@@ -1,0 +1,46 @@
+{
+	"navigation": [{
+			"title": "Warehouse Report",
+			"icon": "sap-icon://electronic-medical-record",
+			"expanded": true,
+			"key": "warehouseReport"
+			
+		}, {
+			"title": "Goods Receipt",
+			"icon": "sap-icon://receipt",
+			"expanded": true,
+			"key": "goodsReceipt"
+			
+		},{
+			"title": "Goods Issue",
+			"icon": "sap-icon://supplier",
+			"expanded": true,
+			"key": "goodsIssue"
+		}, {
+			"title": "Transfer",
+			"icon": "sap-icon://factory",
+			"expanded": true,
+			"key": "Transfer"
+		}, 
+		{
+			"title": "Inventory Count/Posting",
+			"icon": "sap-icon://add-product",
+			"expanded": true,
+			"key": "Count"
+		},
+		{
+			"title": "Transaction History",
+			"icon": "sap-icon://record",
+			"expanded": true,
+			"key": "History"
+        },
+        {
+			"title": "Logoff",
+			"icon": "sap-icon://log",
+			"expanded": true,
+			"key": "Logoff"
+		}
+
+	]
+	
+}

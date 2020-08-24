@@ -1,0 +1,42 @@
+ <mvc:View controllerName="com.ecoverde.ECOVERDE.controller.goodsreceipt100"
+  displayBlock="true"
+  xmlns="sap.m"
+	xmlns:f="sap.ui.layout.form" 
+	xmlns:core="sap.ui.core" 
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc">
+  <App id="goodsreceipt100">
+    <Page showHeader="false">
+          <VBox>
+            <FlexBox
+              height="100px"
+              alignItems="Start"
+              justifyContent="Center">
+                <Image src="./resources/img/ecoverde.png"/>
+              </FlexBox>
+          </VBox>
+   	<f:SimpleForm
+          layout="ResponsiveGridLayout"
+          editable="true"
+          title="Receive Item"
+          adjustLabelSpan="false"
+          labelSpanXL="2"
+          labelSpanL="2"
+          labelSpanM="2"
+          labelSpanS="5">
+	  </f:SimpleForm>
+      <content>
+        <TileContainer height="210px" id="container">
+            <StandardTile icon="sap-icon://bar-code" title="Barcode Scanning" press="onPressJacklift" />
+            <StandardTile icon="sap-icon://inventory" title="Manual Receiving" press="onPressForklift" />
+		  	</TileContainer>
+          </content>
+      <footer>
+        <Bar>
+          
+        </Bar>
+		  </footer>
+        
+      </Page>
+  </App>
+</mvc:View>

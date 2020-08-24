@@ -71,19 +71,76 @@
       },
       "routes": [
         {
-          "name": "Routelogin",
-          "pattern": "Routelogin",
+          "name": "login",
+          "pattern": "login",
           "target": [
-            "Targetlogin"
+            "login"
+          ]
+        },
+        {
+          "name": "settings",
+          "pattern": "settings",
+          "target": [
+            "settings"
+          ]
+        },
+        {
+          "name": "main",
+          "pattern": "main",
+          "target": [
+            "main"
+          ]
+        },
+        {
+          "name": "warehouseReport",
+          "pattern": "warehouseReport",
+          "target": [
+            "warehouseReport"
+          ]
+        },
+        {
+          "name": "goodsReceipt",
+          "pattern": "goodsReceipt",
+          "target": [
+            "goodsReceipt"
           ]
         }
       ],
+
+      
       "targets": {
-        "Targetlogin": {
+        "login": {
           "viewType": "XML",
           "viewLevel": 1,
-          "viewId": "idAppControl",
           "viewName": "login"
+        },
+        "settings": {
+          "viewType": "XML",
+          "viewLevel": 1,
+          "viewName": "settings"
+        },
+        "main": {
+          "viewType": "XML",
+          "viewLevel": 1,
+          "viewName": "main"
+        },
+        "warehouseReport": {
+                    "viewPath": "com.ecoverde.ECOVERDE.view",
+                    "viewType": "XML",
+                    "viewName": "warehouseReport",
+                    "parent": "main",
+                    "controlId": "pageContainer",
+                    "controlAggregation": "pages",
+                    "viewLevel": 3
+        },
+        "goodsReceipt": {
+                    "viewPath": "com.ecoverde.ECOVERDE.view",
+                    "viewType": "XML",
+                    "viewName": "goodsreceipt100",
+                    "parent": "main",
+                    "controlId": "pageContainer",
+                    "controlAggregation": "pages",
+                    "viewLevel": 3
         }
       }
     }

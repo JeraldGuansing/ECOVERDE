@@ -1,12 +1,82 @@
- <mvc:View controllerName="com.ecoverde.ECOVERDE.controller.login"
+ <core:View controllerName="com.ecoverde.ECOVERDE.controller.login"
   displayBlock="true"
-  xmlns="sap.m"
-  xmlns:mvc="sap.ui.core.mvc">
-  <App id="idAppControl" >
-    <pages>
-      <Page title="{i18n>title}">
-        <content></content>
-      </Page>
-    </pages>
+  	xmlns="sap.m"
+	xmlns:f="sap.ui.layout.form" 
+	xmlns:core="sap.ui.core" 
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+  <App id="idAppControl">
+    <Page>
+       <VBox>
+      	<FlexBox
+          height="100px"
+				  alignItems="Start"
+				  justifyContent="Center">
+					  <Image src="./resources/img/ecoverde.png"/>
+          </FlexBox>
+      </VBox>
+	<content>
+          <Panel xmlns="sap.m" class="sapUiResponsiveContentPadding" width="auto" expandable="false" expanded="true">		
+            <headerToolbar>
+				</headerToolbar>
+					<content>
+						<f:SimpleForm editable="true" layout="ResponsiveGridLayout" width="100%">
+						<f:content>
+					
+					<!-- Input Fields -->
+								<Label text="Warehouse" width="100%">
+									<layoutData>
+									<l:GridData span="L2 M4 S12"/>
+									</layoutData>
+								</Label>
+
+								<ComboBox id="whseID" placeholder="Warehouse" required="true">
+									<core:Item key="{key}" text="{text}" />
+								</ComboBox>
+
+									<Label text="Username" width="100%">
+										<layoutData>
+											<l:GridData span="L2 M4 S12"/>
+										</layoutData>
+									</Label>
+
+
+									<Input id="Username" width="100%" placeholder="User Name" required="true">
+										<layoutData>
+											<l:GridData span="L10 M8 S12"/>
+										</layoutData>
+									</Input>
+
+
+									<Label text="Password" width="100%">
+										<layoutData>
+											<l:GridData span="L2 M4 S12"/>
+										</layoutData>
+									</Label>
+
+								<Input id="Password" width="100%" placeholder="Password" type="Password" required="true">
+										<layoutData>
+											<l:GridData span="L10 M8 S12"/>
+										</layoutData>
+									</Input>
+
+							</f:content>
+						</f:SimpleForm>
+						</content>
+					</Panel>
+				</content>
+    	<footer>
+			<Bar>
+				<contentLeft>
+					<Button text="Login" press="onLogin" icon="sap-icon://visits"/>
+				</contentLeft>	
+				<contentRight>
+					<Button text="Setting" press="onSetting" icon="sap-icon://settings" />
+				</contentRight>
+			</Bar>
+		</footer>
+	</Page>
+
   </App>
-</mvc:View>
+</core:View>

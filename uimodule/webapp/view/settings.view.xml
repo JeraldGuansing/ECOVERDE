@@ -1,0 +1,59 @@
+ <mvc:View controllerName="com.ecoverde.ECOVERDE.controller.settings"
+  displayBlock="true"
+  xmlns="sap.m"
+	xmlns:f="sap.ui.layout.form" 
+	xmlns:core="sap.ui.core" 
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc">
+  <App id="settings">
+    <pages>
+         <Page showNavButton="true" navButtonPress="onPressNavBackButton">
+           <VBox>
+            <FlexBox
+                height="100px"
+                alignItems="Start"
+                justifyContent="Center">
+                <Image src="./resources/img/ecoverde.png"/>
+              </FlexBox>
+            </VBox>
+
+        <content>
+          <Panel xmlns="sap.m" class="sapUiResponsiveContentPadding" width="auto" expandable="false" expanded="true">		
+            	<f:SimpleForm editable="true" layout="ResponsiveGridLayout" width="100%">
+							<f:content>
+            <VBox>
+              <List headerText="Authetication Details">
+                <InputListItem label="Server">
+                  <Input id="inputServer" placeholder="Server IP Address" value="" />
+                </InputListItem>
+                <!-- <InputListItem label="Port">
+                  <Input id="" placeholder="Port Number" type="Number" maxLength="3" value="" />
+                </InputListItem> -->
+                <InputListItem label="Database">
+                	<Input id="inputDBName" placeholder="Input Database" value="" />
+                    <!-- <Select items="{oModel>/SelectDatabases}" >
+                        <core:ListItem key="{oModel>Code}" text="{oModel>Desc}" />
+                        <layoutData>
+                          <l:GridData span="L10 M8 S12"/>
+                        </layoutData>
+                    </Select> -->
+                </InputListItem>
+              </List>
+            </VBox>
+            </f:content>
+					</f:SimpleForm>
+
+          </Panel>
+        </content>
+    
+      <footer>
+        <Bar>
+          <contentRight>
+            <Button id="btnSave" icon="sap-icon://save" text="Save" press="onPressSave" />
+          </contentRight>			
+        </Bar>
+      </footer>
+      </Page>
+    </pages>
+  </App>
+</mvc:View>
