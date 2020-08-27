@@ -1,8 +1,8 @@
- <mvc:View controllerName="com.ecoverde.undefined.controller.goodsReceiptPO2"
+ <mvc:View controllerName="com.ecoverde.undefined.controller.GRManual"
   displayBlock="true"
   xmlns="sap.m"
   xmlns:mvc="sap.ui.core.mvc">
-  <App id="goodsReceiptPO2" >
+  <App id="GRManual" >
     <pages>
       <Page title="{i18n>title}">
         <content></content>

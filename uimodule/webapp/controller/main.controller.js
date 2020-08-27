@@ -7,10 +7,10 @@ sap.ui.define([
 	"sap/m/Popover",
 	"sap/m/Button",
 	"sap/m/library",
-	"sap/m/MessageToast"
-], function(Controller,jQuery,Device, Fragment, JSONModel, Popover, Button, mobileLibrary, MessageToast) {
+	"sap/m/MessageToast",
+	"sap/m/MessageBox"
+], function(Controller,jQuery,Device, Fragment, JSONModel, Popover, Button, mobileLibrary, MessageToast,MessageBox) {
   "use strict";
-
   return Controller.extend("com.ecoverde.ECOVERDE.controller.main", {
 
     onInit: function(){
@@ -18,8 +18,9 @@ sap.ui.define([
       this.oMdlMenu = new JSONModel("model/menus.json");
       this.getView().setModel(this.oMdlMenu);
       
-
-      this.router = this.getOwnerComponent().getRouter();
+	  this.router = this.getOwnerComponent().getRouter();
+	  this.router.navTo("homeScreen");
+     
 
     },
 
@@ -36,8 +37,15 @@ sap.ui.define([
 				this.onMenuButtonPress();
 				break;
 			case "goodsReceipt":
-				this.router.navTo("goodsReceipt");
-				this.onMenuButtonPress();
+				this.onChooseProc();
+				// if(CAction === "YES"){
+				// 	CAction = "";
+				// }else if(CAction === "NO"){
+				// 	this.router.navTo("goodsReceipt");
+				// 	this.onMenuButtonPress();
+				// 	CAction = "";
+				// }
+				
 				break;
 			case "goodsIssue":
 				this.router.navTo("Project");
@@ -63,22 +71,10 @@ sap.ui.define([
 				this.router.navTo("Bank");
 				break;
 			default:
-				//this.router.navTo("Dashboard");
-			
-				//	MessageToast.show(sSelectedMenu.toUpperCase() +" is not implemented yet.");
-			//	break;
 			
 			}
 		},
-    
-    onRoutePatternMatched: function (event) {
-			var key = event.getParameter("name");
-			this.byId("childViewSegmentedButton").setSelectedKey(key);
-		},
 
-		onAfterShow: function (router) {
-			router.navTo("Dashboard");
-		},
 
 		onSelect: function (event) {
 			this.router = this.getOwnerComponent().getRouter();
@@ -92,11 +88,9 @@ sap.ui.define([
 			toolPage.setSideExpanded(!toolPage.getSideExpanded());
 		},
 
-		onIconPress: function (oEvent) {
-			this.router.navTo("Dashboard");
-		},
-
 		onLogout: function(){
+			var sServerName = localStorage.getItem("ServerID");
+			var sUrl = sServerName + "/b1s/v1/Logout";
 
 			$.ajax({
 				url: sUrl,
@@ -116,12 +110,40 @@ sap.ui.define([
 				  this.router.navTo("login");
 				},
 				context: this
-			  }).done(function (results) {
-				console.log(results)
 			  });
 
 		},
 
+
+		onChooseProc: function () {
+			var that = this;
+			MessageBox.information("With Purchase Order Reference?", {
+				actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+				title: "Goods Receiving Option",
+				icon: MessageBox.Icon.QUESTION,
+				styleClass:"sapUiSizeCompact",
+				onClose: function (sButton) {
+					if(sButton === "YES"){
+						that.onWithRef();
+						that.onMenuButtonPress();
+					}else if (sButton === "NO"){
+						that.onWithoutRef();
+						that.onMenuButtonPress();
+					}
+				}
+				
+			});
+		},
+
+		onWithRef: function(){
+			this.router = this.getOwnerComponent().getRouter();
+			this.router.navTo("purchaseOrderList");
+		  },
+
+		  onWithoutRef: function(){
+			this.router = this.getOwnerComponent().getRouter();
+			this.router.navTo("goodsReceipt");
+		  },
 
   });
 });

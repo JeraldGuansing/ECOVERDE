@@ -3,5 +3,5 @@ sap.ui.define([
 ], function(Controller) {
   "use strict";
 
-  return Controller.extend("com.ecoverde.undefined.controller.goodsReceiptPO1", {});
+  return Controller.extend("com.ecoverde.undefined.controller.GRManual", {});
 });

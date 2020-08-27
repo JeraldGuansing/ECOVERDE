@@ -1,0 +1,101 @@
+ <mvc:View controllerName="com.ecoverde.ECOVERDE.controller.purchaseOrderList100"
+  displayBlock="true"
+  xmlns="sap.m"
+	xmlns:f="sap.ui.layout.form" 
+	xmlns:core="sap.ui.core" 
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+  xmlns:t="sap.ui.table"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+  <App id="purchaseOrderList100" >
+    <Page showHeader="false">
+        <VBox>
+      	  <FlexBox
+            height="100px"
+				    alignItems="Start"
+				    justifyContent="Center">
+					  <Image src="./resources/img/ecoverde.png"/>
+          </FlexBox>
+         </VBox>
+        
+        	<f:SimpleForm
+              layout="ResponsiveGridLayout"
+              editable="true"
+              title="List of open Purchase Order"
+              adjustLabelSpan="false"
+              labelSpanXL="2"
+              labelSpanL="2"
+              labelSpanM="2"
+              labelSpanS="5">
+	        </f:SimpleForm>
+        
+       
+            <t:Table id="ProductID" rows="{oModel>/Items}" selectionMode="MultiToggle" paste="onPaste" ariaLabelledBy="title">
+                <t:columns>
+                    <t:Column width="11rem">
+                      <Label text="Doc No." />
+                      <t:template>
+                        <Input type="Text"
+                                value="{oModel>ItemCode}"
+                                placeholder="Enter ItemCode ..."
+                                showValueHelp="true"
+                                valueHelpOnly="true"
+                                valueHelpRequest="handleValueHelpRow"/>
+                      </t:template>
+                    </t:Column>
+
+                    <t:Column width="11rem">
+                      <Label text="Vendor Code" />
+                      <t:template>
+                        <Text text="{oModel>ItemName}" wrapping="false" />
+                      </t:template>
+                    </t:Column>
+
+                    <t:Column width="11rem">
+                      <Label text="Vendor Name" />
+                      <t:template>
+                        <Text text="{oModel>Quantity}" wrapping="false" />
+                      </t:template>
+                    </t:Column>
+
+                    <t:Column width="11rem">
+                      <Label text="Vendor Ref. No." />
+                      <t:template>
+                        <Text text="{oModel>UnitPrice}" wrapping="false" />
+                      </t:template>
+                    </t:Column>
+
+                    <t:Column width="11rem">
+                      <Label text="Due Date" />
+                      <t:template>
+                        <Text text="{oModel>UnitPrice}" wrapping="false" />
+                      </t:template>
+                    </t:Column>
+
+                    <t:Column width="11rem">
+                      <Label text="Amount" />
+                      <t:template>
+                        <Text text="{oModel>UnitPrice}" wrapping="false" />
+                      </t:template>
+                    </t:Column>
+
+                    <t:Column width="11rem">
+                      <Label text="Posting Date" />
+                      <t:template>
+                        <Text text="{oModel>UnitPrice}" wrapping="false" />
+                      </t:template>
+                    </t:Column>
+
+                    <t:Column width="11rem">
+                      <Label text="Document Date" />
+                      <t:template>
+                        <Text text="{oModel>UnitPrice}" wrapping="false" />
+                      </t:template>
+                    </t:Column>
+
+
+                </t:columns>
+            </t:Table>
+      </Page>
+  </App>
+</mvc:View>

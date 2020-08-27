@@ -27,13 +27,15 @@
 	  </f:SimpleForm>
       <content>
         <TileContainer height="210px" id="container">
-            <StandardTile icon="sap-icon://bar-code" title="Barcode Scanning" press="onPressJacklift" />
-            <StandardTile icon="sap-icon://inventory" title="Manual Receiving" press="onPressForklift" />
+            <StandardTile icon="sap-icon://bar-code" title="Barcode Scanning" press="onGotoScanview" />
+            <StandardTile icon="sap-icon://inventory" title="Manual Receiving" press="" />
 		  	</TileContainer>
+
+        <!-- <Input id="myBarcode"/>
+         <Button text="Scan" press="onTest"></Button> -->
           </content>
       <footer>
         <Bar>
-          
         </Bar>
 		  </footer>
         

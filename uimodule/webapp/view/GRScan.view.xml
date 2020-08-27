@@ -1,0 +1,82 @@
+ <mvc:View controllerName="com.ecoverde.ECOVERDE.controller.GRScan"
+  displayBlock="true"
+  xmlns="sap.m"
+	xmlns:f="sap.ui.layout.form" 
+	xmlns:core="sap.ui.core" 
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+  xmlns:t="sap.ui.table"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+  <App id="GRScan">
+      <Page showHeader="false">
+         <VBox>
+            <FlexBox
+                height="100px"
+                alignItems="Start"
+                justifyContent="Center">
+                <Image src="./resources/img/ecoverde.png"/>
+              </FlexBox>
+            </VBox>
+             <Input id="myBarcode"/>
+              <Button text="Scan" press="onTest"></Button>
+      
+          <!-- <t:Table id="ItemCode" rows="{oModel>/Items}" selectionMode="MultiToggle" paste="onPaste" ariaLabelledBy="title">
+                <t:columns>
+                    <t:Column width="11rem">
+                      <Label text="Item Code" />
+                      <t:template>
+                        <Input type="Text"
+                                value="{oModel>ItemCode}"
+                                placeholder="Enter ItemCode ..."
+                                showValueHelp="true"
+                                valueHelpOnly="true"
+                                valueHelpRequest="handleValueHelpRow"/>
+                      </t:template>
+                    </t:Column>
+
+                    <t:Column width="11rem">
+                      <Label text="Item Name" />
+                      <t:template>
+                        <Text text="{oModel>ItemName}" wrapping="false" />
+                      </t:template>
+                    </t:Column>
+
+                    <t:Column width="11rem">
+                      <Label text="Quantity" />
+                      <t:template>
+                        <Text text="{oModel>Quantity}" wrapping="false" />
+                      </t:template>
+                    </t:Column>
+                </t:columns>
+            </t:Table> -->
+       
+          <content>
+                <List items="{oModel>/value}" headerText="Scanned Item">
+                  <items>
+                    <ObjectListItem id="list" title="{oModel>ItemCode}"
+                            number="{oModel>Quantity}"
+                            type="Active"
+                            press = "onViewItem">
+                      <attributes>
+                          <ObjectAttribute id="deskID" title="{oModel>ItemName}"/>
+                      </attributes>
+                    </ObjectListItem>
+                  </items>
+                  
+                </List>
+            </content>
+
+    <footer>
+			<Bar>
+				<contentRight>
+					<Button text="Add" press="onTest" icon="sap-icon://add"/>
+				</contentRight>
+        <contentRight>
+					<Button text="Post" press="onSetting" icon="sap-icon://manager-insight"/>
+				</contentRight>
+			</Bar>
+		</footer>
+
+      </Page>
+  </App>
+</mvc:View>

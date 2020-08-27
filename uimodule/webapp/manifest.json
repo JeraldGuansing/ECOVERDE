@@ -104,6 +104,27 @@
           "target": [
             "goodsReceipt"
           ]
+        },
+        {
+          "name": "homeScreen",
+          "pattern": "homeScreen",
+          "target": [
+            "homeScreen"
+          ]
+        },
+        {
+          "name": "purchaseOrderList",
+          "pattern": "purchaseOrderList",
+          "target": [
+            "purchaseOrderList"
+          ]
+        },
+        {
+          "name": "BarcodeScanning",
+          "pattern": "BarcodeScanning",
+          "target": [
+            "BarcodeScanning"
+          ]
         }
       ],
 
@@ -141,7 +162,34 @@
                     "controlId": "pageContainer",
                     "controlAggregation": "pages",
                     "viewLevel": 3
-        }
+        },
+        "homeScreen": {
+                    "viewPath": "com.ecoverde.ECOVERDE.view",
+                    "viewType": "XML",
+                    "viewName": "homescreen",
+                    "parent": "main",
+                    "controlId": "pageContainer",
+                    "controlAggregation": "pages",
+                    "viewLevel": 3
+        },
+        "purchaseOrderList": {
+                    "viewPath": "com.ecoverde.ECOVERDE.view",
+                    "viewType": "XML",
+                    "viewName": "purchaseOrderList100",
+                    "parent": "main",
+                    "controlId": "pageContainer",
+                    "controlAggregation": "pages",
+                    "viewLevel": 3
+        },
+        "BarcodeScanning": {
+          "viewPath": "com.ecoverde.ECOVERDE.view",
+          "viewType": "XML",
+          "viewName": "GRScan",
+          "parent": "main",
+          "controlId": "pageContainer",
+          "controlAggregation": "pages",
+          "viewLevel": 3
+}
       }
     }
   }

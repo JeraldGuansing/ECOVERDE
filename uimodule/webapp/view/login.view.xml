@@ -25,16 +25,6 @@
 						<f:content>
 					
 					<!-- Input Fields -->
-								<Label text="Warehouse" width="100%">
-									<layoutData>
-									<l:GridData span="L2 M4 S12"/>
-									</layoutData>
-								</Label>
-
-								<ComboBox id="whseID" placeholder="Warehouse" required="true">
-									<core:Item key="{key}" text="{text}" />
-								</ComboBox>
-
 									<Label text="Username" width="100%">
 										<layoutData>
 											<l:GridData span="L2 M4 S12"/>
@@ -55,11 +45,23 @@
 										</layoutData>
 									</Label>
 
-								<Input id="Password" width="100%" placeholder="Password" type="Password" required="true">
+								<Input id="Password" change="onWhseList" width="100%" placeholder="Password" type="Password" required="true">
 										<layoutData>
 											<l:GridData span="L10 M8 S12"/>
 										</layoutData>
 									</Input>
+
+									<Label text="Warehouse" width="100%">
+									<layoutData>
+									<l:GridData span="L2 M4 S12"/>
+									</layoutData>
+								</Label>
+
+								 <ComboBox id="whsID" 
+									items="{/value/}"
+									change="onSelectKey">
+									<core:ListItem key="{WarehouseCode}" text="{WarehouseName}"/>
+								</ComboBox>
 
 							</f:content>
 						</f:SimpleForm>

@@ -1,4 +1,4 @@
- <mvc:View controllerName="com.ecoverde.ECOVERDE.controller.warehouseReport"
+ <core:View controllerName="com.ecoverde.ECOVERDE.controller.warehouseReport"
   displayBlock="true"
   xmlns="sap.m"
 	xmlns:f="sap.ui.layout.form" 
@@ -19,8 +19,10 @@
             <List headerText="Warehouse Report">
             
             <InputListItem label="Warehouse">
-                <ComboBox id="whseID" placeholder="Warehouse" required="true">
-                  <core:Item key="{key}" text="{text}" />
+                <ComboBox id="whsID" 
+								  items="{/value/}"
+								  change="onSelectKey">
+                <core:ListItem key="{WarehouseCode}" text="{WarehouseName}"/>
                 </ComboBox>
               </InputListItem>
               
@@ -39,11 +41,11 @@
         </content>
         <footer>
             <Bar>
-                <contentRight>
-                    <Button text="View" press="" icon="sap-icon://tree"/>
-                </contentRight>
+                <contentMiddle>
+                    <Button text="View" press="onWhseList" icon="sap-icon://tree"/>
+                </contentMiddle>
             </Bar>
         </footer>
       </Page>
   </App>
-</mvc:View>
+</core:View>

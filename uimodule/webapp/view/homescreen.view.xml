@@ -1,12 +1,23 @@
- <mvc:View controllerName="com.ecoverde.undefined.controller.homescreen"
+ <mvc:View controllerName="com.ecoverde.ECOVERDE.controller.homescreen"
   displayBlock="true"
   xmlns="sap.m"
-  xmlns:mvc="sap.ui.core.mvc">
-  <App id="homescreen" >
-    <pages>
-      <Page title="{i18n>title}">
-        <content></content>
+	xmlns:f="sap.ui.layout.form" 
+	xmlns:core="sap.ui.core" 
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+  <App id="homescreen">
+      <Page showHeader="false">
+        <VBox>
+      	  <FlexBox
+            height="100px"
+				    alignItems="Start"
+				    justifyContent="Center">
+					  <Image src="./resources/img/ecoverde.png"/>
+          </FlexBox>
+         </VBox>
+        <content>
+        </content>
       </Page>
-    </pages>
   </App>
 </mvc:View>
