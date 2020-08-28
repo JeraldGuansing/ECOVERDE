@@ -31,4 +31,10 @@
 			</NavContainer>
 		</tnt:mainContents>
 	</tnt:ToolPage>
+	<!-- <Page showHeader="false">
+		<footer>
+			<Bar>
+			</Bar>
+		</footer>
+	</Page> -->
 </core:View>

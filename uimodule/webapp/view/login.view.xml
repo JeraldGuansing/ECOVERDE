@@ -31,13 +31,11 @@
 										</layoutData>
 									</Label>
 
-
 									<Input id="Username" width="100%" placeholder="User Name" required="true">
 										<layoutData>
 											<l:GridData span="L10 M8 S12"/>
 										</layoutData>
 									</Input>
-
 
 									<Label text="Password" width="100%">
 										<layoutData>
@@ -45,24 +43,11 @@
 										</layoutData>
 									</Label>
 
-								<Input id="Password" change="onWhseList" width="100%" placeholder="Password" type="Password" required="true">
+								<Input id="Password" width="100%" placeholder="Password" type="Password" required="true">
 										<layoutData>
 											<l:GridData span="L10 M8 S12"/>
 										</layoutData>
 									</Input>
-
-									<Label text="Warehouse" width="100%">
-									<layoutData>
-									<l:GridData span="L2 M4 S12"/>
-									</layoutData>
-								</Label>
-
-								 <ComboBox id="whsID" 
-									items="{/value/}"
-									change="onSelectKey">
-									<core:ListItem key="{WarehouseCode}" text="{WarehouseName}"/>
-								</ComboBox>
-
 							</f:content>
 						</f:SimpleForm>
 						</content>

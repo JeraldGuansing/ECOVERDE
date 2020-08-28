@@ -38,14 +38,6 @@ sap.ui.define([
 				break;
 			case "goodsReceipt":
 				this.onChooseProc();
-				// if(CAction === "YES"){
-				// 	CAction = "";
-				// }else if(CAction === "NO"){
-				// 	this.router.navTo("goodsReceipt");
-				// 	this.onMenuButtonPress();
-				// 	CAction = "";
-				// }
-				
 				break;
 			case "goodsIssue":
 				this.router.navTo("Project");
@@ -142,7 +134,7 @@ sap.ui.define([
 
 		  onWithoutRef: function(){
 			this.router = this.getOwnerComponent().getRouter();
-			this.router.navTo("goodsReceipt");
+			this.router.navTo("BarcodeScanning");
 		  },
 
   });

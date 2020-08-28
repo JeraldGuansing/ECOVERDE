@@ -5,71 +5,43 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/m/Token",
-  "sap/m/MessageBox"
-], function(Controller,MessageToast, JSONModel, Filter, FilterOperator, Token, MessageBox) {
+  "sap/m/MessageBox",
+  "sap/ui/core/Fragment",
+
+], function(Controller,MessageToast, JSONModel, Filter, FilterOperator, Token, MessageBox,Fragment) {
   "use strict";
 
   return Controller.extend("com.ecoverde.ECOVERDE.controller.GRScan", {
     onInit: function(){
-
-      this.oModel = new JSONModel("model/Item.json");
+      
+      this.oModel = new JSONModel("model/item.json");
       this.getView().setModel(this.oModel, "oModel");
-      //this.getBarcode();
+      
     },
 
     onScan: function() {
-          var options = {
-              preferFrontCamera: true, // iOS and Android
-              showFlipCameraButton: true, // iOS and Android
-              showTorchButton: true, // iOS and Android
-              torchOn: true, // Android, launch with the torch switched on (if available)
-              prompt: "Place barcode inside the scan area", // Android
-              resultDisplayDuration: 500, // Android, display scanned text for X ms. 0 suppresses it entirely, default 1500
-              formats: "QR_CODE,PDF_417,UPC_A", // default: all but PDF_417 and RSS_EXPANDED
-              orientation: "portrait", // Android only (portrait|landscape), default unset so it rotates with the device
-              disableAnimations: true // iOS
-          };
+      var that = this;
             cordova.plugins.barcodeScanner.scan(
               function (result) {
                 var sBarcode = result.text;
                 localStorage.setItem("sBarcode", sBarcode);
-                this.onValidateBarcode();
+                that.openLoadingFragment();
+                that.onScanBarcode();
               },
               function (error) {
                 //toast here
         });
     },
+  
 
-    getBarcode: function () {
-    
-      $.ajax({
-        url: "https://202.175.234.102:50000/b1s/v1/BarCodes",
-        type: "GET",
-        crossDomain: true,
-        xhrFields: {
-          withCredentials: true
-        },
-        error: function (xhr, status, error) {
-          console.log("Error Occured");
-        },
-        success: function (json) {
-        },
-        context: this
-      }).done(function (results) {
-
-        this.oModel.getData().value = results.value;
-        this.oModel.refresh();
-      });
-    },
-
-    onTest: function(){
+    onScanBarcode: function(){
       var that = this;
-      var oModel = new sap.ui.model.json.JSONModel();
-      var oView = that.getView();
+      // var oView = that.getView();
 
       var sServerName = localStorage.getItem("ServerID");
-      var vBarcode = oView.byId("myBarcode").getValue();
-      var sUrl = sServerName + "/b1s/v1/Items";
+      //var vBarcode = oView.byId("myBarcode").getValue();
+      var vBarcode = localStorage.getItem("sBarcode");
+      var sUrl = sServerName + "/b1s/v1/Items?$select=ItemCode,BarCode,ItemName";
   
        $.ajax({
             url: sUrl,
@@ -81,59 +53,115 @@ sap.ui.define([
             success: function(response){
              
             var oItem = response.value;
-
-           //filter specific/get 3 fields.
-
-             const scanCode = oItem.filter(function(items){
-              return items.ItemCode == vBarcode || items.ItemName == vBarcode;
-            }).map(function(itemDet){
-              return {
-                    "ItemCode": itemDet.ItemCode, 
-                    "ItemName":itemDet.ItemName,
-                    "BarCode":vBarcode,
-                    "Quantity": 1
-                   };         
-            });
+            const scanCode = oItem.filter(function(items){
+            return items.ItemCode == vBarcode; //|| items.BarCode == vBarcode;
+            })
             //Validation
-            
-           // console.log(scanCode[0].ItemCode);
-           
            var sResult = parseInt(scanCode.length); 
+
             if(sResult == 0){
-              sap.m.MessageToast.show("Barcode Not Found");
+              sap.m.MessageToast.show(vBarcode +"\nBarcode Not Found \nin the system!");
               localStorage.setItem("sBarcode", "");
-             
             }else{
-              //just push the data on model
-
-              //check if with same item
-              
-              var rItem = that.oModel.getData().value;
-
-              rItem.forEach(function(itemCde){
-                if (itemCde.ItemCode === scanCode[0].ItemCode){
-                  itemCde.Quantity = parseInt(itemCde.Quantity) + 1;
-                  console.log(itemCde.Quantity);
-                 
-                }else{
-                  that.oModel.getData().value.push(scanCode[0]);
-                  console.log("new Item");
-                }
+              var StoredItem = that.oModel.getData().value;
+              const oITM = StoredItem.filter(function(OIT){
+              return OIT.ItemCode == vBarcode;
+            })
+            var cResult = parseInt(oITM.length);
+            if(cResult == 0){
+              that.oModel.getData().value.push({
+                "ItemCode":scanCode[0].ItemCode, 
+                "ItemName":scanCode[0].ItemName,
+                "BarCode":scanCode[0].BarCode,
+                "Quantity": 1
               });
-
-              debugger;
-              //that.oModel.getData().value.push(scanCode[0]);
-              that.oModel.refresh();
             
+            }else{
+              oITM[0].Quantity = parseInt(oITM[0].Quantity) + 1;
             }
-      
-            }, error: function(response) { 
-            sap.m.MessageToast.show("Error Occur");
+              that.oModel.refresh();
+              localStorage.setItem("sBarcode", "");
+            }
+            that.closeLoadingFragment()
+            }, error: function() { 
+              that.closeLoadingFragment()
+              console.log("Error Occur");
             }
         })
-    
+        that.closeLoadingFragment()
     },
-    
+  
+    onPostingGR: function(){
+
+      var itemJSON = this.oModel.getData().value;
+
+      if(parseInt(itemJSON.length) == 0){
+        this.onScan();
+      }
+      else{
+
+      var that = this;
+      that.openLoadingFragment();
+      var sServerName = localStorage.getItem("ServerID");
+      var sUrl = sServerName + "/b1s/v1/InventoryGenEntries";
+      var oBody = {"DocumentLines": []};          
+      
+      var StoredItem = this.oModel.getData().value;
+      for(var i = 0;i < StoredItem.length;i++){
+        oBody.DocumentLines.push({
+          "ItemCode": StoredItem[i].ItemCode,
+          "Quantity": StoredItem[i].Quantity,
+          "UnitPrice": 1
+          });
+        }
+      oBody = JSON.stringify(oBody);        
+          $.ajax({
+            url: sUrl,
+            type: "POST",
+            data: oBody,
+            headers: {
+              'Content-Type': 'application/json'},
+            crossDomain: true,
+            xhrFields: {withCredentials: true},
+            error: function (xhr, status, error) {
+              that.closeLoadingFragment();
+              sap.m.MessageToast.show("Unable to post the Item");
+              },
+            success: function (json) {
+              that.closeLoadingFragment();
+                    MessageBox.information("Item successfully Received,\nNew Doc Number Created:" + json.DocNum, {
+                      actions: [MessageBox.Action.OK],
+                      title: "Goods Receipt",
+                      icon: MessageBox.Icon.INFORMATION,
+                      styleClass:"sapUiSizeCompact",
+                      onClose: function (sButton) {
+                        that.onWithoutRef();
+                      }
+                    });
+                  
+                  },context: this
+                });
+              }
+     },
+
+
+     onWithoutRef: function(){
+			this.router = this.getOwnerComponent().getRouter();
+			this.router.navTo("goodsReceipt");
+      },
+      
+     openLoadingFragment: function(){
+      if (! this.oDialog) {
+            this.oDialog = sap.ui.xmlfragment("busyLogin","com.ecoverde.ECOVERDE.view.fragment.BusyDialog", this);   
+       }
+       this.oDialog.open();
+    },
+
+    closeLoadingFragment : function(){
+      if(this.oDialog){
+        this.oDialog.close();
+      }
+    },
 
   });
 });

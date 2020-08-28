@@ -17,20 +17,25 @@ sap.ui.define([
         this.onSetting();
         return;
       }
-
+     
     },
     
-    // onSelectKey : function (){
-    //   var ids = this.getView().byId('statusID').getSelectedKey();
-    //   localStorage.setItem("inbStat",ids);
+    // onDisable: function(){
+    //   this.getView().byId('whsID').setEnabled(false);
     // },
-  
 
+    // onEnable: function(){
+    //   this.getView().byId('whsID').setEnabled(true);
+    // },
+
+    // onSelectKey : function (){
+    //   var whsid = this.getView().byId('whsID').getSelectedKey();
+    //   localStorage.setItem("wheseID",whsid);
+    // },
 
     onLogin: function(oEvent){
       var oView = this.getView();
               
-            localStorage.setItem("wheseID", "");
             localStorage.setItem("userName", "");
             localStorage.setItem("password", "");
 
@@ -44,14 +49,11 @@ sap.ui.define([
               sap.m.MessageToast.show("Input database in settings");
               return;
             }
-              var sWarehouse = this.getView().byId("whsID").getValue();
+              // var sWarehouse = this.getView().byId("whsID").getValue();
               var sUsername = this.getView().byId("Username").getValue();
               var sPassword = this.getView().byId("Password").getValue();
             
-              if(sWarehouse === ""){
-                sap.m.MessageToast.show("Please Select Warehouse");
-                return;
-              }else if(sUsername === ""){
+             if(sUsername === ""){
                 sap.m.MessageToast.show("Please Input UserName");
                 return;
               }else if(sPassword === ""){
@@ -61,8 +63,8 @@ sap.ui.define([
               else{
 
                 //API
-                
-                localStorage.setItem("wheseID", oView.byId("whsID").getValue());
+                this.openLoadingFragment();
+                // localStorage.setItem("wheseID", oView.byId("whsID").getValue());
                 localStorage.setItem("userName", oView.byId("Username").getValue());
                 localStorage.setItem("password", oView.byId("Password").getValue());
                 
@@ -77,10 +79,8 @@ sap.ui.define([
                 oBody.CompanyDB = sDatabaseName;
                 oBody.UserName = sUserName;
                 oBody.Password = sPassw;
-               
-           
+              
                 oBody = JSON.stringify(oBody);
-                 
               
                 $.ajax({
                   url: sUrl,
@@ -93,83 +93,33 @@ sap.ui.define([
                     withCredentials: true
                   },
                   error: function (xhr, status, error) {
+                    that.closeLoadingFragment();
                     sap.m.MessageToast.show("Incorrect UserName/Password");
                   },
                   success: function (json) {
-                    sap.m.MessageToast.show("Welcome");
+                    this.closeLoadingFragment();
                     this.router = this.getOwnerComponent().getRouter();
                     this.router.navTo("main");
+                    sap.m.MessageToast.show("Welcome");
                   },
                   context: this
-                }).done(function (results) {
-                
                 });
           
               }
     },
 
-    onWhseList: function(){
-      var oView = this.getView();
-      var oModel = new sap.ui.model.json.JSONModel();
-     
-      localStorage.setItem("userName", oView.byId("Username").getValue());
-      localStorage.setItem("password", oView.byId("Password").getValue());
-      
-      var sServerName = localStorage.getItem("ServerID");
-      var sDatabaseName = localStorage.getItem("dbName");
-      // var sWhseID = localStorage.getItem("wheseID");
-      var sUserName = localStorage.getItem("userName");
-      var sPassw = localStorage.getItem("password");
-      var sUrl = sServerName + "/b1s/v1/Login";
-
-      var oBody = {};
-      oBody.CompanyDB = sDatabaseName;
-      oBody.UserName = sUserName;
-      oBody.Password = sPassw;
-     
- 
-      oBody = JSON.stringify(oBody);
-       
-    
-      $.ajax({
-        url: sUrl,
-        type: "POST",
-        data: oBody,
-        headers: {
-          'Content-Type': 'application/json'},
-        crossDomain: true,
-        xhrFields: {
-          withCredentials: true
-        },
-        error: function (xhr, status, error) {
-          
-        },
-        success: function (json) {
-          var sUrl1 = sServerName + "/b1s/v1/Warehouses";
-                
-          $.ajax({
-            url: sUrl1,
-            type: "GET",
-            dataType: 'json',
-            crossDomain: true,
-            xhrFields: {
-              withCredentials: true},
-            success: function(response){
-            
-              oModel.setData(response);
-              oView.setModel(oModel);
-            }, error: function(response) { 
-            sap.m.MessageToast.show(response.statusText);}
-            })
-
-
-        },
-        context: this
-      })
-
-	
+    openLoadingFragment: function(){
+      if (! this.oDialog) {
+            this.oDialog = sap.ui.xmlfragment("busyLogin","com.ecoverde.ECOVERDE.view.fragment.BusyDialog", this);   
+       }
+      this.oDialog.open();
     },
 
+    closeLoadingFragment : function(){
+      if(this.oDialog){
+        this.oDialog.close();
+      }
+    },
 
     onSetting: function(){
       this.router = this.getOwnerComponent().getRouter();

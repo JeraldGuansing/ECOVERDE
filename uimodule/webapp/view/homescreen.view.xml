@@ -10,14 +10,21 @@
       <Page showHeader="false">
         <VBox>
       	  <FlexBox
-            height="100px"
+            height="78px"
 				    alignItems="Start"
 				    justifyContent="Center">
 					  <Image src="./resources/img/ecoverde.png"/>
           </FlexBox>
+          <FlexBox
+            height="100px"
+				    alignItems="Start"
+				    justifyContent="Center">
+					  <Image src="./resources/img/Ecoverde_background.png"/>
+          </FlexBox>
          </VBox>
         <content>
         </content>
+        
       </Page>
   </App>
 </mvc:View>

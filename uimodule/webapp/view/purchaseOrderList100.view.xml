@@ -30,72 +30,74 @@
 	        </f:SimpleForm>
         
        
-            <t:Table id="ProductID" rows="{oModel>/Items}" selectionMode="MultiToggle" paste="onPaste" ariaLabelledBy="title">
+            <t:Table id="ProductID" rows="{oModel>/value}" selectionMode="MultiToggle" paste="onPaste" ariaLabelledBy="title">
                 <t:columns>
-                    <t:Column width="11rem">
-                      <Label text="Doc No." />
+                    <t:Column width="5em">
+                      <Label text="Doc Num" />
                       <t:template>
-                        <Input type="Text"
-                                value="{oModel>ItemCode}"
-                                placeholder="Enter ItemCode ..."
-                                showValueHelp="true"
-                                valueHelpOnly="true"
-                                valueHelpRequest="handleValueHelpRow"/>
+                        <Text text="{oModel>DocNum}" wrapping="false" />
                       </t:template>
                     </t:Column>
 
-                    <t:Column width="11rem">
+                    <t:Column width="7rem">
                       <Label text="Vendor Code" />
                       <t:template>
-                        <Text text="{oModel>ItemName}" wrapping="false" />
+                        <Text text="{oModel>CardCode}" wrapping="false" />
                       </t:template>
                     </t:Column>
 
                     <t:Column width="11rem">
                       <Label text="Vendor Name" />
                       <t:template>
-                        <Text text="{oModel>Quantity}" wrapping="false" />
+                        <Text text="{oModel>CardName}" wrapping="false" />
                       </t:template>
                     </t:Column>
 
-                    <t:Column width="11rem">
+                    <t:Column width="5rem">
                       <Label text="Vendor Ref. No." />
                       <t:template>
-                        <Text text="{oModel>UnitPrice}" wrapping="false" />
+                        <Text text="{oModel>NumAtCard}" wrapping="false" />
                       </t:template>
                     </t:Column>
 
-                    <t:Column width="11rem">
+                    <t:Column width="6rem">
                       <Label text="Due Date" />
                       <t:template>
-                        <Text text="{oModel>UnitPrice}" wrapping="false" />
+                        <Text text="{oModel>DocDueDate}" wrapping="false" />
                       </t:template>
                     </t:Column>
 
-                    <t:Column width="11rem">
+                    <t:Column width="6rem">
                       <Label text="Amount" />
                       <t:template>
                         <Text text="{oModel>UnitPrice}" wrapping="false" />
                       </t:template>
                     </t:Column>
 
-                    <t:Column width="11rem">
+                    <t:Column width="6rem">
                       <Label text="Posting Date" />
                       <t:template>
-                        <Text text="{oModel>UnitPrice}" wrapping="false" />
+                        <Text text="{oModel>DocDate}" wrapping="false" />
                       </t:template>
                     </t:Column>
 
-                    <t:Column width="11rem">
+                    <t:Column width="6rem">
                       <Label text="Document Date" />
                       <t:template>
-                        <Text text="{oModel>UnitPrice}" wrapping="false" />
+                        <Text text="{oModel>TaxDate}" wrapping="false" />
                       </t:template>
                     </t:Column>
-
-
                 </t:columns>
             </t:Table>
+
+          <footer>
+            <Bar>
+              <contentRight>
+                <Button text="Receive" press="onSetting" icon="sap-icon://settings" />
+              </contentRight>
+            </Bar>
+          </footer>
+
       </Page>
   </App>
 </mvc:View>

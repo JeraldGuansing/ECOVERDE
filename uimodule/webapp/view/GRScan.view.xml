@@ -9,16 +9,16 @@
 	xmlns:html="http://www.w3.org/1999/xhtml">
   <App id="GRScan">
       <Page showHeader="false">
-         <VBox>
-            <FlexBox
-                height="100px"
-                alignItems="Start"
-                justifyContent="Center">
-                <Image src="./resources/img/ecoverde.png"/>
-              </FlexBox>
-            </VBox>
-             <Input id="myBarcode"/>
-              <Button text="Scan" press="onTest"></Button>
+              <VBox>
+                <FlexBox
+                  height="80px"
+                  alignItems="Start"
+                  justifyContent="Center">
+                    <Image src="./resources/img/ecoverde.png"/>
+                </FlexBox>
+              </VBox>
+             <!-- <Input id="myBarcode"/>
+              <Button text="Scan" press="onTest"></Button> -->
       
           <!-- <t:Table id="ItemCode" rows="{oModel>/Items}" selectionMode="MultiToggle" paste="onPaste" ariaLabelledBy="title">
                 <t:columns>
@@ -58,25 +58,27 @@
                             type="Active"
                             press = "onViewItem">
                       <attributes>
-                          <ObjectAttribute id="deskID" title="{oModel>ItemName}"/>
+                          <ObjectAttribute title="{oModel>ItemName}"/>
+                           <ObjectAttribute title="{oModel>BarCode}"/>
                       </attributes>
                     </ObjectListItem>
                   </items>
-                  
                 </List>
             </content>
 
     <footer>
 			<Bar>
-				<contentRight>
-					<Button text="Add" press="onTest" icon="sap-icon://add"/>
-				</contentRight>
+				<contentLeft>
+					<Button text="Add" press="" icon="sap-icon://add"/>
+				</contentLeft>
+        <contentMiddle>
+					<Button text="Scan" press="onScan" icon="sap-icon://camera"/>
+				</contentMiddle>
         <contentRight>
-					<Button text="Post" press="onSetting" icon="sap-icon://manager-insight"/>
+					<Button text="Post" press="onPostingGR" icon="sap-icon://manager-insight"/>
 				</contentRight>
 			</Bar>
 		</footer>
-
       </Page>
   </App>
 </mvc:View>

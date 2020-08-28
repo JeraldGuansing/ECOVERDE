@@ -21,7 +21,7 @@ sap.ui.define([
       var oView = this.getView();
 		  var oModel = new sap.ui.model.json.JSONModel();
       var sServerName = localStorage.getItem("ServerID");
-      var sUrl = sServerName + "/b1s/v1/Warehouses";
+      var sUrl = sServerName + "/b1s/v1/Warehouses()?$select=WarehouseCode,WarehouseName";
 
       $.ajax({
         url: sUrl,
