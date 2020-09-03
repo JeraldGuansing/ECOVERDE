@@ -51,12 +51,13 @@
             </t:Table> -->
        
           <content>
-                <List items="{oModel>/value}" headerText="Scanned Item">
+                <List items="{oModel>/value}" headerText="List of Received Item">
                   <items>
                     <ObjectListItem id="list" title="{oModel>ItemCode}"
                             number="{oModel>Quantity}"
                             type="Active"
-                            press = "onViewItem">
+                            press = "onViewItem"
+                            icon="sap-icon://product">
                       <attributes>
                           <ObjectAttribute title="{oModel>ItemName}"/>
                            <ObjectAttribute title="{oModel>BarCode}"/>
@@ -69,7 +70,7 @@
     <footer>
 			<Bar>
 				<contentLeft>
-					<Button text="Add" press="" icon="sap-icon://add"/>
+					<Button text="Add" press="onAddItem" icon="sap-icon://add"/>
 				</contentLeft>
         <contentMiddle>
 					<Button text="Scan" press="onScan" icon="sap-icon://camera"/>

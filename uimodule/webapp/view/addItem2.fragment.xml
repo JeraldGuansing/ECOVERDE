@@ -1,0 +1,59 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form">
+    <Dialog>
+        <content>
+            <l:Grid defaultSpan = "L12 M12 S12" width = "auto">
+                <l:content>
+                    <f:Form editable="true">
+                        <f:layout>
+                            <f:ResponsiveGridLayout
+                                labelSpanXL="3"
+                                labelSpanL="3"
+                                labelSpanM="3"
+                                labelSpanS="12"
+                                adjustLabelSpan="false"
+                                emptySpanXL="3"
+                                emptySpanL="3"
+                                emptySpanM="3"
+                                emptySpanS="0"
+                                columnsXL="1"
+                                columnsL="1"
+                                columnsM="1"
+                                singleContainerFullSize="false" />
+                        </f:layout>
+                        <f:formContainers>
+                            <f:FormContainer>
+                                <f:formElements>
+                                    <f:FormElement label="Item Details">
+                                        <Input id="codeID"/>
+                                        <Input id="nameID"/>
+                                    </f:FormElement>
+
+                                    <f:FormElement label="Open Quantity">
+                                        <Input id="rQty" type="Number"/>
+                                    </f:FormElement>
+
+                                    <f:FormElement label="Receiving Quantity">
+                                       <Input id="qtyIDs" placeholder="Input Quantity" type="Number"/>
+                                       <Input id="untPr" type="Number"/>
+                                       <Input id="taxCode"/>
+                                    </f:FormElement>
+                                    
+                                </f:formElements>
+                            </f:FormContainer>
+                        </f:formContainers>
+                    </f:Form>
+                </l:content>
+            </l:Grid>
+        </content>
+        <beginButton>
+            <Button text="Cancel" icon="sap-icon://sys-cancel" press="onCloseAdd" type="Reject"/>
+        </beginButton>
+        <endButton>
+            <Button text="Receive" icon="sap-icon://add" press="onGetAddItem" type="Accept" />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

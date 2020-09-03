@@ -1,3 +1,7 @@
 {
-    "value":[]
+    "value":[],
+    "receiving":[],
+    "DocumentLines":[],
+    "SelectedItem":[],
+    "forPosting":[]
 }

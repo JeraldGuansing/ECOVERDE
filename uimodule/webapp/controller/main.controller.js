@@ -40,7 +40,7 @@ sap.ui.define([
 				this.onChooseProc();
 				break;
 			case "goodsIssue":
-				this.router.navTo("Project");
+				this.router.navTo("goodsIssueMenu");
 				this.onMenuButtonPress();
 				break;
 			case "Transfer":

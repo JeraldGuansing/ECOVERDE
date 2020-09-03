@@ -15,12 +15,12 @@
 				    justifyContent="Center">
 					  <Image src="./resources/img/ecoverde.png"/>
           </FlexBox>
-          <FlexBox
+          <!-- <FlexBox
             height="100px"
 				    alignItems="Start"
 				    justifyContent="Center">
 					  <Image src="./resources/img/Ecoverde_background.png"/>
-          </FlexBox>
+          </FlexBox> -->
          </VBox>
         <content>
         </content>

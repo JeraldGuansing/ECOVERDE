@@ -1,0 +1,57 @@
+ <mvc:View controllerName="com.ecoverde.ECOVERDE.controller.GrReference"
+  displayBlock="true"
+  xmlns="sap.m"
+	xmlns:f="sap.ui.layout.form" 
+	xmlns:core="sap.ui.core" 
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+  xmlns:t="sap.ui.table"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+  <App id="GrReference" >
+      <Page showHeader="false">
+      <content>
+           <ObjectHeader title="Doc No." id="docID">
+                <attributes>
+                    <!-- <ObjectAttribute "/> -->
+                    <ObjectAttribute title="Vendor Code" id="venID"/>
+                    <ObjectAttribute title="Vendor Name" id="venName"/>
+                </attributes>
+            </ObjectHeader>
+        
+                <List>
+                  <InputListItem id="inptID" label="Receiving Option:">
+                    <Switch id="swID" state="false" customTextOn="Scan" customTextOff="Manual"/>
+                  </InputListItem>
+                </List>
+                <List id="projectlistid" items="{oModel>/DocumentLines}">
+                  <items>
+                    <ObjectListItem title="{oModel>ItemCode}"
+                            number="{oModel>receivedQty}/{oModel>Quantity}"
+                            numberUnit="{oModel>GrossTotal} {oModel>Currency} {oModel>TaxCode}"
+                            type="Active"
+                            press = "onPressItem"
+                            icon="sap-icon://product"
+                            intro="{oModel>ItemDescription}">
+                            <!-- <firstStatus>
+				                      <ObjectStatus text="{oModel>LineStatus}"/>
+                            </firstStatus> -->
+                            <!-- <attributes>
+                              <ObjectAttribute title="{oModel>ItemDescription}"/>
+                            </attributes> -->
+                    </ObjectListItem>
+                  </items>
+                </List>
+        </content>
+        <footer>
+            <Bar>
+             <contentLeft>
+				      	<Button text="Scan" press="onScan" icon="sap-icon://camera"/>
+			      	</contentLeft>
+              <contentRight>
+				      	<Button text="Post" press="onPostingGR" icon="sap-icon://manager-insight"/>
+			      	</contentRight>
+            </Bar>
+        </footer>
+      </Page>
+  </App>
+</mvc:View>

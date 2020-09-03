@@ -3,10 +3,38 @@
   xmlns="sap.m"
   xmlns:mvc="sap.ui.core.mvc">
   <App id="goodsIssue" >
-    <pages>
-      <Page title="{i18n>title}">
-        <content></content>
+    <Page showHeader="false">
+          <VBox>
+            <FlexBox
+              height="100px"
+              alignItems="Start"
+              justifyContent="Center">
+                <Image src="./resources/img/ecoverde.png"/>
+              </FlexBox>
+          </VBox>
+   	<f:SimpleForm
+          layout="ResponsiveGridLayout"
+          editable="true"
+          title="Goods Issue"
+          adjustLabelSpan="false"
+          labelSpanXL="2"
+          labelSpanL="2"
+          labelSpanM="2"
+          labelSpanS="5">
+	  </f:SimpleForm>
+      <content>
+        <TileContainer height="210px" id="container">
+            <StandardTile icon="sap-icon://bar-code" title="Barcode Scanning" press="onGotoScanview" />
+            <StandardTile icon="sap-icon://inventory" title="Manual Receiving" press="" />
+		  	</TileContainer>
+
+        <!-- <Input id="myBarcode"/>
+         <Button text="Scan" press="onTest"></Button> -->
+          </content>
+      <footer>
+        <Bar>
+        </Bar>
+		  </footer>  
       </Page>
-    </pages>
   </App>
 </mvc:View>

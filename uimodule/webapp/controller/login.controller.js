@@ -34,6 +34,7 @@ sap.ui.define([
     // },
 
     onLogin: function(oEvent){
+      var that = this;
       var oView = this.getView();
               
             localStorage.setItem("userName", "");
@@ -97,12 +98,12 @@ sap.ui.define([
                     sap.m.MessageToast.show("Incorrect UserName/Password");
                   },
                   success: function (json) {
-                    this.closeLoadingFragment();
-                    this.router = this.getOwnerComponent().getRouter();
-                    this.router.navTo("main");
+                    that.closeLoadingFragment();
+                    that.router = that.getOwnerComponent().getRouter();
+                    that.router.navTo("main");
                     sap.m.MessageToast.show("Welcome");
                   },
-                  context: this
+                  context: that
                 });
           
               }

@@ -29,8 +29,8 @@
               labelSpanS="5">
 	        </f:SimpleForm>
         
-       
-            <t:Table id="ProductID" rows="{oModel>/value}" selectionMode="MultiToggle" paste="onPaste" ariaLabelledBy="title">
+       <content>
+            <t:Table id="tblID" rows="{oModel>/value}" cellClick="" selectionMode="Single" ariaLabelledBy="title">
                 <t:columns>
                     <t:Column width="5em">
                       <Label text="Doc Num" />
@@ -89,11 +89,14 @@
                     </t:Column>
                 </t:columns>
             </t:Table>
-
+        </content>
           <footer>
             <Bar>
+            <contentLeft>
+                <Button text="Refresh" press="initialize" icon="sap-icon://synchronize" />
+              </contentLeft>
               <contentRight>
-                <Button text="Receive" press="onSetting" icon="sap-icon://settings" />
+                <Button text="Receive" press="getContextByIndex" icon="sap-icon://add-document" />
               </contentRight>
             </Bar>
           </footer>

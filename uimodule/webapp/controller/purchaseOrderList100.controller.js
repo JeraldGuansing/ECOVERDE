@@ -14,13 +14,35 @@ sap.ui.define([
   return Controller.extend("com.ecoverde.ECOVERDE.controller.purchaseOrderList100", {
 
     onInit: function(){
-     
-      this.oModel = new JSONModel("model/POlist.json");
-      this.getView().setModel(this.oModel, "oModel");
+      var that = this;
+	    var oView = this.getView();
+        oView.addEventDelegate({
+            onAfterHide: function(evt) {
+                //This event is fired every time when the NavContainer has made this child control invisible.
+            },
+            onAfterShow: function(evt) {
+                //This event is fired every time when the NavContainer has made this child control visible.
+            },
+            onBeforeFirstShow: function(evt) {
+                //This event is fired before the NavContainer shows this child control for the first time.
+            },
+            onBeforeHide: function(evt) {
+                //This event is fired every time before the NavContainer hides this child control.
+            },
+            onBeforeShow: function(evt) {
+                //This event is fired every time before the NavContainer shows this child control.
+                that.initialize(evt.data);
+            }
+        });
       
-      this.onGetPurchaseList();
     },
 
+    initialize: function(){
+      this.oModel = new JSONModel("model/POlist.json");
+      this.getView().setModel(this.oModel, "oModel");
+      this.onGetPurchaseList();
+      this.oModel.refresh();
+    },
 
     onGetPurchaseList: function(){
       this.openLoadingFragment();
@@ -28,7 +50,7 @@ sap.ui.define([
       var oView = that.getView();
      
       var sServerName = localStorage.getItem("ServerID");
-      var sUrl = sServerName + "/b1s/v1/PurchaseDeliveryNotes?$select=DocNum,CardCode,CardName,NumAtCard,DocDueDate,DocDate,TaxDate";
+      var sUrl = sServerName + "/b1s/v1/PurchaseDeliveryNotes?$select=DocNum,CardCode,CardName,NumAtCard,DocDueDate,DocDate,TaxDate&$filter=DocumentStatus eq 'bost_Open'";
   
       $.ajax({
         url: sUrl,
@@ -64,5 +86,42 @@ sap.ui.define([
       }
     },
 
+
+    getContextByIndex: function(evt) {
+			var oTable = this.byId("tblID");
+			var iIndex = oTable.getSelectedIndex();
+			if (iIndex < 0) {
+				MessageToast.show("Please Select Item first");
+			} else {
+          this.onReceivedItem();
+         }
+		},
+
+      onReceivedItem: function(evt) {
+        
+        localStorage.setItem("DocNo", "");
+        localStorage.setItem("VendorCode", "");
+        localStorage.setItem("VendorName", "");
+        
+        var i = this.byId("tblID").getSelectedIndices();
+        var oList =  this.oModel.getData().value;
+       
+        localStorage.setItem("DocNo", oList[i].DocNum);
+        localStorage.setItem("VendorCode", oList[i].CardCode);
+        localStorage.setItem("VendorName", oList[i].CardName);
+             
+        this.clearSelection();
+        this.onGotoReceived();
+      },
+
+      clearSelection: function(evt) {
+        this.byId("tblID").clearSelection();
+      },
+  
+      onGotoReceived: function(){
+        this.router = this.getOwnerComponent().getRouter();
+        this.router.navTo("GRwReference");
+        },
+      
   });
 });

@@ -125,6 +125,20 @@
           "target": [
             "BarcodeScanning"
           ]
+        },
+        {
+          "name": "GRwReference",
+          "pattern": "GRwReference",
+          "target": [
+            "GRwReference"
+          ]
+        },
+        {
+          "name": "goodsIssueMenu",
+          "pattern": "goodsIssue",
+          "target": [
+            "goodsIssueMenu"
+          ]
         }
       ],
 
@@ -189,7 +203,26 @@
           "controlId": "pageContainer",
           "controlAggregation": "pages",
           "viewLevel": 3
-}
+        },
+        "GRwReference": {
+          "viewPath": "com.ecoverde.ECOVERDE.view",
+          "viewType": "XML",
+          "viewName": "GrReference",
+          "parent": "main",
+          "controlId": "pageContainer",
+          "controlAggregation": "pages",
+          "viewLevel": 3
+        },
+        "goodsIssueMenu": {
+          "viewPath": "com.ecoverde.ECOVERDE.view",
+          "viewType": "XML",
+          "viewName": "goodsIssue",
+          "parent": "main",
+          "controlId": "pageContainer",
+          "controlAggregation": "pages",
+          "viewLevel": 3
+        }
+        
       }
     }
   }
