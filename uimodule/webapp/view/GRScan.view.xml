@@ -18,7 +18,7 @@
                 </FlexBox>
               </VBox>
              <!-- <Input id="myBarcode"/>
-              <Button text="Scan" press="onTest"></Button> -->
+              <Button text="Scan" press="ontest"></Button> -->
       
           <!-- <t:Table id="ItemCode" rows="{oModel>/Items}" selectionMode="MultiToggle" paste="onPaste" ariaLabelledBy="title">
                 <t:columns>
@@ -56,17 +56,20 @@
                     <ObjectListItem id="list" title="{oModel>ItemCode}"
                             number="{oModel>Quantity}"
                             type="Active"
-                            press = "onViewItem"
-                            icon="sap-icon://product">
-                      <attributes>
-                          <ObjectAttribute title="{oModel>ItemName}"/>
-                           <ObjectAttribute title="{oModel>BarCode}"/>
-                      </attributes>
-                    </ObjectListItem>
+                            press = "onShowEdit"
+                            icon="sap-icon://product"
+                            intro="{oModel>ItemName}">
+                      
+                                <firstStatus>
+                                  <ObjectStatus text="{oModel>UoMCode}"/>
+                                </firstStatus>
+                                <attributes>
+                                  <ObjectAttribute title="{oModel>BarCode}"/>
+                                </attributes>
+                          </ObjectListItem>
                   </items>
                 </List>
             </content>
-
     <footer>
 			<Bar>
 				<contentLeft>

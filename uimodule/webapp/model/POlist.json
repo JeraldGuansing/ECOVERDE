@@ -3,5 +3,10 @@
     "receiving":[],
     "DocumentLines":[],
     "SelectedItem":[],
-    "forPosting":[]
+    "forPosting":[],
+    "itemMaster":[],
+    "Barcode":[],
+    "UoMCode":[],
+    "UoMEntry":[],
+    "BarcodeUnit": []
 }

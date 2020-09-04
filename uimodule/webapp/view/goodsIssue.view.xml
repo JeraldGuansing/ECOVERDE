@@ -1,7 +1,10 @@
- <mvc:View controllerName="com.ecoverde.undefined.controller.goodsIssue"
+ <mvc:View controllerName="com.ecoverde.ECOVERDE.controller.goodsIssue"
   displayBlock="true"
   xmlns="sap.m"
-  xmlns:mvc="sap.ui.core.mvc">
+	xmlns:f="sap.ui.layout.form" 
+	xmlns:core="sap.ui.core" 
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc">
   <App id="goodsIssue" >
     <Page showHeader="false">
           <VBox>
@@ -24,8 +27,8 @@
 	  </f:SimpleForm>
       <content>
         <TileContainer height="210px" id="container">
-            <StandardTile icon="sap-icon://bar-code" title="Barcode Scanning" press="onGotoScanview" />
-            <StandardTile icon="sap-icon://inventory" title="Manual Receiving" press="" />
+            <StandardTile icon="sap-icon://shipping-status" title="Issuance to Project" press="onGotoScanview" />
+            <StandardTile icon="sap-icon://insurance-house" title="Return to Supplier" press="" />
 		  	</TileContainer>
 
         <!-- <Input id="myBarcode"/>

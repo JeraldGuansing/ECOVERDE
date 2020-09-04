@@ -6,10 +6,21 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
   xmlns:t="sap.ui.table"
-	xmlns:html="http://www.w3.org/1999/xhtml">
+	xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:tnt="sap.tnt">
   <App id="GrReference" >
       <Page showHeader="false">
-      <content>
+       <customHeader>
+          <Toolbar>
+            <Button type="Back" press=""/>
+            <ToolbarSpacer/>
+          
+            <ToolbarSpacer/>
+            <Button icon="sap-icon://action-settings" type="Transparent" press=""/>
+		        </Toolbar>
+          </customHeader>
+        <content>
+         
            <ObjectHeader title="Doc No." id="docID">
                 <attributes>
                     <!-- <ObjectAttribute "/> -->
@@ -17,7 +28,8 @@
                     <ObjectAttribute title="Vendor Name" id="venName"/>
                 </attributes>
             </ObjectHeader>
-        
+         <!-- <Input id="myBarcode"/>
+              <Button text="Scan" press="ontest"></Button> -->
                 <List>
                   <InputListItem id="inptID" label="Receiving Option:">
                     <Switch id="swID" state="false" customTextOn="Scan" customTextOff="Manual"/>
@@ -32,9 +44,9 @@
                             press = "onPressItem"
                             icon="sap-icon://product"
                             intro="{oModel>ItemDescription}">
-                            <!-- <firstStatus>
-				                      <ObjectStatus text="{oModel>LineStatus}"/>
-                            </firstStatus> -->
+                            <firstStatus>
+				                      <ObjectStatus text=" {oModel>UoMCode}"/>
+                            </firstStatus>
                             <!-- <attributes>
                               <ObjectAttribute title="{oModel>ItemDescription}"/>
                             </attributes> -->
@@ -45,8 +57,11 @@
         <footer>
             <Bar>
              <contentLeft>
-				      	<Button text="Scan" press="onScan" icon="sap-icon://camera"/>
+				      	<Button text="Add" press="onAddItemThree" icon="sap-icon://add"/>
 			      	</contentLeft>
+              <contentMiddle>
+				      	<Button text="Scan" press="onScan" icon="sap-icon://camera"/>
+			      	</contentMiddle>
               <contentRight>
 				      	<Button text="Post" press="onPostingGR" icon="sap-icon://manager-insight"/>
 			      	</contentRight>

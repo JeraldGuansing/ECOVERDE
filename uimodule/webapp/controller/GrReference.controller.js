@@ -1,5 +1,5 @@
 sap.ui.define([
-  'sap/ui/core/mvc/Controller',
+  "sap/ui/core/mvc/Controller",
   "sap/m/MessageToast",
   "sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter",
@@ -38,7 +38,13 @@ sap.ui.define([
                 that.initialize(evt.data);
             }
         });
-	},
+  },
+  
+  onWithRef: function(){
+    this.router = this.getOwnerComponent().getRouter();
+    this.router.navTo("purchaseOrderList");
+    },
+
 
     initialize: function(vFromId){
       var oView = this.getView();
@@ -54,6 +60,13 @@ sap.ui.define([
       this.onGRList();
       
     },
+
+    // onTest: function(){
+    //   localStorage.setItem("sBarcode", this.getView().byId("myBarcode").getValue());
+    //   that.openLoadingFragment();
+    //   that.onScanBarcode();
+    // },
+
 
     onScan: function() {
       var that = this;
@@ -129,7 +142,6 @@ sap.ui.define([
         that.closeLoadingFragment()
     },
   
-
     onPostingGR: function(){
 
       var itemJSON = this.oModel.getData().forPosting;
@@ -155,8 +167,7 @@ sap.ui.define([
             "Quantity": StoredItem[i].Quantity,
             "TaxCode": StoredItem[i].TaxCode,
             "UnitPrice": StoredItem[i].UnitPrice,
-            "LineStatus": "bost_Close",
-            "RemainingOpenQuantity": 0
+            "LineStatus": "bost_Close"
           });
         }else{
           oBody.DocumentLines.push({
@@ -199,8 +210,6 @@ sap.ui.define([
                 });
               }
      },
-
-
 
      onPressItem: function(oEvent){
           var that = this;
@@ -306,7 +315,7 @@ sap.ui.define([
       that.openLoadingFragment();
       var docID = localStorage.getItem("DocNo");
       var sServerName = localStorage.getItem("ServerID");
-      var sUrl = sServerName + "/b1s/v1/PurchaseDeliveryNotes(" + docID +")?$select=DocumentLines";
+      var sUrl = sServerName + "/b1s/v1/PurchaseDeliveryNotes(" + docID + ")?$select=DocumentLines";
     
       $.ajax({
         url: sUrl,
@@ -316,26 +325,27 @@ sap.ui.define([
         xhrFields: {
           withCredentials: true},
         success: function(response){
-          //that.oModel.getData().DocumentLines  = response.DocumentLines;
-          var rResult = response.DocumentLines;
-          for(var i = 0;i < rResult.length;i++){
-          that.oModel.getData().DocumentLines.push({
-            "DocNum": docID,
-            "ItemCode":rResult[i].ItemCode,
-            "ItemDescription": rResult[i].ItemDescription,
-            "UnitPrice": rResult[i].UnitPrice,
-            "TaxCode": rResult[i].TaxCode,
-            "Quantity": rResult[i].Quantity,
-            "RemainingOpenQuantity": rResult[i].RemainingOpenQuantity,
-            "receivedQty": rResult[i].Quantity - rResult[i].RemainingOpenQuantity,
-            "LineStatus": rResult[i].LineStatus.replace('bost_',''),
-            "GrossTotal": rResult[i].GrossTotal,
-            "Currency": rResult[i].Currency
-          });
-        
-        }
-          that.oModel.refresh();
-          that.closeLoadingFragment();
+         //that.oModel.getData().DocumentLines  = response.DocumentLines;
+         var rResult = response.DocumentLines;
+         for(var i = 0;i < rResult.length;i++){
+         that.oModel.getData().DocumentLines.push({
+           "DocNum": docID,
+           "ItemCode":rResult[i].ItemCode,
+           "ItemDescription": rResult[i].ItemDescription,
+           "UnitPrice": rResult[i].UnitPrice,
+           "TaxCode": rResult[i].TaxCode,
+           "Quantity": rResult[i].Quantity,
+           "RemainingOpenQuantity": rResult[i].RemainingOpenQuantity,
+           "receivedQty": rResult[i].Quantity - rResult[i].RemainingOpenQuantity,
+           "LineStatus": rResult[i].LineStatus.replace('bost_',''),
+           "GrossTotal": rResult[i].GrossTotal,
+           "Currency": rResult[i].Currency,
+           "UoMCode": rResult[i].UoMCode
+         });
+       
+       }
+         that.oModel.refresh();
+         that.closeLoadingFragment();
         }, error: function(response) { 
           that.closeLoadingFragment();
           console.log(response);
@@ -357,13 +367,34 @@ sap.ui.define([
       this.closeLoadingFragment();
     },
 
+    onCloseAddthree: function(){
+      if(this.addItemDialog3){
+          this.addItemDialog3.close();
+      }
+      this.closeLoadingFragment();
+    },
+
     onAddItem: function(){
       if (!this.addItemDialog2) {
           this.addItemDialog2 = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.addItem2", this);
           this.getView().addDependent(this.addItemDialog2);
       }
       this.addItemDialog2.open();
+    },
 
+    onAddItemThree: function(){
+      if (!this.addItemDialog3) {
+          this.addItemDialog3 = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.addItem3", this);
+          this.getView().addDependent(this.addItemDialog3);
+      }
+      this.onGetItem();
+       // this.onGetUOM();
+          sap.ui.getCore().byId("itmID3").setSelectedKey("");
+          sap.ui.getCore().byId("itmName3").setSelectedKey("");
+          sap.ui.getCore().byId("uomID3").setSelectedKey("");
+          sap.ui.getCore().byId("qtyID3").setValue("");
+        
+      this.addItemDialog3.open();
     },
 
   
@@ -374,10 +405,215 @@ sap.ui.define([
   },
 
 
+  onGetItem: function(){
+    this.openLoadingFragment();
+    var sServerName = localStorage.getItem("ServerID");
+    var sUrl = sServerName + "/b1s/v1/Items?$select=ItemCode,ItemName&$filter=BarCode ne 'null'";
+    
+    $.ajax({
+      url: sUrl,
+          type: "GET",
+          crossDomain: true,
+          xhrFields: {
+          withCredentials: true
+          },
+          error: function (xhr, status, error) {
+            this.closeLoadingFragment();
+            console.log("Error Occured");
+          },
+          success: function (json) {
+            this.oModel.getData().itemMaster  = json.value;
+            this.oModel.refresh();
+            this.closeLoadingFragment();
+          },
+          context: this
+        })
+
+  },
+
+  onSelectItemCode: function(){
+    var itemName = sap.ui.getCore().byId("itmID3").getSelectedKey();
+    sap.ui.getCore().byId("itmName3").setValue(itemName);
+    this.openLoadingFragment();
+    this.onGetListOfAbst();
+    // this.onGetListOfUOM();
+},
+
+
+onSelectItemName: function(){
+  var itemCode = sap.ui.getCore().byId("itmName3").getSelectedKey();
+  sap.ui.getCore().byId("itmID3").setValue(itemCode);
+  localStorage.setItem("sBarcode", sap.ui.getCore().byId("itmID3").getValue());
+  this.openLoadingFragment();
+  this.onGetListOfAbst();
+  // getBarcode here
+},
+
+
+onGetListOfAbst: function(){
+var that = this;
+var itemUOMcode = sap.ui.getCore().byId("itmID3").getValue()
+this.closeLoadingFragment();
+var sServerName = localStorage.getItem("ServerID");
+var sUrl = sServerName + "/b1s/v1/BarCodes?$filter=ItemNo eq '" + itemUOMcode + "'";
+$.ajax({
+  url: sUrl,
+  type: "GET",
+  dataType: 'json',
+  crossDomain: true,
+  xhrFields: {
+    withCredentials: true},
+  success: function(response){
+    that.oModel.getData().UoMEntry = response.value;
+    that.oModel.refresh();
+    that.onGetListOfUOM();
+  }, error: function() { 
+    that.closeLoadingFragment()
+    console.log("Error Occur");
+  }
+})
+//Get UOMList
+
+},
+
+onGetListOfUOM: function(){
+var that = this;
+var sServerName = localStorage.getItem("ServerID");
+var abslist = that.oModel.getData().UoMEntry;
+var UoMContainer = [];
+for(var i = 0;i < parseInt(abslist.length);i++){ 
+      var absNo = abslist[i].UoMEntry; 
+      var sUrl = sServerName + "/b1s/v1/UnitOfMeasurements?$select=Code,AbsEntry&$filter=AbsEntry eq " + absNo;
+      $.ajax({
+        url: sUrl,
+        type: "GET",
+        dataType: 'json',
+        crossDomain: true,
+        xhrFields: {
+          withCredentials: true},
+        success: function(response){
+          var getresult = response.value;
+          UoMContainer.push({
+            "Code": getresult[0].Code,
+            "AbsEntry": getresult[0].AbsEntry
+          })
+         
+          that.oModel.getData().UoMCode = UoMContainer;
+          that.oModel.refresh();
+         
+        }, error: function() { 
+          that.closeLoadingFragment()
+          console.log("Error Occur");
+        }
+    })
+  }
+ 
+ 
+},
+
+onGetBarcodeOnAdd: function(){
+  this.openLoadingFragment();
+  var that = this;
+  var itmCode = sap.ui.getCore().byId("itmID3").getValue();
+  var AbsEntryID = sap.ui.getCore().byId("uomID3").getSelectedKey();
+  var sServerName = localStorage.getItem("ServerID");
+  var sUrl = sServerName + "/b1s/v1/BarCodes?$filter=UoMEntry eq " + AbsEntryID + " and ItemNo eq '" + itmCode + "'";
+  var BcodUntContainer = [];
+  $.ajax({
+    url: sUrl,
+    type: "GET",
+    dataType: 'json',
+    crossDomain: true,
+    xhrFields: {
+      withCredentials: true},
+    success: function(response){
+      BcodUntContainer = response.value;
+
+      that.oModel.getData().BarcodeUnit = BcodUntContainer;
+      that.oModel.refresh();
+      that.closeLoadingFragment();
+    }, error: function() { 
+      that.closeLoadingFragment()
+      console.log("Error Occur");
+    }
+})
+    that.closeLoadingFragment()
+},
+
+onAdditionalItem: function(){
+  var that = this;
+  that.openLoadingFragment();
+  var sItmID = sap.ui.getCore().byId("itmID3").getValue();
+  var sItmName = sap.ui.getCore().byId("itmName3").getValue();
+  var sQtyID = sap.ui.getCore().byId("qtyID3").getValue();
+  var sUoMID = sap.ui.getCore().byId("uomID3").getValue();
+  var AbsEntryID = sap.ui.getCore().byId("uomID3").getSelectedKey();
+  var docID = localStorage.getItem("DocNo");
+  if(sItmID == ""){
+    sap.m.MessageToast.show("Please select Item Code");
+    return;
+  }else if(sItmName == ""){
+    sap.m.MessageToast.show("Please select Item Name");
+    return;
+  }else if(sUoMID == ""){
+    sap.m.MessageToast.show("Please select Item UoM");
+    return;
+  }else if(sQtyID == "" || sQtyID <= 0 ){
+    sap.m.MessageToast.show("Please input quantity");
+    return;
+  }else{
+
+    ///>>>>>>>GetBarcode
+
+    var StoredBarc = that.oModel.getData().BarcodeUnit; 
+    var getStrBarc = "";
+    if(StoredBarc.lenght != 0){
+      getStrBarc = StoredBarc[0].Barcode;
+    }
+    
+
+    var StoredItem = that.oModel.getData().value;        
+    const oITM = StoredItem.filter(function(OIT){
+    return OIT.ItemCode == sItmID && OIT.BarCode == getStrBarc;
+     })
+  var cResult = parseInt(oITM.length);
+  if(cResult == 0){
+    that.oModel.getData().DocumentLines.push({
+      "DocNum": docID,
+      "ItemCode": sItmID,
+      "ItemDescription":sItmName,
+      "BarCode": getStrBarc,
+      "Quantity": sQtyID,
+      "UoMCode": sUoMID,
+      "AbsEntry":AbsEntryID,
+      "GrossTotal": "",
+      "Currency": "",
+      "GrossTotal": 0,
+      "LineStatus": "",
+      "RemainingOpenQuantity": sQtyID,
+      "receivedQty": sQtyID - sQtyID,
+      "UnitPrice": 0,
+      "TaxCode": 0,
+    });
+    that.closeLoadingFragment();
+  }else{
+    oITM[0].Quantity = parseInt(oITM[0].Quantity) + parseInt(sQtyID);
+    that.closeLoadingFragment();
+  }
+  that.closeLoadingFragment();
+  that.oModel.refresh();
+  that.onCloseAddthree();
+  }
+  
+},
+
+
   onWithRef: function(){
     this.router = this.getOwnerComponent().getRouter();
     this.router.navTo("purchaseOrderList");
     },
+
+
 
   });
 });

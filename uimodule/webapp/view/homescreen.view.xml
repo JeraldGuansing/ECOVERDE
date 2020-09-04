@@ -9,6 +9,16 @@
   <App id="homescreen">
       <Page showHeader="false">
         <VBox>
+        <FlexBox
+            height="100px"
+				    alignItems="Start"
+				    justifyContent="Center">
+          </FlexBox>
+          <FlexBox
+            height="100px"
+				    alignItems="Start"
+				    justifyContent="Center">
+          </FlexBox>
       	  <FlexBox
             height="78px"
 				    alignItems="Start"
@@ -24,7 +34,10 @@
          </VBox>
         <content>
         </content>
-        
+        <footer>
+          <Bar>
+          </Bar>
+        </footer>
       </Page>
   </App>
 </mvc:View>

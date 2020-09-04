@@ -10,7 +10,7 @@
 	<tnt:ToolPage id="toolPage">
 		<tnt:header>
 			<f:ShellBar class="myShellBar" showMenuButton="true" homeIconPressed="onIconPress" showCopilot="false"
-				menuButtonPressed="onMenuButtonPress" showProductSwitcher="false">
+				menuButtonPressed="onMenuButtonPress" showNotifications="true" 	notificationsNumber="2">
 			</f:ShellBar>
 		</tnt:header>
 		<tnt:sideContent>

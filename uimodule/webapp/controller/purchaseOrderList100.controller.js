@@ -7,8 +7,7 @@ sap.ui.define([
 	"sap/m/Token",
   "sap/m/MessageBox",
   "sap/ui/core/Fragment",
-	"sap/ui/core/syncStyleClass",
-], function(Controller,MessageToast, JSONModel, Filter, FilterOperator, Token, MessageBox,Fragment,syncStyleClass) {
+], function(Controller,MessageToast, JSONModel, Filter, FilterOperator, Token, MessageBox,Fragment) {
   "use strict";
 	var iTimeoutId;
   return Controller.extend("com.ecoverde.ECOVERDE.controller.purchaseOrderList100", {
@@ -79,6 +78,37 @@ sap.ui.define([
        }
       this.oDialog.open();
     },
+
+    onSearchDoc: function(){
+      this.openLoadingFragment();
+      var searchF = this.getView().byId("sField").getValue()
+      var that = this;
+      var oView = that.getView();
+     
+      var sServerName = localStorage.getItem("ServerID");
+      var sUrl = sServerName + "/b1s/v1/PurchaseDeliveryNotes?$select=DocNum,CardCode,CardName,NumAtCard,DocDueDate,DocDate,TaxDate&$filter=DocNum eq " + searchF + " and DocumentStatus eq 'bost_Open'";
+  
+      $.ajax({
+        url: sUrl,
+        type: "GET",
+        crossDomain: true,
+        xhrFields: {
+          withCredentials: true
+        },
+        error: function (xhr, status, error) {
+          this.closeLoadingFragment();
+          console.log("Error Occured");
+        },
+        success: function (json) {
+       
+        this.oModel.getData().value = json.value;
+        this.oModel.refresh();
+        this.closeLoadingFragment();
+        },
+        context: this
+      });
+    },
+
 
     closeLoadingFragment : function(){
       if(this.oDialog){

@@ -37,8 +37,7 @@
       <footer>
         <Bar>
         </Bar>
-		  </footer>
-        
+		  </footer>  
       </Page>
   </App>
 </mvc:View>

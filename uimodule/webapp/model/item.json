@@ -1,5 +1,16 @@
 {
-    "value":[],
-    "itemMaster":[]
+    "value":[{
+        "AbsEntry": "-1",
+        "BarCode": "100009231",
+        "ItemCode": "LM4029D",
+        "ItemName": "LeMon 4029 500 sheet paper drawer",
+        "Quantity": "2",
+        "UoMCode": "Manual"
+        }],
+    "itemMaster":[],
+    "Barcode":[],
+    "UoMCode":[],
+    "UoMEntry":[],
+    "BarcodeUnit": []
         
 }

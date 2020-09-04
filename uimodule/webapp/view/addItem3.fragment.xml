@@ -4,15 +4,6 @@
     xmlns:core="sap.ui.core"
     xmlns:f="sap.ui.layout.form">
     <Dialog>
-            <customHeader>
-			<Toolbar>
-				<!-- <Button type="Back" press="onPress" />-->
-			<ToolbarSpacer/>
-				<!-- <Title text="Title" level="H2"/> -->
-				<ToolbarSpacer/>
-				<Button icon="sap-icon://decline" type="Reject" press="onCloseEdit" ariaLabelledBy="editButtonLabel"/>
-			</Toolbar>
-            </customHeader>
         <content>
             <l:Grid defaultSpan = "L12 M12 S12" width = "auto">
                 <l:content>
@@ -38,23 +29,26 @@
                                 <f:formElements>
                                 
                                     <f:FormElement label="Item Code">
-                                        <Input id="eItemID" items="{oModel>/itemMaster}"/>
+                                        <ComboBox id="itmID3" selectionChange="onSelectItemCode" placeholder="Select Item Code" items="{oModel>/itemMaster}">
+                                            <core:Item key="{oModel>ItemName}" text="{oModel>ItemCode}" />
+                                        </ComboBox>
                                     </f:FormElement>
 
                                     <f:FormElement label="Item Name">
-                                        <Input id="eItemName" items="{oModel>/itemMaster}"/>
+                                        <ComboBox id="itmName3" selectionChange="onSelectItemName" placeholder="Select Description" items="{oModel>/itemMaster}">
+                                            <core:Item key="{oModel>ItemCode}" text="{oModel>ItemName}" />
+                                        </ComboBox>
                                     </f:FormElement>
 
                                        <f:FormElement label="UoM Code">
-                                        <ComboBox id="iUOMID" selectionChange="onGetBarcodeOnAdd" placeholder="Select UoMCode" items="{oModel>/UoMCode}">
+                                        <ComboBox id="uomID3" selectionChange="onGetBarcodeOnAdd" placeholder="Select UoMCode" items="{oModel>/UoMCode}">
                                             <core:Item key="{oModel>AbsEntry}" text="{oModel>Code}" />
                                         </ComboBox>
                                     </f:FormElement>
 
                                     <f:FormElement label="Quantity">
-                                       <Input id="eQtyID" placeholder="Input Quantity" type="Number"/>
+                                       <Input id="qtyID3" placeholder="Input Quantity" type="Number"/>
                                     </f:FormElement>
-                                    
                                 </f:formElements>
                             </f:FormContainer>
                         </f:formContainers>
@@ -63,11 +57,10 @@
             </l:Grid>
         </content>
         <beginButton>
-            <Button text="Delete" icon="sap-icon://delete" press="onCloseEdit" type="Reject"/>
+            <Button text="Cancel" icon="sap-icon://sys-cancel" press="onCloseAddthree" type="Reject"/>
         </beginButton>
-    
         <endButton>
-            <Button text="Save" icon="sap-icon://save" press="onGetAddItem" type="Accept" />
+            <Button text="Add" icon="sap-icon://add" press="onAdditionalItem" type="Accept" />
         </endButton>
     </Dialog>
 </core:FragmentDefinition>
