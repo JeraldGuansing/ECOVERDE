@@ -7,8 +7,13 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:html="http://www.w3.org/1999/xhtml">
   <App id="idAppControl">
-    <Page>
+    <Page showHeader="false">
        <VBox>
+	   	<FlexBox
+          height="20px"
+				  alignItems="Start"
+				  justifyContent="Center">
+          </FlexBox>
       	<FlexBox
           height="100px"
 				  alignItems="Start"

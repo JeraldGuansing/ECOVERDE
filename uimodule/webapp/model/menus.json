@@ -33,14 +33,7 @@
 			"icon": "sap-icon://record",
 			"expanded": true,
 			"key": "History"
-        },
-        {
-			"title": "Logoff",
-			"icon": "sap-icon://log",
-			"expanded": true,
-			"key": "Logoff"
-		}
-
-	]
-	
+        }
+	],
+	"VendorList":[]
 }

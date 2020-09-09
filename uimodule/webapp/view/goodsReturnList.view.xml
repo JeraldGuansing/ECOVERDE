@@ -1,4 +1,4 @@
- <mvc:View controllerName="com.ecoverde.ECOVERDE.controller.purchaseOrderList100"
+ <mvc:View controllerName="com.ecoverde.ECOVERDE.controller.goodsReturnList"
   displayBlock="true"
   xmlns="sap.m"
 	xmlns:f="sap.ui.layout.form" 
@@ -8,8 +8,8 @@
   xmlns:t="sap.ui.table"
    xmlns:tnt="sap.tnt"
 	xmlns:html="http://www.w3.org/1999/xhtml">
-  <App id="purchaseOrderList100" >
-    <Page showHeader="false">
+  <App id="goodsReturnList" >
+    <Page showHeader="True" showNavButton="true" navButtonPress="onPressIssuance">
         <VBox>
       	  <FlexBox
             height="100px"
@@ -18,24 +18,16 @@
 					  <Image src="./resources/img/ecoverde.png"/>
           </FlexBox>
          </VBox>
-        
-        	<f:SimpleForm
-              layout="ResponsiveGridLayout"
-              editable="true"
-              title="List of open Purchase Order"
-              adjustLabelSpan="false"
-              labelSpanXL="2"
-              labelSpanL="2"
-              labelSpanM="2"
-              labelSpanS="5">
-	        </f:SimpleForm>
-        
+      
        <content>
 
           <Toolbar>
-            <SearchField id="sField" search="onSearchDoc" width="100%" />
+          <Label text="Vendor:"/>
+            <ComboBox id="rtVendor" width="84%" placeholder="Select Vendor" selectionChange="onSelectVendor" items="{oModel>/VendorList}">
+                <core:Item key="{oModel>CarCOde}" text="{oModel>CardName}"/>
+            </ComboBox>
           </Toolbar>
-            <t:Table id="tblID" rows="{oModel>/value}" cellClick="" selectionMode="Single" ariaLabelledBy="title">
+            <t:Table id="tblID" rows="{oModel>/goodsRetlist}" cellClick="" selectionMode="Single" ariaLabelledBy="title">
                 <t:columns>
                     <t:Column width="5em">
                       <Label text="Doc Num" />
@@ -48,27 +40,6 @@
                       <Label text="Vendor Code" />
                       <t:template>
                         <Text text="{oModel>CardCode}" wrapping="false" />
-                      </t:template>
-                    </t:Column>
-
-                    <t:Column width="11rem">
-                      <Label text="Vendor Name" />
-                      <t:template>
-                        <Text text="{oModel>CardName}" wrapping="false" />
-                      </t:template>
-                    </t:Column>
-
-                    <t:Column width="5rem">
-                      <Label text="Vendor Ref. No." />
-                      <t:template>
-                        <Text text="{oModel>NumAtCard}" wrapping="false" />
-                      </t:template>
-                    </t:Column>
-
-                    <t:Column width="6rem">
-                      <Label text="Due Date" />
-                      <t:template>
-                        <Text text="{oModel>DocDueDate}" wrapping="false" />
                       </t:template>
                     </t:Column>
 
@@ -100,8 +71,12 @@
             <contentLeft>
                 <Button text="Refresh" press="initialize" icon="sap-icon://synchronize" />
               </contentLeft>
+              <contentLeft>
+                <Button text="Add" press="onPressAddReturn" icon="sap-icon://add" />
+              </contentLeft> 
+
               <contentRight>
-                <Button text="Copy" press="getContextByIndex" icon="sap-icon://copy" />
+                <Button text="Copy" press="onPressCopyReturn" icon="sap-icon://copy" />
               </contentRight>
             </Bar>
           </footer>

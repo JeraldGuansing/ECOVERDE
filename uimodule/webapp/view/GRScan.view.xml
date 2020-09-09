@@ -8,50 +8,40 @@
   xmlns:t="sap.ui.table"
 	xmlns:html="http://www.w3.org/1999/xhtml">
   <App id="GRScan">
-      <Page showHeader="false">
-              <VBox>
+      <Page showHeader="true" title="Goods Receipt">
+              <!-- <VBox>
                 <FlexBox
                   height="80px"
                   alignItems="Start"
                   justifyContent="Center">
                     <Image src="./resources/img/ecoverde.png"/>
                 </FlexBox>
-              </VBox>
+              </VBox> -->
              <!-- <Input id="myBarcode"/>
               <Button text="Scan" press="ontest"></Button> -->
+      <List>        
+        <InputListItem label="Vendor Code">
+          	  <Label id="Vcode" />
+        </InputListItem>
+        
+        <InputListItem label="Vendor Name">
+                <Label id="Vname" />
+        </InputListItem>
+  
+        <InputListItem label="Posting Date">
+             	<DatePicker
+              id="DP8"
+              displayFormat="MM/dd/YYYY"
+              change=""
+              class="sapUiSmallMarginBottom"/>
+        </InputListItem>
       
-          <!-- <t:Table id="ItemCode" rows="{oModel>/Items}" selectionMode="MultiToggle" paste="onPaste" ariaLabelledBy="title">
-                <t:columns>
-                    <t:Column width="11rem">
-                      <Label text="Item Code" />
-                      <t:template>
-                        <Input type="Text"
-                                value="{oModel>ItemCode}"
-                                placeholder="Enter ItemCode ..."
-                                showValueHelp="true"
-                                valueHelpOnly="true"
-                                valueHelpRequest="handleValueHelpRow"/>
-                      </t:template>
-                    </t:Column>
+     </List>
+      <html:br></html:br>
 
-                    <t:Column width="11rem">
-                      <Label text="Item Name" />
-                      <t:template>
-                        <Text text="{oModel>ItemName}" wrapping="false" />
-                      </t:template>
-                    </t:Column>
 
-                    <t:Column width="11rem">
-                      <Label text="Quantity" />
-                      <t:template>
-                        <Text text="{oModel>Quantity}" wrapping="false" />
-                      </t:template>
-                    </t:Column>
-                </t:columns>
-            </t:Table> -->
-       
-          <content>
-                <List items="{oModel>/value}" headerText="List of Received Item">
+             <content>
+                <List items="{oModel>/value}">
                   <items>
                     <ObjectListItem id="list" title="{oModel>ItemCode}"
                             number="{oModel>Quantity}"
@@ -83,6 +73,7 @@
 				</contentRight>
 			</Bar>
 		</footer>
-      </Page>
-  </App>
+
+  </Page>
+</App>
 </mvc:View>

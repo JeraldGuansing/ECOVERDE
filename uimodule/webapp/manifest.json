@@ -139,6 +139,27 @@
           "target": [
             "goodsIssueMenu"
           ]
+        },
+        {
+          "name": "goodsIssuance",
+          "pattern": "goodsIssuance",
+          "target": [
+            "goodsIssuance"
+          ]
+        },
+        {
+          "name": "goodsReturn",
+          "pattern": "goodsReturn",
+          "target": [
+            "goodsReturn"
+          ]
+        },
+        {
+          "name": "goodsReturnList",
+          "pattern": "goodsReturnList",
+          "target": [
+            "goodsReturnList"
+          ]
         }
       ],
 
@@ -147,7 +168,8 @@
         "login": {
           "viewType": "XML",
           "viewLevel": 1,
-          "viewName": "login"
+          "viewName": "login",
+          "transition": "fade"
         },
         "settings": {
           "viewType": "XML",
@@ -157,7 +179,8 @@
         "main": {
           "viewType": "XML",
           "viewLevel": 1,
-          "viewName": "main"
+          "viewName": "main",
+          "transition": "flip"
         },
         "warehouseReport": {
                     "viewPath": "com.ecoverde.ECOVERDE.view",
@@ -202,7 +225,8 @@
           "parent": "main",
           "controlId": "pageContainer",
           "controlAggregation": "pages",
-          "viewLevel": 3
+          "viewLevel": 3,
+          "transition": "flip"
         },
         "GRwReference": {
           "viewPath": "com.ecoverde.ECOVERDE.view",
@@ -221,8 +245,36 @@
           "controlId": "pageContainer",
           "controlAggregation": "pages",
           "viewLevel": 3
+        },
+        "goodsIssuance": {
+          "viewPath": "com.ecoverde.ECOVERDE.view",
+          "viewType": "XML",
+          "viewName": "goodsIssuance",
+          "parent": "main",
+          "controlId": "pageContainer",
+          "controlAggregation": "pages",
+          "viewLevel": 3,
+          "transition": "flip"
+        },
+        "goodsReturn": {
+          "viewPath": "com.ecoverde.ECOVERDE.view",
+          "viewType": "XML",
+          "viewName": "goodsReturn",
+          "parent": "main",
+          "controlId": "pageContainer",
+          "controlAggregation": "pages",
+          "viewLevel": 3,
+          "transition": "flip"
+        },
+        "goodsReturnList": {
+          "viewPath": "com.ecoverde.ECOVERDE.view",
+          "viewType": "XML",
+          "viewName": "goodsReturnList",
+          "parent": "main",
+          "controlId": "pageContainer",
+          "controlAggregation": "pages",
+          "viewLevel": 3
         }
-        
       }
     }
   }

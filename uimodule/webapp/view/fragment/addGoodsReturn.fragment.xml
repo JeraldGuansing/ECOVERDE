@@ -10,7 +10,7 @@
 			<ToolbarSpacer/>
 				<!-- <Title text="Title" level="H2"/> -->
 				<ToolbarSpacer/>
-				<Button icon="sap-icon://decline" type="Reject" press="onCloseEdit" ariaLabelledBy="editButtonLabel"/>
+				<Button icon="sap-icon://decline" type="Reject" press="onCloseIssuance" ariaLabelledBy="editButtonLabel"/>
 			</Toolbar>
             </customHeader>
         <content>
@@ -36,26 +36,35 @@
                         <f:formContainers>
                             <f:FormContainer>
                                 <f:formElements>
-                                
+
+                                    <f:FormElement label="Vendor">
+                                        <ComboBox id="retVendor" placeholder="Select Vendor"  selectionChange="onGetItemRet" items="{oModel>/VendorList}">
+                                            <core:Item key="{oModel>CardCode}" text="{oModel>CardName}" />
+                                        </ComboBox>
+                                    </f:FormElement>
+
                                     <f:FormElement label="Item Code">
-                                        <Input id="eItemID"/>
-                                        <Input id="eBarcode" placeholder="Editbarcode"/>
-                                    
+                                    <ComboBox id="retItemCode" placeholder="Select Item Code" selectionChange="onSelectItemCode" items="{oModel>/itemMaster}">
+                                            <core:Item key="{oModel>ItemName}" text="{oModel>ItemCode}" />
+                                        </ComboBox>
                                     </f:FormElement>
 
                                     <f:FormElement label="Item Name">
-                                        <Input id="eItemName"/>
+                                       <ComboBox id="retItemName" placeholder="Select Item Name"  selectionChange="onSelectItemName" items="{oModel>/itemMaster}">
+                                            <core:Item key="{oModel>ItemCode}" text="{oModel>ItemName}" />
+                                        </ComboBox>
                                     </f:FormElement>
 
-                                       <f:FormElement label="UoM Code">
-                                        <ComboBox id="iUOMID" selectionChange="onGetBarcodeOnEdit" items="{oModel>/UoMCode}">
+                                    <f:FormElement label="UoM Code">
+                                        <ComboBox id="retUOM" placeholder="Select Item UOM"  selectionChange="onSelectUoM" items="{oModel>/UoMCode}">
                                             <core:Item key="{oModel>AbsEntry}" text="{oModel>Code}" />
                                         </ComboBox>
-                                         <Input id="curiUOMID" placeholder="curUOM"/>
                                     </f:FormElement>
 
+                                
+
                                     <f:FormElement label="Quantity">
-                                       <Input id="eQtyID" liveChange="onEnableBttn" type="Number"/>
+                                       <Input id="retQtyID" placeholder="Input Quantity" liveChange="onEnableBttn" type="Number"/>
                                             
                                     </f:FormElement>
                                     
@@ -67,11 +76,11 @@
             </l:Grid>
         </content>
         <beginButton>
-            <Button text="Delete" icon="sap-icon://delete" press="onDeleteItem" type="Reject"/>
+            <Button text="Cancel" icon="sap-icon://inspect-down" press="onCloseIssuance" type="Reject"/>
         </beginButton>
     
         <endButton>
-            <Button id="bttnSave" text="Save" icon="sap-icon://save" press="onSaveEdit" type="Accept" />
+            <Button text="Save" icon="sap-icon://save" press="onSaveItem" type="Accept" />
         </endButton>
     </Dialog>
 </core:FragmentDefinition>

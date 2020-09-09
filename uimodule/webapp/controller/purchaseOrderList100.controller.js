@@ -37,7 +37,7 @@ sap.ui.define([
     },
 
     initialize: function(){
-      this.oModel = new JSONModel("model/POlist.json");
+      this.oModel = new JSONModel("model/item.json");
       this.getView().setModel(this.oModel, "oModel");
       this.onGetPurchaseList();
       this.oModel.refresh();

@@ -14,6 +14,8 @@ sap.ui.define([
   var UntPrice;
   var Sstate;
   var tcodes;
+  var listpath;
+  var indS;
   return Controller.extend("com.ecoverde.ECOVERDE.controller.GrReference", {
    
     onInit: function(){
@@ -46,9 +48,9 @@ sap.ui.define([
     },
 
 
-    initialize: function(vFromId){
+initialize: function(vFromId){
       var oView = this.getView();
-      this.oModel = new JSONModel("model/POlist.json");
+      this.oModel = new JSONModel("model/item.json");
       this.getView().setModel(this.oModel, "oModel");
 
       oView.byId("docID").setTitle("Doc Num: " + localStorage.getItem("DocNo"));
@@ -67,6 +69,8 @@ sap.ui.define([
     //   that.onScanBarcode();
     // },
 
+  
+
 
     onScan: function() {
       var that = this;
@@ -84,24 +88,24 @@ sap.ui.define([
     },
   
 
-    onScanBarcode: function(){
+onScanBarcode: function(){
       var that = this;
       var vBarcode = localStorage.getItem("sBarcode");
       var staxCode;
       var sunitPr;
-      if(tcodes != vBarcode){
-        MessageBox.information("Invalid Barcode,\nPlease check your selected item", {
-          actions: [MessageBox.Action.OK],
-          title: "Goods Receipt PO",
-          icon: MessageBox.Icon.WARNING,
-          styleClass:"sapUiSizeCompact"
-        });
-        that.closeLoadingFragment()
-      }else{
+      // if(tcodes != vBarcode){
+      //   MessageBox.information("Invalid Barcode,\nPlease check your selected item", {
+      //     actions: [MessageBox.Action.OK],
+      //     title: "Goods Receipt PO",
+      //     icon: MessageBox.Icon.WARNING,
+      //     styleClass:"sapUiSizeCompact"
+      //   });
+      //   that.closeLoadingFragment()
+      // }else{
 
       var StoredItem = that.oModel.getData().DocumentLines;
       const oITM = StoredItem.filter(function(OIT){
-      return OIT.ItemCode == vBarcode;})
+      return OIT.BarCode == vBarcode;})
        
       var cResult = parseInt(oITM.length);
       if(cResult == 0){
@@ -121,7 +125,7 @@ sap.ui.define([
 
       var RecItem = that.oModel.getData().forPosting;
             const rITM = RecItem.filter(function(RIT){
-            return RIT.ItemCode == vBarcode;})
+            return RIT.BarCode == vBarcode;})
 
             var rResult = parseInt(rITM.length);
             if(rResult == 0){
@@ -137,12 +141,14 @@ sap.ui.define([
               rITM[0].Quantity = parseInt(rITM[0].Quantity) + 1;
             }
           }
-        }
+        // }
         that.oModel.refresh();
         that.closeLoadingFragment()
     },
+
+
   
-    onPostingGR: function(){
+onPostingGR: function(){
 
       var itemJSON = this.oModel.getData().forPosting;
 
@@ -161,13 +167,15 @@ sap.ui.define([
       
       var StoredItem = this.oModel.getData().forPosting;
       for(var i = 0;i < StoredItem.length;i++){
-        if(StoredItem[i].Quantity === StoredItem[i].receivedQty){
+        if(StoredItem[i].Quantity !=0){
+        if(StoredItem[i].Quantity == StoredItem[i].receivedQty){
           oBody.DocumentLines.push({
             "ItemCode": StoredItem[i].ItemCode,
             "Quantity": StoredItem[i].Quantity,
             "TaxCode": StoredItem[i].TaxCode,
             "UnitPrice": StoredItem[i].UnitPrice,
-            "LineStatus": "bost_Close"
+            "LineStatus": "bost_Close",
+            "WarehouseCode": localStorage.getItem("wheseID")
           });
         }else{
           oBody.DocumentLines.push({
@@ -175,10 +183,13 @@ sap.ui.define([
             "Quantity": StoredItem[i].Quantity,
             "TaxCode": StoredItem[i].TaxCode,
             "UnitPrice": StoredItem[i].UnitPrice,
-            "RemainingOpenQuantity":  StoredItem[i].RemainingOpenQuantity
+            "RemainingOpenQuantity":  StoredItem[i].RemainingOpenQuantity,
+            "WarehouseCode": localStorage.getItem("wheseID")
           });
           }
+         }
         }
+      
         //console.log(oBody);
       oBody = JSON.stringify(oBody);        
           $.ajax({
@@ -211,7 +222,7 @@ sap.ui.define([
               }
      },
 
-     onPressItem: function(oEvent){
+onPressItem: function(oEvent){
           var that = this;
           var oView = this.getView();
           var rState = oView.byId("swID").getState();
@@ -226,6 +237,15 @@ sap.ui.define([
 
           var priceCur = oEvent.getSource().getNumberUnit();
           var priceCat = priceCur.split(" ");
+        
+          var myInputControl = oEvent.getSource(); // e.g. the first item
+          var boundData = myInputControl.getBindingContext('oModel').getObject();
+          listpath = myInputControl.getBindingContext('oModel').getPath();
+          var indexItem = listpath.split("/");
+          indS =indexItem[2];
+
+          console.log(boundData);
+
 
           if(rState === true){
             if(rQty[0] === rQty[1]){
@@ -233,7 +253,26 @@ sap.ui.define([
             }
           }else{ 
             if(rQty[0] === rQty[1]){
-              sap.m.MessageToast.show("This Item is Fully Received, Please proceed on other item");
+              MessageBox.information("Do you want to Modify?", {
+                actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+                title: "Goods Receipt PO",
+                icon: MessageBox.Icon.INFORMATION,
+                styleClass:"sapUiSizeCompact",
+                onClose: function (sButton) {
+                  if(sButton == "YES"){
+                  that.onEditItem();
+                  sap.ui.getCore().byId("codeIDref").setValue(boundData.ItemCode);
+                  sap.ui.getCore().byId("nameIDref").setValue(boundData.ItemDescription);
+                  sap.ui.getCore().byId("rQtyref").setValue(boundData.Quantity);
+                  sap.ui.getCore().byId("qtyIDref").setValue(boundData.receivedQty);
+
+                  sap.ui.getCore().byId('codeIDref').setEnabled(false);
+                  sap.ui.getCore().byId('nameIDref').setEnabled(false);
+                  sap.ui.getCore().byId("rQtyref").setEnabled(false);
+                  // that.onShowEdit();
+                }
+                }
+              });
             }else{
               this.onAddItem()
               //set value
@@ -257,7 +296,9 @@ sap.ui.define([
         }
      },
 
-
+ onSaveEdit: function(){
+    
+ },
 
   onGetAddItem: function(){
       var that = this;
@@ -271,9 +312,9 @@ sap.ui.define([
       if(sQtyID == "" || sQtyID <= 0){
         sap.m.MessageToast.show("Please input quantity");
         return;
-      }else if(parseInt(sQtyID) > parseInt(rQtyID)){
-        sap.m.MessageToast.show("Input quantity exceed to remaining quantity");
-        return;
+      // }else if(parseInt(sQtyID) > parseInt(rQtyID)){
+      //   sap.m.MessageToast.show("Input quantity exceed to remaining quantity");
+      //   return;
       }else{
         var StoredItem = that.oModel.getData().DocumentLines;
         const oITM = StoredItem.filter(function(OIT){
@@ -332,6 +373,7 @@ sap.ui.define([
            "DocNum": docID,
            "ItemCode":rResult[i].ItemCode,
            "ItemDescription": rResult[i].ItemDescription,
+           "BarCode":  rResult[i].BarCode,
            "UnitPrice": rResult[i].UnitPrice,
            "TaxCode": rResult[i].TaxCode,
            "Quantity": rResult[i].Quantity,
@@ -382,6 +424,21 @@ sap.ui.define([
       this.addItemDialog2.open();
     },
 
+    onEditItem: function(){
+      if (!this.editWithRef) {
+          this.editWithRef = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.fragment.editWithRef", this);
+          this.getView().addDependent(this.editWithRef);
+      }
+      this.editWithRef.open();
+    },
+
+    onCloseEditItem: function(){
+      if(this.editWithRef){
+          this.editWithRef.close();
+      }
+      this.closeLoadingFragment();
+    },
+
     onAddItemThree: function(){
       if (!this.addItemDialog3) {
           this.addItemDialog3 = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.addItem3", this);
@@ -408,7 +465,7 @@ sap.ui.define([
   onGetItem: function(){
     this.openLoadingFragment();
     var sServerName = localStorage.getItem("ServerID");
-    var sUrl = sServerName + "/b1s/v1/Items?$select=ItemCode,ItemName&$filter=BarCode ne 'null'";
+    var sUrl = sServerName + "/b1s/v1/Items?$select=ItemCode,ItemName&$filter=BarCode ne 'null'&$filter=Mainsupplier eq '"+ localStorage.getItem("VendorCode"); +"'";
     
     $.ajax({
       url: sUrl,
@@ -419,7 +476,7 @@ sap.ui.define([
           },
           error: function (xhr, status, error) {
             this.closeLoadingFragment();
-            console.log("Error Occured");
+            console.log("Error Occured: " + error);
           },
           success: function (json) {
             this.oModel.getData().itemMaster  = json.value;
@@ -607,11 +664,37 @@ onAdditionalItem: function(){
   
 },
 
+onPressDelete: function(oEvent){
+  var that = this;
 
-  onWithRef: function(){
+    // var myInputControl = oEvent.getSource();
+    // console.log(myInputControl);
+    // listpath = myInputControl.getBindingContext('projectlistid').getPath(); // e.g. the first item;
+    // var indexItem = listpath.split("/");
+    // indS =indexItem[2];
+
+    var StoredItem = that.oModel.getData().DocumentLines;
+    if(StoredItem[indS].RemainingOpenQuantity != StoredItem[indS].Quantity){
+    MessageBox.information("Are you sure you want to reset this Item??", {
+      actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+      title: "Reset Item",
+      icon: MessageBox.Icon.QUESTION,
+      styleClass:"sapUiSizeCompact",
+      onClose: function (sButton) {
+        if(sButton == "YES"){
+          StoredItem[indS].RemainingOpenQuantity = StoredItem[indS].Quantity;
+          that.oModel.refresh();
+        }
+      }
+    });
+  }
+
+},
+
+onWithRef: function(){
     this.router = this.getOwnerComponent().getRouter();
     this.router.navTo("purchaseOrderList");
-    },
+},
 
 
 

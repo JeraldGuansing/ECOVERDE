@@ -29,7 +29,7 @@
                                 <f:formElements>
                                 
                                     <f:FormElement label="Item Code">
-                                        <ComboBox id="itmID" selectionChange="onSelectItemCode" placeholder="Select Item Code" items="{oModel>/itemMaster}">
+                                        <ComboBox id="itmID" selectionChange="onSelectItemCode"  placeholder="Select Item Code" items="{oModel>/itemMaster}">
                                             <core:Item key="{oModel>ItemName}" text="{oModel>ItemCode}" />
                                         </ComboBox>
                                     </f:FormElement>

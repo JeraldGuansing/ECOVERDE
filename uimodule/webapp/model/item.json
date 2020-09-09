@@ -1,16 +1,22 @@
 {
-    "value":[{
-        "AbsEntry": "-1",
-        "BarCode": "100009231",
-        "ItemCode": "LM4029D",
-        "ItemName": "LeMon 4029 500 sheet paper drawer",
-        "Quantity": "2",
-        "UoMCode": "Manual"
-        }],
+    "value":[],
     "itemMaster":[],
     "Barcode":[],
     "UoMCode":[],
     "UoMEntry":[],
-    "BarcodeUnit": []
-        
+    "BarcodeUnit": [],
+    "receiving":[],
+    "DocumentLines":[],
+    "SelectedItem":[],
+    "forPosting":[],
+    "userDetails":[],
+    "projectList":[],
+    "goodsIssue":[],
+    "goodsReturn":[],
+    "VendorList":[],
+    "goodsRetlist":[],
+    "nextPage": [],
+    "prevPage": []
+
+    
 }

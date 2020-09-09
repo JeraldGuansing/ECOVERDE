@@ -8,5 +8,19 @@
     "Barcode":[],
     "UoMCode":[],
     "UoMEntry":[],
-    "BarcodeUnit": []
+    "BarcodeUnit": [],
+    "projectList":[],
+    "goodsIssue":[
+        {
+            "ProCode": "",
+            "ProjName": "",
+            "ItemCode": "",
+            "ItemName": "",
+            "Quantity": "",
+            "UoMCode": "",
+            "UoMEntry": "",
+            "Barcode": "", 
+            "WarehouseCode": ""
+        }
+    ]
 }

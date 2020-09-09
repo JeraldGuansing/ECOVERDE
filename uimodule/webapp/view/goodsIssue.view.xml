@@ -6,7 +6,7 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc">
   <App id="goodsIssue" >
-    <Page showHeader="false">
+    <Page showHeader="false" class="sapUiContentPadding sapUiResponsivePadding--header sapUiResponsivePadding--subHeader sapUiResponsivePadding--content sapUiResponsivePadding--footer">
           <VBox>
             <FlexBox
               height="100px"
@@ -27,8 +27,8 @@
 	  </f:SimpleForm>
       <content>
         <TileContainer height="210px" id="container">
-            <StandardTile icon="sap-icon://shipping-status" title="Issuance to Project" press="onGotoScanview" />
-            <StandardTile icon="sap-icon://insurance-house" title="Return to Supplier" press="" />
+            <StandardTile icon="sap-icon://shipping-status" title="Issuance to Project" press="onSelectParamV" />
+            <StandardTile icon="sap-icon://insurance-house" title="Return to Supplier" press="onPressReturnlist" />
 		  	</TileContainer>
 
         <!-- <Input id="myBarcode"/>

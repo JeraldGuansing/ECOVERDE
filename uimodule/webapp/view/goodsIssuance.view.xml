@@ -1,12 +1,68 @@
- <mvc:View controllerName="com.ecoverde.undefined.controller.goodsIssuance"
+ <mvc:View controllerName="com.ecoverde.ECOVERDE.controller.goodsIssuance"
   displayBlock="true"
   xmlns="sap.m"
-  xmlns:mvc="sap.ui.core.mvc">
+	xmlns:f="sap.ui.layout.form" 
+	xmlns:core="sap.ui.core" 
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+  xmlns:t="sap.ui.table"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:tnt="sap.tnt">
   <App id="goodsIssuance" >
-    <pages>
-      <Page title="{i18n>title}">
-        <content></content>
+    <Page title="Goods Issuance" showNavButton="true" navButtonPress="onPressNavBack">
+   <List>        
+        <InputListItem label="Vendor Code">
+          	  <Label id="Vcode" />
+        </InputListItem>
+        
+        <InputListItem label="Vendor Name">
+                <Label id="Vname" />
+        </InputListItem>
+        
+        <InputListItem label="Project Name">
+            	<Label id="projDesc" />
+        </InputListItem>
+        
+        <InputListItem label="Posting Date">
+             	<DatePicker
+              id="DP8"
+              displayFormat="MM/dd/YYYY"
+              change=""
+              class="sapUiSmallMarginBottom"/>
+        </InputListItem>
+      
+     </List>
+      <html:br></html:br>
+        <content>
+                <List id="projectlistid" items="{oModel>/goodsIssue}">
+                    <ObjectListItem title="{oModel>ItemCode}"
+                            number="{oModel>Quantity}"
+                            numberUnit="{oModel>UoMCode}"
+                            type="Active"
+                            press = "onPressItem"
+                            icon="sap-icon://product"
+                            intro="{oModel>ItemName}">
+                            <attributes>
+                              <ObjectAttribute title="{oModel>Barcode}"/>
+                            </attributes>
+                    </ObjectListItem>
+                </List>
+        </content>
+        
+        <footer>
+            <Bar>
+             <contentLeft>
+				      	<Button text="Add" press="onPressAdd" icon="sap-icon://add"/>
+			      	</contentLeft>
+              <contentMiddle>
+				      	<Button text="Scan" press="onScan" icon="sap-icon://camera"/>
+			      	</contentMiddle>
+              <contentRight>
+				      	<Button text="Post" press="onConfirmPosting" icon="sap-icon://manager-insight"/>
+			      	</contentRight>
+            </Bar>
+        </footer>
+        
       </Page>
-    </pages>
   </App>
 </mvc:View>

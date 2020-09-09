@@ -9,15 +9,16 @@ sap.ui.define([
   "sap/ui/model/json/JSONModel"
 ], function(Controller,MessageToast,Device,Filter,FilterOperator,Token,MessageBox,JSONModel) {
   "use strict";
-
+ 
   return Controller.extend("com.ecoverde.ECOVERDE.controller.login", {
     
     onInit: function () {
+      this.closeLoadingFragment();
       if(!localStorage.ServerID || !localStorage.dbName){
         this.onSetting();
         return;
       }
-     
+      
     },
     
     // onDisable: function(){
@@ -98,10 +99,11 @@ sap.ui.define([
                     sap.m.MessageToast.show("Incorrect UserName/Password");
                   },
                   success: function (json) {
-                    that.closeLoadingFragment();
+                    that.onGetUserdet();
                     that.router = that.getOwnerComponent().getRouter();
                     that.router.navTo("main");
                     sap.m.MessageToast.show("Welcome");
+                    this.closeLoadingFragment();
                   },
                   context: that
                 });
@@ -115,6 +117,38 @@ sap.ui.define([
        }
       this.oDialog.open();
     },
+
+
+    onGetUserdet: function(){
+			var that = this;
+			
+			var sUserName =localStorage.getItem("userName");
+			var sServerName = localStorage.getItem("ServerID");
+			var sUrl = sServerName + "/b1s/v1/Users?$select=U_whsCode&$filter=UserCode eq '" + sUserName + "'";
+      var userD=[];
+      var whse;
+     
+			$.ajax({
+				url: sUrl,
+				type: "GET",
+				headers: {
+				  'Content-Type': 'application/json'},
+				crossDomain: true,
+				xhrFields: {
+				  withCredentials: true
+				},
+				error: function (xhr, status, error){
+				  sap.m.MessageToast.show("Incorrect UserName/Password");
+				},
+				success: function (json) {
+          userD = json.value;
+          whse = userD[0].U_whsCode;
+          localStorage.setItem("wheseID", whse);
+          
+				},
+				context: that
+        });
+		  },
 
     closeLoadingFragment : function(){
       if(this.oDialog){

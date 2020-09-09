@@ -10,17 +10,7 @@
   xmlns:tnt="sap.tnt">
   <App id="GrReference" >
       <Page showHeader="false">
-       <customHeader>
-          <Toolbar>
-            <Button type="Back" press=""/>
-            <ToolbarSpacer/>
-          
-            <ToolbarSpacer/>
-            <Button icon="sap-icon://action-settings" type="Transparent" press=""/>
-		        </Toolbar>
-          </customHeader>
         <content>
-         
            <ObjectHeader title="Doc No." id="docID">
                 <attributes>
                     <!-- <ObjectAttribute "/> -->
@@ -36,7 +26,6 @@
                   </InputListItem>
                 </List>
                 <List id="projectlistid" items="{oModel>/DocumentLines}">
-                  <items>
                     <ObjectListItem title="{oModel>ItemCode}"
                             number="{oModel>receivedQty}/{oModel>Quantity}"
                             numberUnit="{oModel>GrossTotal} {oModel>Currency} {oModel>TaxCode}"
@@ -51,7 +40,6 @@
                               <ObjectAttribute title="{oModel>ItemDescription}"/>
                             </attributes> -->
                     </ObjectListItem>
-                  </items>
                 </List>
         </content>
         <footer>

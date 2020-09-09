@@ -1,12 +1,45 @@
- <mvc:View controllerName="com.ecoverde.undefined.controller.goodsReturn"
+ <mvc:View controllerName="com.ecoverde.ECOVERDE.controller.goodsReturn"
   displayBlock="true"
   xmlns="sap.m"
-  xmlns:mvc="sap.ui.core.mvc">
+	xmlns:f="sap.ui.layout.form" 
+	xmlns:core="sap.ui.core" 
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+  xmlns:t="sap.ui.table"
+	xmlns:html="http://www.w3.org/1999/xhtml">
   <App id="goodsReturn" >
-    <pages>
-      <Page title="{i18n>title}">
-        <content></content>
+    <Page title="Goods Return" showNavButton="true" navButtonPress="onPressNavBack">
+        <content>
+                <List id="projectlistid" items="{oModel>/goodsReturn}">
+                    <ObjectListItem title="{oModel>ItemCode}"
+                            number="{oModel>Quantity}"
+                            numberUnit="{oModel>UoMCode}"
+                            type="Active"
+                            press = "onPressItem"
+                            icon="sap-icon://database"
+                            intro="{oModel>ItemName}">
+                            <firstStatus>
+				                      <ObjectStatus text=" {oModel>ProjName}"/>
+                            </firstStatus>
+                            <attributes>
+                              <ObjectAttribute title="{oModel>Barcode}"/>
+                            </attributes>
+                    </ObjectListItem>
+                </List>
+        </content>
+        <footer>
+            <Bar>
+             <contentLeft>
+				      	<Button text="Add" press="onPressAddr" icon="sap-icon://add"/>
+			      	</contentLeft>
+              <!-- <contentMiddle>
+				      	<Button text="Scan" press="onScan" icon="sap-icon://camera"/>
+			      	</contentMiddle> -->
+              <contentRight>
+				      	<Button text="Post" press="onPostreturn" icon="sap-icon://manager-insight"/>
+			      	</contentRight>
+            </Bar>
+        </footer>
       </Page>
-    </pages>
   </App>
 </mvc:View>
