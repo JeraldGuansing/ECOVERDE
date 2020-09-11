@@ -10,7 +10,7 @@
 			<ToolbarSpacer/>
 				<!-- <Title text="Title" level="H2"/> -->
 				<ToolbarSpacer/>
-				<Button icon="sap-icon://decline" type="Reject" press="onCloseIssuance" ariaLabelledBy="editButtonLabel"/>
+				<Button icon="sap-icon://decline" type="Reject" press="onCloseAddI" ariaLabelledBy="editButtonLabel"/>
 			</Toolbar>
             </customHeader>
         <content>
@@ -38,28 +38,26 @@
                                 <f:formElements>
 
                                     <f:FormElement label="Item Code">
-                                    <ComboBox id="retItemCode" placeholder="Select Item Code" selectionChange="onSelectItemCode" items="{oModel>/itemMaster}">
+                                    <ComboBox id="reqtemCode" placeholder="Select Item Code" selectionChange="onSelectItemCode" items="{oModel>/itemMaster}">
                                             <core:Item key="{oModel>ItemName}" text="{oModel>ItemCode}" />
                                         </ComboBox>
                                     </f:FormElement>
 
                                     <f:FormElement label="Item Name">
-                                       <ComboBox id="retItemName" placeholder="Select Item Name"  selectionChange="onSelectItemName" items="{oModel>/itemMaster}">
+                                       <ComboBox id="reqItemName" placeholder="Select Item Name"  selectionChange="onSelectItemName" items="{oModel>/itemMaster}">
                                             <core:Item key="{oModel>ItemCode}" text="{oModel>ItemName}" />
                                         </ComboBox>
                                     </f:FormElement>
 
                                     <f:FormElement label="UoM Code">
-                                        <ComboBox id="retUOM" placeholder="Select Item UOM"  selectionChange="onSelectUoM" items="{oModel>/UoMCode}">
+                                        <ComboBox id="reqUOM" placeholder="Select Item UOM"  selectionChange="onSelectUoM" items="{oModel>/UoMCode}">
                                             <core:Item key="{oModel>AbsEntry}" text="{oModel>Code}" />
                                         </ComboBox>
                                     </f:FormElement>
 
-                                
-
+                            
                                     <f:FormElement label="Quantity">
-                                       <Input id="retQtyID" placeholder="Input Quantity" liveChange="onEnableBttn" type="Number"/>
-                                            
+                                       <Input id="reqQtyID" placeholder="Input Quantity" liveChange="onEnableBttn" type="Number"/>
                                     </f:FormElement>
                                     
                                 </f:formElements>
@@ -70,11 +68,11 @@
             </l:Grid>
         </content>
         <beginButton>
-            <Button text="Cancel" icon="sap-icon://inspect-down" press="onCloseIssuance" type="Reject"/>
+            <Button text="Cancel" icon="sap-icon://inspect-down" press="onCloseAddI" type="Reject"/>
         </beginButton>
     
         <endButton>
-            <Button text="Save" icon="sap-icon://save" press="onSaveItem" type="Accept" />
+            <Button text="Save" icon="sap-icon://save" press="onSaveAddItem" type="Accept" />
         </endButton>
     </Dialog>
 </core:FragmentDefinition>

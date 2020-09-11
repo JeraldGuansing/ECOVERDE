@@ -53,7 +53,7 @@
         </beginButton>
     
         <endButton>
-            <Button text="Add" icon="sap-icon://add" press="onSaveVendor" type="Accept" />
+            <Button text="Next" icon="sap-icon://open-command-field" press="onSaveVendor" type="Accept" />
         </endButton>
     </Dialog>
 </core:FragmentDefinition>

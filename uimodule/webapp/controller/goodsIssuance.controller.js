@@ -288,7 +288,7 @@ onGetItemIssue: function(){
         },
         error: function (xhr, status, error) {
           this.closeLoadingFragment();
-          console.log("Error Occured");
+          console.log("Error Occured" + xhr.responseJSON.error.message.value);
         },
         success: function (json) {
           this.oModel.getData().itemMaster  = json.value;

@@ -57,7 +57,7 @@ sap.ui.define([
         var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
         var yyyy = today.getFullYear();
         
-        today = mm + '/' + dd + '/' + yyyy;
+        today =  yyyy+ mm + dd;
         this.byId("DP8").setValue(today);
 
       },
@@ -244,14 +244,16 @@ sap.ui.define([
       that.openLoadingFragment();
       var sServerName = localStorage.getItem("ServerID");
       var sUrl = sServerName + "/b1s/v1/InventoryGenEntries";
-      var oBody = {"DocumentLines": []};          
+      var oBody = {
+        "CardCode": localStorage.getItem("VendorCode"),
+        "DocDate": that.getView().byId("DP8").getValue(),
+        "DocumentLines": []};          
       
       var StoredItem = this.oModel.getData().value;
       for(var i = 0;i < StoredItem.length;i++){
         oBody.DocumentLines.push({
           "ItemCode": StoredItem[i].ItemCode,
           "Quantity": StoredItem[i].Quantity,
-          "UnitPrice": 1,
           "UoMEntry": StoredItem[i].AbsEntry,
           "UoMCode": StoredItem[i].UoMCode,
           "WarehouseCode": localStorage.getItem("wheseID")
@@ -269,7 +271,7 @@ sap.ui.define([
             xhrFields: {withCredentials: true},
             error: function (xhr, status, error) {
               that.closeLoadingFragment();
-              sap.m.MessageToast.show("Unable to post the Item");
+              sap.m.MessageToast.show("Unable to post the Item: " + xhr.responseJSON.error.message.value);
               },
             success: function (json) {
              
@@ -388,7 +390,7 @@ sap.ui.define([
         ///>>>>>>>GetBarcode
         var StoredBarc = that.oModel.getData().BarcodeUnit; 
         var getStrBarc = "";
-        if(StoredBarc.lenght != 0){
+        if(StoredBarc.length != 0){
           getStrBarc = StoredBarc[0].Barcode;
         }
         
@@ -568,7 +570,6 @@ sap.ui.define([
     
     that.closeLoadingFragment();
   },
-
 
   onGetBarcodeOnEdit: function(){
    

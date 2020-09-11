@@ -48,6 +48,18 @@ sap.ui.define([
 initialize: function(vFromId){
         this.oModel = new JSONModel("model/item.json");
         this.getView().setModel(this.oModel, "oModel");
+        var oView = this.getView();
+        oView.byId("Vcode").setText(localStorage.getItem("VendorCode"));
+        oView.byId("Vname").setText(localStorage.getItem("VendorName"));
+
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        var yyyy = today.getFullYear();
+        
+        today =  yyyy+ mm + dd;
+        this.byId("DP8").setValue(today);
+
       },
 
 
@@ -68,12 +80,8 @@ onPressAddr: function(){
       sap.ui.getCore().byId("retItemName").setSelectedKey("");
       sap.ui.getCore().byId("retUOM").setValue("");
       sap.ui.getCore().byId("retUOM").setSelectedKey("");
-      sap.ui.getCore().byId("retVendor").setValue("");
-      sap.ui.getCore().byId("retVendor").setSelectedKey("");
       sap.ui.getCore().byId("retQtyID").setValue("");
-
-     
-      this.onGetListVendor();
+      this.onGetItemRet();
       this.addgoodsReturn.open();
     },
 
@@ -84,8 +92,6 @@ onSaveItem: function(){
       var sItmName = sap.ui.getCore().byId("retItemName").getValue();
       var sUoM = sap.ui.getCore().byId("retUOM").getValue();
       var sUoMEntry = sap.ui.getCore().byId("retUOM").getSelectedKey();
-      var sCardName = sap.ui.getCore().byId("retVendor").getValue();
-      var sCardCode = sap.ui.getCore().byId("retVendor").getSelectedKey();
       var sqty = sap.ui.getCore().byId("retQtyID").getValue();
       
       if(sItmID == ""){
@@ -98,10 +104,6 @@ onSaveItem: function(){
         return;
       }else if(sUoM == ""){
         sap.m.MessageToast.show("Please select UoM");
-        that.closeLoadingFragment();
-        return;
-      }else if(sCardName == ""){
-        sap.m.MessageToast.show("Please select Vendor");
         that.closeLoadingFragment();
         return;
       }else if(sqty == "" || sqty <= 0){
@@ -118,8 +120,6 @@ onSaveItem: function(){
         if(cResult == 0){
          
           that.oModel.getData().goodsReturn.push({
-            "CardCode": sCardCode,
-            "CardName": sCardName,
             "ItemCode": sItmID,
             "ItemName": sItmName,
             "Quantity": sqty,
@@ -127,7 +127,6 @@ onSaveItem: function(){
             "UoMEntry": sUoMEntry,
             "Barcode": iBarc
           });
-          localStorage.setItem("VendorCode",sCardCode);
           that.closeLoadingFragment();
         }else{
           oITM[0].Quantity = parseInt(oITM[0].Quantity) + parseInt(sqty);
@@ -138,19 +137,36 @@ onSaveItem: function(){
         that.onCloseIssuance();
       }
     },
-    
-onPostreturn: function(){
+
+    onConfirmPosting: function(){
       var itemJSON = this.oModel.getData().goodsReturn;
       if(parseInt(itemJSON.length) == 0){
         sap.m.MessageToast.show("Please Input item First");
       }
       else{
+      var that = this;
+      MessageBox.information("Are you sure you want to [POST] this transaction?", {
+        actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+        title: "POST Goods Return",
+        icon: MessageBox.Icon.QUESTION,
+        styleClass:"sapUiSizeCompact",
+        onClose: function (sButton) {
+          if(sButton === "YES"){
+            that.onPostreturn();
+          }}
+      });
+    }
+      },
+    
+onPostreturn: function(){
+    
         var that = this;
         that.openLoadingFragment();
         var sServerName = localStorage.getItem("ServerID");
         var sUrl = sServerName + "/b1s/v1/PurchaseReturns";
         var oBody = {
           "CardCode": localStorage.getItem("VendorCode"),
+          "DocDate": that.getView().byId("DP8").getValue(),
           "DocumentLines": []};
         var posItem = this.oModel.getData().goodsReturn;
 
@@ -197,10 +213,9 @@ onPostreturn: function(){
                 },context: this
               });
     
-      }
+      
     },    
 
-  
 onCloseIssuance: function(){
       if(this.addgoodsReturn){
           this.addgoodsReturn.close();
@@ -210,11 +225,9 @@ onCloseIssuance: function(){
     },
 
 onGetItemRet: function(){
-      var venCode = sap.ui.getCore().byId("retVendor").getSelectedKey();
-      localStorage.setItem("VendorCode",venCode);
       this.openLoadingFragment();
       var sServerName = localStorage.getItem("ServerID");
-      var sUrl = sServerName + "/b1s/v1/Items?$select=ItemCode,ItemName&$filter=BarCode ne 'null'&$filter=Mainsupplier eq '"+ venCode +"'";
+      var sUrl = sServerName + "/b1s/v1/Items?$select=ItemCode,ItemName&$filter=BarCode ne 'null'&$filter=Mainsupplier eq '"+ localStorage.getItem("VendorCode") +"'";
       
       $.ajax({
         url: sUrl,
@@ -342,30 +355,8 @@ onGetBarcode: function(){
         },      
         
 
-onGetListVendor: function(){
-          var that = this;   
-            var sServerName = localStorage.getItem("ServerID");
-            var sUrl = sServerName + "/b1s/v1/BusinessPartners?$select=CardCode,CardName";
-            $.ajax({
-              url: sUrl,
-              type: "GET",
-              dataType: 'json',
-              crossDomain: true,
-              xhrFields: {
-                withCredentials: true},
-              success: function(response){
-                that.oModel.getData().VendorList = response.value;
-                that.oModel.refresh();
-            
-              }, error: function() { 
-                that.closeLoadingFragment()
-                console.log("Error Occur");
-              }
-          })
-        }, 
 
-
-        onSelectItemCode: function(){
+onSelectItemCode: function(){
           var itemName = sap.ui.getCore().byId("retItemCode").getSelectedKey();
           sap.ui.getCore().byId("retItemName").setValue(itemName);
           this.openLoadingFragment();
@@ -375,7 +366,7 @@ onGetListVendor: function(){
       },
       
     
-      onSelectItemName: function(){
+onSelectItemName: function(){
         var itemCode = sap.ui.getCore().byId("retItemName").getSelectedKey();
         sap.ui.getCore().byId("retItemCode").setValue(itemCode);
         //localStorage.setItem("sBarcode", sap.ui.getCore().byId("itmID").getValue());
@@ -385,7 +376,7 @@ onGetListVendor: function(){
         // getBarcode here
       },
     
-      onSelectUoM: function(){
+onSelectUoM: function(){
         var that = this;
         itmBar =  sap.ui.getCore().byId("retItemCode").getValue();
         uomntry = sap.ui.getCore().byId("retUOM").getSelectedKey();

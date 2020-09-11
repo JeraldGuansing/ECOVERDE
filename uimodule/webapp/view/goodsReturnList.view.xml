@@ -9,24 +9,18 @@
    xmlns:tnt="sap.tnt"
 	xmlns:html="http://www.w3.org/1999/xhtml">
   <App id="goodsReturnList" >
-    <Page showHeader="True" showNavButton="true" navButtonPress="onPressIssuance">
-        <VBox>
-      	  <FlexBox
-            height="100px"
-				    alignItems="Start"
-				    justifyContent="Center">
-					  <Image src="./resources/img/ecoverde.png"/>
-          </FlexBox>
-         </VBox>
-      
+    <Page showHeader="true" title="Goods Return" showNavButton="true" navButtonPress="onPressIssuance">    
        <content>
-
-          <Toolbar>
-          <Label text="Vendor:"/>
-            <ComboBox id="rtVendor" width="84%" placeholder="Select Vendor" selectionChange="onSelectVendor" items="{oModel>/VendorList}">
-                <core:Item key="{oModel>CarCOde}" text="{oModel>CardName}"/>
-            </ComboBox>
-          </Toolbar>
+          <List>
+            <InputListItem label="Vendor Code">
+                  <Label id="venID" />
+            </InputListItem>
+            <InputListItem label="Vendor Name">
+                    <Label id="venName" />
+            </InputListItem>
+          
+        </List>
+        <html:br></html:br>
             <t:Table id="tblID" rows="{oModel>/goodsRetlist}" cellClick="" selectionMode="Single" ariaLabelledBy="title">
                 <t:columns>
                     <t:Column width="5em">
@@ -36,10 +30,10 @@
                       </t:template>
                     </t:Column>
 
-                    <t:Column width="7rem">
-                      <Label text="Vendor Code" />
+                     <t:Column width="6rem">
+                      <Label text="Posting Date" />
                       <t:template>
-                        <Text text="{oModel>CardCode}" wrapping="false" />
+                        <Text text="{oModel>DocDate}" wrapping="false" />
                       </t:template>
                     </t:Column>
 
@@ -51,18 +45,19 @@
                     </t:Column>
 
                     <t:Column width="6rem">
-                      <Label text="Posting Date" />
-                      <t:template>
-                        <Text text="{oModel>DocDate}" wrapping="false" />
-                      </t:template>
-                    </t:Column>
-
-                    <t:Column width="6rem">
                       <Label text="Document Date" />
                       <t:template>
                         <Text text="{oModel>TaxDate}" wrapping="false" />
                       </t:template>
                     </t:Column>
+
+                    <t:Column width="6rem">
+                      <Label text="DocEntry" />
+                      <t:template>
+                        <Text text="{oModel>DocEntry}" wrapping="false" />
+                      </t:template>
+                    </t:Column>
+
                 </t:columns>
             </t:Table>
         </content>
@@ -71,12 +66,9 @@
             <contentLeft>
                 <Button text="Refresh" press="initialize" icon="sap-icon://synchronize" />
               </contentLeft>
-              <contentLeft>
-                <Button text="Add" press="onPressAddReturn" icon="sap-icon://add" />
-              </contentLeft> 
 
               <contentRight>
-                <Button text="Copy" press="onPressCopyReturn" icon="sap-icon://copy" />
+                <Button text="Copy" press="getContextByIndex" icon="sap-icon://copy" />
               </contentRight>
             </Bar>
           </footer>

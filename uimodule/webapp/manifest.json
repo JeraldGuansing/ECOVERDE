@@ -160,10 +160,43 @@
           "target": [
             "goodsReturnList"
           ]
+        },
+        {
+          "name": "transferView",
+          "pattern": "transferView",
+          "target": [
+            "transferView"
+          ]
+        },
+        {
+          "name": "returnWref",
+          "pattern": "returnWref",
+          "target": [
+            "returnWref"
+          ]
+        },
+        {
+          "name": "transferRequest",
+          "pattern": "transferRequest",
+          "target": [
+            "transferRequest"
+          ]
+        },
+        {
+          "name": "InventoryTransfer",
+          "pattern": "InventoryTransfer",
+          "target": [
+            "InventoryTransfer"
+          ]
+        },
+        {
+          "name": "InventoryPost",
+          "pattern": "InventoryPost",
+          "target": [
+            "InventoryPost"
+          ]
         }
       ],
-
-      
       "targets": {
         "login": {
           "viewType": "XML",
@@ -274,7 +307,57 @@
           "controlId": "pageContainer",
           "controlAggregation": "pages",
           "viewLevel": 3
+        },
+        "transferView": {
+          "viewPath": "com.ecoverde.ECOVERDE.view",
+          "viewType": "XML",
+          "viewName": "transferView",
+          "parent": "main",
+          "controlId": "pageContainer",
+          "controlAggregation": "pages",
+          "viewLevel": 3
+        },
+        "returnWref": {
+          "viewPath": "com.ecoverde.ECOVERDE.view",
+          "viewType": "XML",
+          "viewName": "returnsWref",
+          "parent": "main",
+          "controlId": "pageContainer",
+          "controlAggregation": "pages",
+          "viewLevel": 3,
+          "transition": "flip"
+        },
+        "transferRequest": {
+          "viewPath": "com.ecoverde.ECOVERDE.view",
+          "viewType": "XML",
+          "viewName": "transferRequest",
+          "parent": "main",
+          "controlId": "pageContainer",
+          "controlAggregation": "pages",
+          "viewLevel": 3,
+          "transition": "flip"
+        },
+        "InventoryTransfer": {
+          "viewPath": "com.ecoverde.ECOVERDE.view",
+          "viewType": "XML",
+          "viewName": "InventoryTransfer",
+          "parent": "main",
+          "controlId": "pageContainer",
+          "controlAggregation": "pages",
+          "viewLevel": 3,
+          "transition": "flip"
+        },
+        "InventoryPost": {
+          "viewPath": "com.ecoverde.ECOVERDE.view",
+          "viewType": "XML",
+          "viewName": "InventoryPosting",
+          "parent": "main",
+          "controlId": "pageContainer",
+          "controlAggregation": "pages",
+          "viewLevel": 3,
+          "transition": "flip"
         }
+        
       }
     }
   }

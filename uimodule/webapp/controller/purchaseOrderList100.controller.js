@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/m/Token",
   "sap/m/MessageBox",
-  "sap/ui/core/Fragment",
+  "sap/ui/core/Fragment"
 ], function(Controller,MessageToast, JSONModel, Filter, FilterOperator, Token, MessageBox,Fragment) {
   "use strict";
 	var iTimeoutId;
@@ -40,7 +40,7 @@ sap.ui.define([
       this.oModel = new JSONModel("model/item.json");
       this.getView().setModel(this.oModel, "oModel");
       this.onGetPurchaseList();
-      this.oModel.refresh();
+      // this.oModel.refresh();
     },
 
     onGetPurchaseList: function(){
@@ -49,7 +49,7 @@ sap.ui.define([
       var oView = that.getView();
      
       var sServerName = localStorage.getItem("ServerID");
-      var sUrl = sServerName + "/b1s/v1/PurchaseDeliveryNotes?$select=DocNum,CardCode,CardName,NumAtCard,DocDueDate,DocDate,TaxDate&$filter=DocumentStatus eq 'bost_Open'";
+      var sUrl = sServerName + "/b1s/v1/PurchaseOrders?$select=DocNum,DocEntry,CardCode,CardName,NumAtCard,DocDueDate,DocDate,TaxDate&$filter=DocumentStatus eq 'bost_Open'&$orderby=DocNum";
   
       $.ajax({
         url: sUrl,
@@ -60,7 +60,7 @@ sap.ui.define([
         },
         error: function (xhr, status, error) {
           this.closeLoadingFragment();
-          console.log("Error Occured");
+          console.log("Error Occured:" + error);
         },
         success: function (json) {
        
@@ -86,7 +86,7 @@ sap.ui.define([
       var oView = that.getView();
      
       var sServerName = localStorage.getItem("ServerID");
-      var sUrl = sServerName + "/b1s/v1/PurchaseDeliveryNotes?$select=DocNum,CardCode,CardName,NumAtCard,DocDueDate,DocDate,TaxDate&$filter=DocNum eq " + searchF + " and DocumentStatus eq 'bost_Open'";
+      var sUrl = sServerName + "/b1s/v1/PurchaseOrders?$select=DocNum,DocEntry,CardCode,CardName,NumAtCard,DocDueDate,DocDate,TaxDate&$filter=DocNum eq " + searchF + " and DocumentStatus eq 'bost_Open'";
   
       $.ajax({
         url: sUrl,
@@ -127,7 +127,7 @@ sap.ui.define([
          }
 		},
 
-      onReceivedItem: function(evt) {
+  onReceivedItem: function(evt) {
         
         localStorage.setItem("DocNo", "");
         localStorage.setItem("VendorCode", "");
@@ -139,6 +139,7 @@ sap.ui.define([
         localStorage.setItem("DocNo", oList[i].DocNum);
         localStorage.setItem("VendorCode", oList[i].CardCode);
         localStorage.setItem("VendorName", oList[i].CardName);
+        localStorage.setItem("DocEntry", oList[i].DocEntry);
              
         this.clearSelection();
         this.onGotoReceived();

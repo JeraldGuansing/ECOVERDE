@@ -45,8 +45,8 @@ sap.ui.define([
 		this.router.navTo("homeScreen");
 		
 		this.getView().byId("userID").setText("User:   " + localStorage.getItem("userName"));
-		this.getView().byId("whsID").setText("Warehouse:   " + localStorage.getItem("wheseID"));
-	
+		this.getView().byId("whsID").setText("Warehouse Code:   " + localStorage.getItem("wheseID"));
+		this.getView().byId("whsName").setText(localStorage.getItem("wheseNm"));
 	},
 
     onItemSelect: function (oEvent) {
@@ -69,7 +69,7 @@ sap.ui.define([
 				this.onMenuButtonPress();
 				break;
 			case "Transfer":
-				this.router.navTo("Unit");
+				this.router.navTo("transferView");
 				this.onMenuButtonPress();
 				break;
 			case "Count":
@@ -214,7 +214,6 @@ sap.ui.define([
 			  this.Vendorlist = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.fragment.vendor", this);
 			  this.getView().addDependent(this.Vendorlist);
 			}
-		
 			sap.ui.getCore().byId("VendorIDs").setValue("");
 			sap.ui.getCore().byId("VendorIDs").setSelectedKey("");
 		   	

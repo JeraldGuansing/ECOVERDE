@@ -40,8 +40,19 @@ sap.ui.define([
   initialize: function(vFromId){
     this.oModel = new JSONModel("model/item.json");
     this.getView().setModel(this.oModel, "oModel");
+    var oView = this.getView();
+    oView.byId("venID").setText(localStorage.getItem("VendorCode"));
+    oView.byId("venName").setText(localStorage.getItem("VendorName"));
 
-    this.onGetListVendor();
+    // var today = new Date();
+    // var dd = String(today.getDate()).padStart(2, '0');
+    // var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    // var yyyy = today.getFullYear();
+    
+    // today =  yyyy+ mm + dd;
+    // this.byId("DP8").setValue(today);
+
+    this.onGetReturnList();
   },
 
     onPressReturnlist: function(){
@@ -56,36 +67,13 @@ sap.ui.define([
 
     onPressCopyReturn: function(){
       this.router = this.getOwnerComponent().getRouter();
-      this.router.navTo("goodsReturn");
+      this.router.navTo("returnWref");
     },
 
     onPressIssuance: function(){
       this.router = this.getOwnerComponent().getRouter();
-      this.router.navTo("goodsIssuance");
+      this.router.navTo("goodsIssueMenu");
     },
-
-    onGetListVendor: function(){
-      var that = this;   
-      that.openLoadingFragment();
-        var sServerName = localStorage.getItem("ServerID");
-        var sUrl = sServerName + "/b1s/v1/BusinessPartners?$select=CardCode,CardName";
-        $.ajax({
-          url: sUrl,
-          type: "GET",
-          dataType: 'json',
-          crossDomain: true,
-          xhrFields: {
-            withCredentials: true},
-          success: function(response){
-            that.oModel.getData().VendorList = response.value;
-            that.oModel.refresh();
-            that.closeLoadingFragment()
-          }, error: function() { 
-            that.closeLoadingFragment()
-            console.log("Error Occur");
-          }
-      })
-    }, 
 
     onGetReturnList: function(){
       this.openLoadingFragment();
@@ -93,7 +81,7 @@ sap.ui.define([
      
      
       var sServerName = localStorage.getItem("ServerID");
-      var sUrl = sServerName + "/b1s/v1/PurchaseReturns?$select=DocNum,CardCode&$filter=CardCode eq '" +  localStorage.getItem("VendorCode") +"'";
+      var sUrl = sServerName + "/b1s/v1/PurchaseDeliveryNotes?$select=DocNum,DocEntry,NumAtCard,DocDueDate,DocDate,TaxDate&$filter=CardCode eq '" +  localStorage.getItem("VendorCode") +"'";
   
       $.ajax({
         url: sUrl,
@@ -134,6 +122,33 @@ closeLoadingFragment : function(){
       if(this.oDialog){
         this.oDialog.close();
       }
+    },
+
+getContextByIndex: function(evt) {
+			var oTable = this.byId("tblID");
+			var iIndex = oTable.getSelectedIndex();
+			if (iIndex < 0) {
+				MessageToast.show("Please Select Item first");
+			} else {
+          this.onCopyGRPO();
+         }
+		},
+
+  onCopyGRPO: function(evt) {
+        
+      localStorage.setItem("DocNo", "");
+      
+      var i = this.byId("tblID").getSelectedIndices();
+      var oList =  this.oModel.getData().goodsRetlist;
+     
+      localStorage.setItem("DocNo", oList[i].DocNum);
+      localStorage.setItem("DocEntry", oList[i].DocEntry);
+      this.clearSelection();
+      this.onPressCopyReturn();
+    },
+
+    clearSelection: function(evt) {
+      this.byId("tblID").clearSelection();
     },
 
   });

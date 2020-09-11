@@ -1,12 +1,43 @@
- <mvc:View controllerName="com.ecoverde.undefined.controller.transferView"
+ <mvc:View controllerName="com.ecoverde.ECOVERDE.controller.transferView"
   displayBlock="true"
-  xmlns="sap.m"
-  xmlns:mvc="sap.ui.core.mvc">
+ xmlns="sap.m"
+	xmlns:f="sap.ui.layout.form" 
+	xmlns:core="sap.ui.core" 
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc">
   <App id="transferView" >
-    <pages>
-      <Page title="{i18n>title}">
-        <content></content>
+     <Page showHeader="false">
+          <VBox>
+            <FlexBox
+              height="100px"
+              alignItems="Start"
+              justifyContent="Center">
+                <Image src="./resources/img/ecoverde.png"/>
+              </FlexBox>
+          </VBox>
+   	<f:SimpleForm
+          layout="ResponsiveGridLayout"
+          editable="true"
+          title="Transfer"
+          adjustLabelSpan="false"
+          labelSpanXL="2"
+          labelSpanL="2"
+          labelSpanM="2"
+          labelSpanS="5">
+	  </f:SimpleForm>
+      <content>
+        <TileContainer height="210px" id="container">
+            <StandardTile icon="sap-icon://request" title="Transfer Request" press="onGotoRequest" />
+            <StandardTile icon="sap-icon://inventory" title="Inventory Transfer" press="onGotoInventory" />
+		  	</TileContainer>
+
+        <!-- <Input id="myBarcode"/>
+         <Button text="Scan" press="onTest"></Button> -->
+          </content>
+      <footer>
+        <Bar>
+        </Bar>
+		  </footer>  
       </Page>
-    </pages>
   </App>
 </mvc:View>

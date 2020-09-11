@@ -16,7 +16,10 @@
     "VendorList":[],
     "goodsRetlist":[],
     "nextPage": [],
-    "prevPage": []
+    "prevPage": [],
+    "warehouses":[],
+    "TransferRequest":[],
+    "InventoryTransfer":[]
 
     
 }

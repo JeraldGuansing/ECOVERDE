@@ -1,4 +1,4 @@
- <mvc:View controllerName="com.ecoverde.ECOVERDE.controller.GRScan"
+ <mvc:View controllerName="com.ecoverde.ECOVERDE.controller.transferRequest"
   displayBlock="true"
   xmlns="sap.m"
 	xmlns:f="sap.ui.layout.form" 
@@ -7,31 +7,24 @@
 	xmlns:mvc="sap.ui.core.mvc"
   xmlns:t="sap.ui.table"
 	xmlns:html="http://www.w3.org/1999/xhtml">
-  <App id="GRScan">
-      <Page showHeader="true" title="Goods Receipt">
-              <!-- <VBox>
-                <FlexBox
-                  height="80px"
-                  alignItems="Start"
-                  justifyContent="Center">
-                    <Image src="./resources/img/ecoverde.png"/>
-                </FlexBox>
-              </VBox> -->
-             <!-- <Input id="myBarcode"/>
-              <Button text="Scan" press="ontest"></Button> -->
-      <List>        
-        <InputListItem label="Vendor Code">
-          	  <Label id="Vcode" />
+  <App id="transferRequest" >
+     <Page showHeader="true" title="Transfer Request" showNavButton="true" navButtonPress="onPressNavback">
+        <List>
+        <InputListItem label="From Warehouse">
+          	  <Input id="fromWID"/>
         </InputListItem>
         
-        <InputListItem label="Vendor Name">
-                <Label id="Vname" />
+        <InputListItem label="To Warehouse">
+          <ComboBox id="toWID" items="{oModel>/warehouses}" placeholder="Select Warehouse">
+              <core:Item key="{oModel>WarehouseCode}" text="{oModel>WarehouseName}" />
+          </ComboBox>
         </InputListItem>
   
         <InputListItem label="Posting Date">
              	<DatePicker
               id="DP8"
               displayFormat="MM/dd/YYYY"
+              valueFormat="yyyyMMdd"
               change=""
               class="sapUiSmallMarginBottom"/>
         </InputListItem>
@@ -41,7 +34,7 @@
 
 
              <content>
-                <List items="{oModel>/value}">
+                <List items="{oModel>/TransferRequest}">
                   <items>
                     <ObjectListItem id="list" title="{oModel>ItemCode}"
                             number="{oModel>Quantity}"
@@ -63,7 +56,7 @@
     <footer>
 			<Bar>
 				<contentLeft>
-					<Button text="Add" press="onAddItem" icon="sap-icon://add"/>
+					<Button text="Add" press="onPressAddI" icon="sap-icon://add"/>
 				</contentLeft>
         <contentMiddle>
 					<Button text="Scan" press="onScan" icon="sap-icon://camera"/>
@@ -75,5 +68,5 @@
 		</footer>
 
   </Page>
-</App>
+  </App>
 </mvc:View>

@@ -28,7 +28,7 @@
       <content>
         <TileContainer height="210px" id="container">
             <StandardTile icon="sap-icon://shipping-status" title="Issuance to Project" press="onSelectParamV" />
-            <StandardTile icon="sap-icon://insurance-house" title="Return to Supplier" press="onPressReturnlist" />
+            <StandardTile icon="sap-icon://insurance-house" title="Return to Supplier" press="onSelectVendorShow" />
 		  	</TileContainer>
 
         <!-- <Input id="myBarcode"/>

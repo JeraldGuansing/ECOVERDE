@@ -92,6 +92,14 @@
                         <Text text="{oModel>TaxDate}" wrapping="false" />
                       </t:template>
                     </t:Column>
+
+                      <t:Column width="6rem">
+                      <Label text="Doc Entry" />
+                      <t:template>
+                        <Text text="{oModel>DocEntry}" wrapping="false" />
+                      </t:template>
+                    </t:Column>
+
                 </t:columns>
             </t:Table>
         </content>

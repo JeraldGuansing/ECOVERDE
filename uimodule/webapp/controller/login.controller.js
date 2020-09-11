@@ -124,9 +124,8 @@ sap.ui.define([
 			
 			var sUserName =localStorage.getItem("userName");
 			var sServerName = localStorage.getItem("ServerID");
-			var sUrl = sServerName + "/b1s/v1/Users?$select=U_whsCode&$filter=UserCode eq '" + sUserName + "'";
-      var userD=[];
-      var whse;
+      var sUrl = sServerName + "/b1s/v1/$crossjoin(Users,Warehouses)?$expand=Users($select=U_whsCode), Warehouses($select=WarehouseName)&$filter=Users/U_whsCode eq Warehouses/WarehouseCode and Users/UserCode eq '" + sUserName + "'";
+      //var sUrl = sServerName + "/b1s/v1/Users?$select=U_whsCode&$filter=UserCode eq '" + sUserName + "'"
      
 			$.ajax({
 				url: sUrl,
@@ -138,13 +137,11 @@ sap.ui.define([
 				  withCredentials: true
 				},
 				error: function (xhr, status, error){
-				  sap.m.MessageToast.show("Incorrect UserName/Password");
+				  sap.m.MessageToast.show(xhr.responseJSON.error.message.value);
 				},
 				success: function (json) {
-          userD = json.value;
-          whse = userD[0].U_whsCode;
-          localStorage.setItem("wheseID", whse);
-          
+          localStorage.setItem("wheseID", json.value[0].Users.U_whsCode);
+          localStorage.setItem("wheseNm", json.value[0].Warehouses.WarehouseName);
 				},
 				context: that
         });

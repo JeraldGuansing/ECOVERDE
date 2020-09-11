@@ -4,6 +4,15 @@
     xmlns:core="sap.ui.core"
     xmlns:f="sap.ui.layout.form">
     <Dialog>
+            <customHeader>
+			<Toolbar>
+				<!-- <Button type="Back" press="onPress" />-->
+			<ToolbarSpacer/>
+				<!-- <Title text="Title" level="H2"/> -->
+				<ToolbarSpacer/>
+				<Button icon="sap-icon://decline" type="Reject" press="onCloseVendor" ariaLabelledBy="editButtonLabel"/>
+			</Toolbar>
+            </customHeader>
         <content>
             <l:Grid defaultSpan = "L12 M12 S12" width = "auto">
                 <l:content>
@@ -27,20 +36,11 @@
                         <f:formContainers>
                             <f:FormContainer>
                                 <f:formElements>
-                                    <f:FormElement label="Item Details">
-                                        <Input id="codeIDref"/>
-                                        <Input id="nameIDref"/>
-                                    </f:FormElement>
-<!-- 
-                                    <f:FormElement label="Open Quantity">
-                                        <Input id="rQtyref" type="Number"/>
-                                    </f:FormElement> -->
-
-                                    <f:FormElement label="Receiving Quantity">
-                                       <Input id="qtyIDref" placeholder="Input Quantity" type="Number"/>
-                                     
-                                    </f:FormElement>
-                                    
+                                    <f:FormElement label="Vendor">
+                                        <ComboBox id="retVendorIDs" showButton="true" placeholder="Select Item Vendor" selectionChange="onSelectUoM" items="{oModel>/VendorList}">
+                                            <core:Item key="{oModel>CardCode}" text="{oModel>CardName}" />
+                                        </ComboBox>
+                                    </f:FormElement>                                    
                                 </f:formElements>
                             </f:FormContainer>
                         </f:formContainers>
@@ -49,10 +49,11 @@
             </l:Grid>
         </content>
         <beginButton>
-            <Button text="Cancel" icon="sap-icon://sys-cancel" press="onCloseEditItem" type="Reject"/>
+            <Button text="Cancel" icon="sap-icon://inspect-down" press="onCloseVendor" type="Reject"/>
         </beginButton>
+    
         <endButton>
-            <Button text="Save" icon="sap-icon://save" press="onSaveEdit" type="Accept" />
+            <Button text="Next" icon="sap-icon://open-command-field" press="onSaveVendor" type="Accept" />
         </endButton>
     </Dialog>
 </core:FragmentDefinition>

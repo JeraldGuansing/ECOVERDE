@@ -9,17 +9,33 @@
 	xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:tnt="sap.tnt">
   <App id="GrReference" >
-      <Page showHeader="false">
-        <content>
-           <ObjectHeader title="Doc No." id="docID">
-                <attributes>
-                    <!-- <ObjectAttribute "/> -->
-                    <ObjectAttribute title="Vendor Code" id="venID"/>
-                    <ObjectAttribute title="Vendor Name" id="venName"/>
-                </attributes>
-            </ObjectHeader>
-         <!-- <Input id="myBarcode"/>
-              <Button text="Scan" press="ontest"></Button> -->
+      <Page title="Good Receipt PO" showNavButton="true" navButtonPress="onWithRef">
+            <content>
+              <List>
+                
+            <InputListItem label="Doc Num">
+                    <Label id="docID" />
+            </InputListItem>
+
+            <InputListItem label="Vendor Code">
+                  <Label id="venID" />
+            </InputListItem>
+            
+            <InputListItem label="Vendor Name">
+                    <Label id="venName" />
+            </InputListItem>
+      
+            <InputListItem label="Posting Date">
+                  <DatePicker
+                  id="DP8"
+                  displayFormat="YYYY-MM-dd"
+                  valueFormat="yyyyMMdd"
+                  change=""
+                  class="sapUiSmallMarginBottom"/>
+            </InputListItem>
+          
+        </List>
+      <html:br></html:br>
                 <List>
                   <InputListItem id="inptID" label="Receiving Option:">
                     <Switch id="swID" state="false" customTextOn="Scan" customTextOff="Manual"/>
@@ -27,18 +43,15 @@
                 </List>
                 <List id="projectlistid" items="{oModel>/DocumentLines}">
                     <ObjectListItem title="{oModel>ItemCode}"
-                            number="{oModel>receivedQty}/{oModel>Quantity}"
+                            number="{oModel>receivedQty}/{oModel>openQuant}"
                             numberUnit="{oModel>GrossTotal} {oModel>Currency} {oModel>TaxCode}"
                             type="Active"
                             press = "onPressItem"
-                            icon="sap-icon://product"
+                            icon="sap-icon://add-product"
                             intro="{oModel>ItemDescription}">
                             <firstStatus>
 				                      <ObjectStatus text=" {oModel>UoMCode}"/>
                             </firstStatus>
-                            <!-- <attributes>
-                              <ObjectAttribute title="{oModel>ItemDescription}"/>
-                            </attributes> -->
                     </ObjectListItem>
                 </List>
         </content>
@@ -51,7 +64,7 @@
 				      	<Button text="Scan" press="onScan" icon="sap-icon://camera"/>
 			      	</contentMiddle>
               <contentRight>
-				      	<Button text="Post" press="onPostingGR" icon="sap-icon://manager-insight"/>
+				      	<Button text="Post" press="onConfirmPosting" icon="sap-icon://manager-insight"/>
 			      	</contentRight>
             </Bar>
         </footer>

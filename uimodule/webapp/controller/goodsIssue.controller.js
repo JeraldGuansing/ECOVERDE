@@ -12,7 +12,7 @@ sap.ui.define([
   "use strict";
 
   return Controller.extend("com.ecoverde.ECOVERDE.controller.goodsIssue", {
-  onInit: function(){
+onInit: function(){
       var that = this;
 	    var oView = this.getView();
 
@@ -36,17 +36,17 @@ sap.ui.define([
         });
   },
   
-  initialize: function(vFromId){
+initialize: function(vFromId){
     this.oModel = new JSONModel("model/item.json");
     this.getView().setModel(this.oModel, "oModel");
   },
 
-  onPressIssuance: function(){
+onPressIssuance: function(){
     this.router = this.getOwnerComponent().getRouter();
     this.router.navTo("goodsIssuance");
   },
 
-  onSelectParamV: function(){
+onSelectParamV: function(){
     if (!this.project) {
       this.project = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.fragment.project", this);
       this.getView().addDependent(this.project);
@@ -69,11 +69,9 @@ onCloseParamV: function(){
   if(this.project){
   this.project.close();
     }
-    // this.closeLoadingFragment();
-  
   },
 
-  onSaveDial:function(){
+onSaveDial:function(){
     var VendName = sap.ui.getCore().byId("isVendor").getValue();
     var projName = sap.ui.getCore().byId("isProject").getValue();
     
@@ -96,13 +94,11 @@ onCloseParamV: function(){
   },
 
   onPressReturnlist: function(){
-    this.router = this.getOwnerComponent().getRouter();
-    this.router.navTo("goodsReturnList");
+  
   },
 
   onGetListVendor: function(){
-    var that = this;
-    this.openLoadingFragment();   
+    var that = this;  
       var sServerName = localStorage.getItem("ServerID");
       var sUrl = sServerName + "/b1s/v1/BusinessPartners?$select=CardCode,CardName&$filter=CardType eq 'cSupplier'";
       $.ajax({
@@ -115,7 +111,7 @@ onCloseParamV: function(){
         success: function(response){
           that.oModel.getData().VendorList = response.value;
           that.oModel.refresh();
-          that.closeLoadingFragment()
+        
         }, error: function() { 
           that.closeLoadingFragment()
           console.log("Error Occur");
@@ -163,7 +159,107 @@ onCloseParamV: function(){
     }
   },
 
+  onChooseProc: function () {
+    var that = this;
+    MessageBox.information("Copy from GRPO?", {
+      actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+      title: "Goods Receiving Option",
+      icon: MessageBox.Icon.QUESTION,
+      styleClass:"sapUiSizeCompact",
+      onClose: function (sButton) {
+        if(sButton === "YES"){
+          that.onWithRef(); 
+          that.onCloseVendor();
+        }else if (sButton === "NO"){
+          that.onWithoutRef();
+          that.onCloseVendor();
+        }
+      }
+      
+    });
+  },
 
+  
+onWithoutRef: function(){
+    this.router = this.getOwnerComponent().getRouter();
+    this.router.navTo("goodsReturn");
+  },
+
+onWithRef: function (){
+    this.router = this.getOwnerComponent().getRouter();
+    this.router.navTo("goodsReturnList");
+  },
+
+onWithout: function (){
+  },
+
+oncheckinGRPO: function(){
+    this.openLoadingFragment();
+    var that = this;
+    var oView = that.getView();
+   
+    var sServerName = localStorage.getItem("ServerID");
+    var sUrl = sServerName + "/b1s/v1/PurchaseDeliveryNotes?$select=DocNum&$filter=DocumentStatus eq 'bost_Open' and CardCode eq '" + localStorage.getItem("VendorCode") +"'";
+
+    $.ajax({
+      url: sUrl,
+      type: "GET",
+      crossDomain: true,
+      xhrFields: {
+        withCredentials: true
+      },
+      error: function (xhr, status, error) {
+        this.closeLoadingFragment();
+        console.log("Error Occured:" + xhr.responseJSON.error.message.value);
+      },
+      success: function (json) {
+          if(json.value != 0){
+            that.onChooseProc();
+          }else{
+            that.onWithoutRef();
+            that.onCloseVendor();
+          }
+      
+      this.closeLoadingFragment();
+      },
+      context: this
+    });
+  },
+
+
+onSelectVendorShow: function(){
+  this.openLoadingFragment();
+    if (!this.retVendorList) {
+      this.retVendorList = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.fragment.retVendor", this);
+      this.getView().addDependent(this.retVendorList);
+    }
+  
+    sap.ui.getCore().byId("retVendorIDs").setValue("");
+    sap.ui.getCore().byId("retVendorIDs").setSelectedKey("");
+       
+    this.onGetListVendor();
+    this.retVendorList.open();
+    this.closeLoadingFragment();
+    },
+
+onCloseVendor: function(){
+		  if(this.retVendorList){
+		  this.retVendorList.close();}
+      },
+      
+onSaveVendor:function(){
+    var VendName = sap.ui.getCore().byId("retVendorIDs").getValue();
+        
+    if(VendName == ""){
+      sap.m.MessageToast.show("Please select Vendor");
+      this.closeLoadingFragment();
+      return;
+    }else{
+      localStorage.setItem("VendorName",sap.ui.getCore().byId("retVendorIDs").getValue());
+      localStorage.setItem("VendorCode",sap.ui.getCore().byId("retVendorIDs").getSelectedKey());
+      this.oncheckinGRPO();
+    }
+},
 
   });
 });

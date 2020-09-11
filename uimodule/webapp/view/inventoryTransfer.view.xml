@@ -1,0 +1,73 @@
+ <mvc:View controllerName="com.ecoverde.ECOVERDE.controller.inventoryTransfer"
+  displayBlock="true"
+  xmlns="sap.m"
+	xmlns:f="sap.ui.layout.form" 
+	xmlns:core="sap.ui.core" 
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+  xmlns:t="sap.ui.table"
+   xmlns:tnt="sap.tnt"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+  <App id="inventoryTransfer" >
+     <Page showHeader="true" title="Inventory Transfer" showNavButton="true" navButtonPress="onPressIssuance">    
+       <content>
+          <List>
+            <InputListItem label="Warehouse Code">
+                <Input id="whseID" />
+            </InputListItem> 
+             <InputListItem label="Warehouse Name">
+                <Input id="whseNM" />
+            </InputListItem> 
+          </List>
+
+        <html:br></html:br>
+
+            <t:Table id="tblID" rows="{oModel>/InventoryTransfer}" cellClick="" selectionMode="Single" ariaLabelledBy="title">
+                <t:columns>
+                    <t:Column width="5em">
+                      <Label text="DocNum" />
+                      <t:template>
+                        <Text text="{oModel>InventoryTransferRequests/DocNum}" wrapping="false" />
+                      </t:template>
+                    </t:Column>
+
+                    <t:Column width="16rem">
+                      <Label text="Requesting Whse" />
+                      <t:template>
+                        <Text text="{oModel>InventoryTransferRequests/FromWarehouse} - {oModel>Warehouses/WarehouseName}" wrapping="false" />
+                      </t:template>
+                    </t:Column>
+
+                     <t:Column width="6rem">
+                      <Label text="Posting Date" />
+                      <t:template>
+                        <Text text="{oModel>InventoryTransferRequests/DocDate}" wrapping="false" />
+                      </t:template>
+                    </t:Column>
+
+                    <t:Column width="6rem">
+                      <Label text="DocEntry" />
+                      <t:template>
+                        <Text text="{oModel>InventoryTransferRequests/DocEntry}" wrapping="false" />
+                      </t:template>
+                    </t:Column>
+                  
+                </t:columns>
+            </t:Table>
+        </content>
+          <footer>
+            <Bar>
+            <contentLeft>
+                <Button text="Refresh" press="initialize" icon="sap-icon://synchronize" />
+              </contentLeft>
+
+              <contentRight>
+                <Button text="Copy" press="getContextByIndex" icon="sap-icon://copy" />
+              </contentRight>
+            </Bar>
+          </footer>
+
+      </Page>
+ 
+  </App>
+</mvc:View>

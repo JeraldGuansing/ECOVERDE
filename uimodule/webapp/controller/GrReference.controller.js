@@ -16,10 +16,12 @@ sap.ui.define([
   var tcodes;
   var listpath;
   var indS;
+  var lineNum;
   return Controller.extend("com.ecoverde.ECOVERDE.controller.GrReference", {
    
     onInit: function(){
       var that = this;
+
 	    var oView = this.getView();
 
         oView.addEventDelegate({
@@ -53,26 +55,26 @@ initialize: function(vFromId){
       this.oModel = new JSONModel("model/item.json");
       this.getView().setModel(this.oModel, "oModel");
 
-      oView.byId("docID").setTitle("Doc Num: " + localStorage.getItem("DocNo"));
+      oView.byId("docID").setText(localStorage.getItem("DocNo"));
       oView.byId("venID").setText(localStorage.getItem("VendorCode"));
       oView.byId("venName").setText(localStorage.getItem("VendorName"));
       oView.byId("inptID").setVisible(false);
-        this.oModel.setData({receiving:[]});
-        this.oModel.updateBindings(true);
+        // this.oModel.setData({receiving:[]});
+        // this.oModel.updateBindings(true);
       this.onGRList();
+      // console.log(this.oModel.getData())
+      var today = new Date();
+      var dd = String(today.getDate()).padStart(2, '0');
+      var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+      var yyyy = today.getFullYear();
       
+      today =  yyyy+ mm + dd;
+      this.byId("DP8").setValue(today);
+
     },
 
-    // onTest: function(){
-    //   localStorage.setItem("sBarcode", this.getView().byId("myBarcode").getValue());
-    //   that.openLoadingFragment();
-    //   that.onScanBarcode();
-    // },
 
-  
-
-
-    onScan: function() {
+onScan: function() {
       var that = this;
             cordova.plugins.barcodeScanner.scan(
               function (result) {
@@ -146,52 +148,63 @@ onScanBarcode: function(){
         that.closeLoadingFragment()
     },
 
-
-  
-onPostingGR: function(){
-
-      var itemJSON = this.oModel.getData().forPosting;
-
+onConfirmPosting: function(){
+      var that = this;
+      var itemJSON = that.oModel.getData().forPosting;
       if(parseInt(itemJSON.length) == 0){
         sap.m.MessageToast.show("Please Scan/Input item First");
       }
       else{
 
+      
+      if(parseInt(itemJSON.length) == 0){
+        sap.m.MessageToast.show("Please Scan/Input item First");
+      }
+      else{
+
+      MessageBox.information("Are you sure you want to [POST] this transaction?", {
+        actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+        title: "POST Goods Receipt w/out PO",
+        icon: MessageBox.Icon.QUESTION,
+        styleClass:"sapUiSizeCompact",
+        onClose: function (sButton) {
+          if(sButton === "YES"){
+            that.onPostingGR();
+          }}
+      });
+      }
+    }
+    },
+    
+onPostingGR: function(){
       var that = this;
+      var oView = that.getView();
       that.openLoadingFragment();
       var sServerName = localStorage.getItem("ServerID");
       var sUrl = sServerName + "/b1s/v1/PurchaseDeliveryNotes";
       var oBody = {
         "CardCode": localStorage.getItem("VendorCode"),
+        "DocType": "dDocument_Items",
+        "DocDate": oView.byId("DP8").getValue(),
         "DocumentLines": []};          
       
       var StoredItem = this.oModel.getData().forPosting;
       for(var i = 0;i < StoredItem.length;i++){
-        if(StoredItem[i].Quantity !=0){
-        if(StoredItem[i].Quantity == StoredItem[i].receivedQty){
+        if(StoredItem[i].Quantity !=0){      
           oBody.DocumentLines.push({
             "ItemCode": StoredItem[i].ItemCode,
             "Quantity": StoredItem[i].Quantity,
             "TaxCode": StoredItem[i].TaxCode,
-            "UnitPrice": StoredItem[i].UnitPrice,
-            "LineStatus": "bost_Close",
+            "UnitPrice": StoredItem[i].UnitPrice,  
+            "BaseEntry" : localStorage.getItem("DocEntry"),
+            "BaseType": "22",
+            "BaseLine": StoredItem[i].lineNum,
             "WarehouseCode": localStorage.getItem("wheseID")
           });
-        }else{
-          oBody.DocumentLines.push({
-            "ItemCode": StoredItem[i].ItemCode,
-            "Quantity": StoredItem[i].Quantity,
-            "TaxCode": StoredItem[i].TaxCode,
-            "UnitPrice": StoredItem[i].UnitPrice,
-            "RemainingOpenQuantity":  StoredItem[i].RemainingOpenQuantity,
-            "WarehouseCode": localStorage.getItem("wheseID")
-          });
-          }
-         }
         }
-      
-        //console.log(oBody);
-      oBody = JSON.stringify(oBody);        
+      }
+        // console.log(oBody);  
+          oBody = JSON.stringify(oBody);
           $.ajax({
             url: sUrl,
             type: "POST",
@@ -202,24 +215,26 @@ onPostingGR: function(){
             xhrFields: {withCredentials: true},
             error: function (xhr, status, error) {
               that.closeLoadingFragment();
-              sap.m.MessageToast.show("Unable to post the Item");
+              sap.m.MessageToast.show("Unable to post the Item:\n" + xhr.responseJSON.error.message.value);
               },
             success: function (json) {
               //console.log(json);
               that.closeLoadingFragment();
-                    MessageBox.information("Item successfully received", {
+                    MessageBox.information("Item successfully received \nCreated Doc number:" + json.DocNum, {
                       actions: [MessageBox.Action.OK],
                       title: "Goods Receipt PO",
                       icon: MessageBox.Icon.INFORMATION,
                       styleClass:"sapUiSizeCompact",
                       onClose: function () {
+                        // that.getView().destroy();
                         that.onWithRef();
                       }
                     });
                   
                   },context: this
                 });
-              }
+
+                //Update Purchase Order;
      },
 
 onPressItem: function(oEvent){
@@ -243,16 +258,16 @@ onPressItem: function(oEvent){
           listpath = myInputControl.getBindingContext('oModel').getPath();
           var indexItem = listpath.split("/");
           indS =indexItem[2];
-
-          console.log(boundData);
+          lineNum = boundData.LineNum;
+          // console.log(boundData);
 
 
           if(rState === true){
-            if(rQty[0] === rQty[1]){
+            if(rQty[0] == rQty[1]){
             that.onScan();
             }
           }else{ 
-            if(rQty[0] === rQty[1]){
+            if(rQty[0] >= rQty[1]){
               MessageBox.information("Do you want to Modify?", {
                 actions: [MessageBox.Action.YES, MessageBox.Action.NO],
                 title: "Goods Receipt PO",
@@ -261,14 +276,15 @@ onPressItem: function(oEvent){
                 onClose: function (sButton) {
                   if(sButton == "YES"){
                   that.onEditItem();
+               
                   sap.ui.getCore().byId("codeIDref").setValue(boundData.ItemCode);
                   sap.ui.getCore().byId("nameIDref").setValue(boundData.ItemDescription);
-                  sap.ui.getCore().byId("rQtyref").setValue(boundData.Quantity);
+                  //sap.ui.getCore().byId("rQtyref").setValue(boundData.Quantity);
                   sap.ui.getCore().byId("qtyIDref").setValue(boundData.receivedQty);
 
                   sap.ui.getCore().byId('codeIDref').setEnabled(false);
                   sap.ui.getCore().byId('nameIDref').setEnabled(false);
-                  sap.ui.getCore().byId("rQtyref").setEnabled(false);
+                  // sap.ui.getCore().byId("rQtyref").setEnabled(false);
                   // that.onShowEdit();
                 }
                 }
@@ -296,11 +312,8 @@ onPressItem: function(oEvent){
         }
      },
 
- onSaveEdit: function(){
-    
- },
 
-  onGetAddItem: function(){
+onGetAddItem: function(){
       var that = this;
       //var docID = localStorage.getItem("DocNo")
       var itCode = sap.ui.getCore().byId("codeID").getValue()
@@ -316,6 +329,7 @@ onPressItem: function(oEvent){
       //   sap.m.MessageToast.show("Input quantity exceed to remaining quantity");
       //   return;
       }else{
+        var remQty;
         var StoredItem = that.oModel.getData().DocumentLines;
         const oITM = StoredItem.filter(function(OIT){
         return OIT.ItemCode == itCode;})
@@ -324,19 +338,24 @@ onPressItem: function(oEvent){
             if(cResult == 0){
             }else{
               oITM[0].RemainingOpenQuantity = parseInt(oITM[0].RemainingOpenQuantity) - parseInt(sQtyID);
-              oITM[0].receivedQty = parseInt(oITM[0].Quantity) - parseInt(oITM[0].RemainingOpenQuantity)
+              oITM[0].receivedQty = parseInt(oITM[0].receivedQty) + parseInt(sQtyID); 
             }
           
+            remQty = oITM[0].RemainingOpenQuantity;
+
             var RecItem = that.oModel.getData().forPosting;
             const rITM = RecItem.filter(function(RIT){
             return RIT.ItemCode == itCode;})
+
 
             var rResult = parseInt(rITM.length);
             if(rResult == 0){
             
               that.oModel.getData().forPosting.push({
+                "lineNum": lineNum,
                 "ItemCode": itCode,
                 "Quantity": sQtyID,
+                "remainingQ": remQty,
                 "TaxCode": staxCode,
                 "UnitPrice": sunitPr
               });
@@ -346,17 +365,17 @@ onPressItem: function(oEvent){
             }
 
             this.oModel.refresh();
+            //console.log(that.oModel.getData());
             this.onCloseAdd();    
       }
   },
 
-    onGRList: function(){
+onGRList: function(){
       var that = this;
-     
       that.openLoadingFragment();
       var docID = localStorage.getItem("DocNo");
       var sServerName = localStorage.getItem("ServerID");
-      var sUrl = sServerName + "/b1s/v1/PurchaseDeliveryNotes(" + docID + ")?$select=DocumentLines";
+      var sUrl = sServerName + "/b1s/v1/PurchaseOrders?$select=DocNum,DocumentLines&$filter=DocNum eq " + docID;
     
       $.ajax({
         url: sUrl,
@@ -366,57 +385,67 @@ onPressItem: function(oEvent){
         xhrFields: {
           withCredentials: true},
         success: function(response){
-         //that.oModel.getData().DocumentLines  = response.DocumentLines;
-         var rResult = response.DocumentLines;
-         for(var i = 0;i < rResult.length;i++){
-         that.oModel.getData().DocumentLines.push({
-           "DocNum": docID,
-           "ItemCode":rResult[i].ItemCode,
-           "ItemDescription": rResult[i].ItemDescription,
-           "BarCode":  rResult[i].BarCode,
-           "UnitPrice": rResult[i].UnitPrice,
-           "TaxCode": rResult[i].TaxCode,
-           "Quantity": rResult[i].Quantity,
-           "RemainingOpenQuantity": rResult[i].RemainingOpenQuantity,
-           "receivedQty": rResult[i].Quantity - rResult[i].RemainingOpenQuantity,
-           "LineStatus": rResult[i].LineStatus.replace('bost_',''),
-           "GrossTotal": rResult[i].GrossTotal,
-           "Currency": rResult[i].Currency,
-           "UoMCode": rResult[i].UoMCode
-         });
-       
-       }
+          // console.log(response)
+          //that.oModel.getData().DocumentLines  = response.value[0];
+         var rResult = [];
+         rResult = response.value[0].DocumentLines;
+         try {
+          for(var i = 0;i < rResult.length;i++){
+          if(rResult[i].RemainingOpenQuantity != 0){
+          that.oModel.getData().DocumentLines.push({
+            "DocNum": docID,
+            "ItemCode":rResult[i].ItemCode,
+            "ItemDescription": rResult[i].ItemDescription,
+            "BarCode":  rResult[i].BarCode,
+            "UnitPrice": rResult[i].UnitPrice,
+            "TaxCode": rResult[i].TaxCode,
+            "Quantity":  rResult[i].Quantity,
+            "openQuant": rResult[i].RemainingOpenQuantity,
+            "RemainingOpenQuantity": rResult[i].RemainingOpenQuantity,
+            "receivedQty": "0",
+            "GrossTotal": rResult[i].GrossTotal,
+            "Currency": rResult[i].Currency,
+            "UoMCode": rResult[i].UoMCode,
+            "LineNum": rResult[i].LineNum
+            
+          });
+        }}
+      }
+        catch(err) {
+          that.initialize();
+            // that.router = that.getOwnerComponent().getRouter();
+            // that.router.navTo("homeScreen")
+        }
          that.oModel.refresh();
          that.closeLoadingFragment();
         }, error: function(response) { 
           that.closeLoadingFragment();
-          console.log(response);
         }
     })
     },
 
-    openLoadingFragment: function(){
+openLoadingFragment: function(){
       if (! this.oDialog) {
             this.oDialog = sap.ui.xmlfragment("busyLogin","com.ecoverde.ECOVERDE.view.fragment.BusyDialog", this);   
        }
        this.oDialog.open();
     },
 
-    onCloseAdd: function(){
+onCloseAdd: function(){
       if(this.addItemDialog2){
           this.addItemDialog2.close();
       }
       this.closeLoadingFragment();
     },
 
-    onCloseAddthree: function(){
+onCloseAddthree: function(){
       if(this.addItemDialog3){
           this.addItemDialog3.close();
       }
       this.closeLoadingFragment();
     },
 
-    onAddItem: function(){
+onAddItem: function(){
       if (!this.addItemDialog2) {
           this.addItemDialog2 = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.addItem2", this);
           this.getView().addDependent(this.addItemDialog2);
@@ -424,7 +453,7 @@ onPressItem: function(oEvent){
       this.addItemDialog2.open();
     },
 
-    onEditItem: function(){
+onEditItem: function(){
       if (!this.editWithRef) {
           this.editWithRef = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.fragment.editWithRef", this);
           this.getView().addDependent(this.editWithRef);
@@ -432,14 +461,29 @@ onPressItem: function(oEvent){
       this.editWithRef.open();
     },
 
-    onCloseEditItem: function(){
+onCloseEditItem: function(){
       if(this.editWithRef){
           this.editWithRef.close();
       }
       this.closeLoadingFragment();
     },
 
-    onAddItemThree: function(){
+
+onSaveEdit: function(){
+      var that = this;
+      var StoredItem = that.oModel.getData().DocumentLines;
+      // if(sap.ui.getCore().byId("qtyIDref").getValue() !=0){
+      StoredItem[indS].RemainingOpenQuantity = parseInt(StoredItem[indS].RemainingOpenQuantity) - parseInt(sap.ui.getCore().byId("qtyIDref").getValue());
+      StoredItem[indS].receivedQty = parseInt(sap.ui.getCore().byId("qtyIDref").getValue());
+      // }else{
+      //   //StoredItem.splice(indS,1);
+      // }
+      
+      that.oModel.refresh();
+      that.onCloseEditItem();
+     },
+
+onAddItemThree: function(){
       if (!this.addItemDialog3) {
           this.addItemDialog3 = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.addItem3", this);
           this.getView().addDependent(this.addItemDialog3);
@@ -455,14 +499,14 @@ onPressItem: function(oEvent){
     },
 
   
-  closeLoadingFragment : function(){
+closeLoadingFragment : function(){
     if(this.oDialog){
       this.oDialog.close();
     }
   },
 
 
-  onGetItem: function(){
+onGetItem: function(){
     this.openLoadingFragment();
     var sServerName = localStorage.getItem("ServerID");
     var sUrl = sServerName + "/b1s/v1/Items?$select=ItemCode,ItemName&$filter=BarCode ne 'null'&$filter=Mainsupplier eq '"+ localStorage.getItem("VendorCode"); +"'";
@@ -488,7 +532,7 @@ onPressItem: function(oEvent){
 
   },
 
-  onSelectItemCode: function(){
+onSelectItemCode: function(){
     var itemName = sap.ui.getCore().byId("itmID3").getSelectedKey();
     sap.ui.getCore().byId("itmName3").setValue(itemName);
     this.openLoadingFragment();
@@ -646,7 +690,6 @@ onAdditionalItem: function(){
       "GrossTotal": "",
       "Currency": "",
       "GrossTotal": 0,
-      "LineStatus": "",
       "RemainingOpenQuantity": sQtyID,
       "receivedQty": sQtyID - sQtyID,
       "UnitPrice": 0,
@@ -664,39 +707,10 @@ onAdditionalItem: function(){
   
 },
 
-onPressDelete: function(oEvent){
-  var that = this;
-
-    // var myInputControl = oEvent.getSource();
-    // console.log(myInputControl);
-    // listpath = myInputControl.getBindingContext('projectlistid').getPath(); // e.g. the first item;
-    // var indexItem = listpath.split("/");
-    // indS =indexItem[2];
-
-    var StoredItem = that.oModel.getData().DocumentLines;
-    if(StoredItem[indS].RemainingOpenQuantity != StoredItem[indS].Quantity){
-    MessageBox.information("Are you sure you want to reset this Item??", {
-      actions: [MessageBox.Action.YES, MessageBox.Action.NO],
-      title: "Reset Item",
-      icon: MessageBox.Icon.QUESTION,
-      styleClass:"sapUiSizeCompact",
-      onClose: function (sButton) {
-        if(sButton == "YES"){
-          StoredItem[indS].RemainingOpenQuantity = StoredItem[indS].Quantity;
-          that.oModel.refresh();
-        }
-      }
-    });
-  }
-
-},
-
 onWithRef: function(){
     this.router = this.getOwnerComponent().getRouter();
     this.router.navTo("purchaseOrderList");
 },
-
-
 
   });
 });

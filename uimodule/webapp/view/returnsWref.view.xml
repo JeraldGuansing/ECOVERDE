@@ -1,4 +1,4 @@
- <mvc:View controllerName="com.ecoverde.ECOVERDE.controller.goodsReturn"
+ <mvc:View controllerName="com.ecoverde.ECOVERDE.controller.returnsWref"
   displayBlock="true"
   xmlns="sap.m"
 	xmlns:f="sap.ui.layout.form" 
@@ -6,10 +6,14 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
   xmlns:t="sap.ui.table"
+   xmlns:tnt="sap.tnt"
 	xmlns:html="http://www.w3.org/1999/xhtml">
-  <App id="goodsReturn" >
-    <Page title="Goods Return" showNavButton="true" navButtonPress="onPressNavBack">
-        <List>        
+  <App id="returnsWref" >
+      <Page title="Goods Return" showNavButton="true" navButtonPress="onPressNavBack">
+        <List>
+        <InputListItem label="Vendor Code">
+          	  <Label id="docID" />
+        </InputListItem>        
         <InputListItem label="Vendor Code">
           	  <Label id="Vcode" />
         </InputListItem>
@@ -34,12 +38,9 @@
                             type="Active"
                             press = "onPressItem"
                             icon="sap-icon://database"
-                            intro="{oModel>ItemName}">
-                            <firstStatus>
-				                      <ObjectStatus text=" {oModel>ProjName}"/>
-                            </firstStatus>
+                            intro="{oModel>ItemDescription}">
                             <attributes>
-                              <ObjectAttribute title="{oModel>Barcode}"/>
+                              <ObjectAttribute title="{oModel>BarCode}"/>
                             </attributes>
                     </ObjectListItem>
                 </List>
@@ -49,14 +50,12 @@
              <contentLeft>
 				      	<Button text="Add" press="onPressAddr" icon="sap-icon://add"/>
 			      	</contentLeft>
-              <!-- <contentMiddle>
-				      	<Button text="Scan" press="onScan" icon="sap-icon://camera"/>
-			      	</contentMiddle> -->
               <contentRight>
 				      	<Button text="Post" press="onConfirmPosting" icon="sap-icon://manager-insight"/>
 			      	</contentRight>
             </Bar>
         </footer>
       </Page>
+  
   </App>
 </mvc:View>
