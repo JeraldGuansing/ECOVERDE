@@ -53,7 +53,7 @@ sap.ui.define([
      
       var sServerName = localStorage.getItem("ServerID");
  //     var sUrl = sServerName + "/b1s/v1/InventoryTransferRequests?$select=DocNum,DocEntry,FromWarehouse,DocDate&$filter=DocumentStatus eq 'bost_Open' and ToWarehouse eq '" +  localStorage.getItem("wheseID") +"'";
-      var sUrl = sServerName + "/b1s/v1/$crossjoin(InventoryTransferRequests,Warehouses)?$expand=InventoryTransferRequests($select=DocNum,DocEntry,FromWarehouse,DocDate),Warehouses($select=WarehouseName)&$filter=InventoryTransferRequests/FromWarehouse eq Warehouses/WarehouseCode and InventoryTransferRequests/DocumentStatus eq 'bost_Open' and InventoryTransferRequests/ToWarehouse eq '" +  localStorage.getItem("wheseID") +"'";
+      var sUrl = sServerName + "/b1s/v1/$crossjoin(InventoryTransferRequests,Warehouses)?$expand=InventoryTransferRequests($select=DocNum,DocEntry,FromWarehouse,DocDate,Reference1),Warehouses($select=WarehouseName)&$filter=InventoryTransferRequests/FromWarehouse eq Warehouses/WarehouseCode and InventoryTransferRequests/DocumentStatus eq 'bost_Open' and InventoryTransferRequests/ToWarehouse eq '" +  localStorage.getItem("wheseID") +"'";
   
       $.ajax({
         url: sUrl,
@@ -103,10 +103,11 @@ onCopyReq: function(evt) {
       localStorage.setItem("DocNo", "");
       var i = this.byId("tblID").getSelectedIndices();
       var oList =  this.oModel.getData().InventoryTransfer;
-     console.log(oList)
+     
       localStorage.setItem("DocNo", oList[i].InventoryTransferRequests.DocNum);
       localStorage.setItem("DocEntry", oList[i].InventoryTransferRequests.DocEntry);
       localStorage.setItem("FromWhseID", oList[i].InventoryTransferRequests.FromWarehouse);
+      localStorage.setItem("Reference1", oList[i].InventoryTransferRequests.Reference1);
       localStorage.setItem("FromWhseNM", oList[i].Warehouses.WarehouseName);
       this.clearSelection();
       this.onCopyRequest();
@@ -118,7 +119,7 @@ clearSelection: function(evt) {
 
     onPressNavback: function(){
       this.router = this.getOwnerComponent().getRouter();
-      this.router.navTo("InventoryTransfer");
+      this.router.navTo("transferView");
       },
       
       onCopyRequest: function(){

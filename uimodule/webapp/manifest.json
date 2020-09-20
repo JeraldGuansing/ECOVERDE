@@ -195,7 +195,29 @@
           "target": [
             "InventoryPost"
           ]
+        },
+        {
+          "name": "inventoryCountMenu",
+          "pattern": "inventoryCountMenu",
+          "target": [
+            "inventoryCountMenu"
+          ]
+        },
+        {
+          "name": "CreateCount",
+          "pattern": "CreateCount",
+          "target": [
+            "CreateCount"
+          ]
+        },
+        {
+          "name": "inventoryView",
+          "pattern": "inventoryView",
+          "target": [
+            "inventoryView"
+          ]
         }
+        
       ],
       "targets": {
         "login": {
@@ -356,8 +378,37 @@
           "controlAggregation": "pages",
           "viewLevel": 3,
           "transition": "flip"
+        },
+        "inventoryCountMenu": {
+          "viewPath": "com.ecoverde.ECOVERDE.view",
+          "viewType": "XML",
+          "viewName": "invantoryCount",
+          "parent": "main",
+          "controlId": "pageContainer",
+          "controlAggregation": "pages",
+          "viewLevel": 3,
+          "transition": "flip"
+        },
+        "CreateCount": {
+          "viewPath": "com.ecoverde.ECOVERDE.view",
+          "viewType": "XML",
+          "viewName": "CreateCount",
+          "parent": "main",
+          "controlId": "pageContainer",
+          "controlAggregation": "pages",
+          "viewLevel": 3,
+          "transition": "flip"
+        },
+        "inventoryView": {
+          "viewPath": "com.ecoverde.ECOVERDE.view",
+          "viewType": "XML",
+          "viewName": "viewCount",
+          "parent": "main",
+          "controlId": "pageContainer",
+          "controlAggregation": "pages",
+          "viewLevel": 3,
+          "transition": "flip"
         }
-        
       }
     }
   }

@@ -19,7 +19,33 @@
     "prevPage": [],
     "warehouses":[],
     "TransferRequest":[],
-    "InventoryTransfer":[]
+    "InventoryTransfer":[],
+    "SelectedItemCount":[],
+    "countType":[
+        {
+            "Code": "ctSingleCounter",
+            "type": "Single Counting"
+        },
+        {
+            "Code": "ctMultipleCounters",
+            "type": "Multiple Counters"
+        }
+    ],
+    "counterType":[
+        {
+            "Code": "ctUser",
+            "ustype": "User"
+        },
+        {
+            "Code": "ctEmployee",
+            "ustype": "Employee"
+        }
+    ],
+    "Counters":[],
+    "Employee":[],
+    "addingCount":[]
+
+
 
     
 }

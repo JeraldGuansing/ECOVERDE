@@ -81,7 +81,7 @@ sap.ui.define([
      
      
       var sServerName = localStorage.getItem("ServerID");
-      var sUrl = sServerName + "/b1s/v1/PurchaseDeliveryNotes?$select=DocNum,DocEntry,NumAtCard,DocDueDate,DocDate,TaxDate&$filter=CardCode eq '" +  localStorage.getItem("VendorCode") +"'";
+      var sUrl = sServerName + "/b1s/v1/PurchaseDeliveryNotes?$select=DocNum,DocEntry,NumAtCard,DocDueDate,DocDate,TaxDate&$filter=DocumentStatus eq 'bost_Open' and CardCode eq '" +  localStorage.getItem("VendorCode") +"'";
   
       $.ajax({
         url: sUrl,
@@ -92,7 +92,7 @@ sap.ui.define([
         },
         error: function (xhr, status, error) {
           this.closeLoadingFragment();
-          console.log("Error Occured: " + error);
+          console.log(xhr.responseJSON.error.message.value);
         },
         success: function (json) {
        

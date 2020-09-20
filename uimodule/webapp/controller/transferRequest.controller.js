@@ -102,6 +102,9 @@ sap.ui.define([
       },
 
       onPressAddI: function(){
+        if(this.getView().byId("toWID").getValue() == ""){
+          sap.m.MessageToast.show("Please select warehouse first");
+        }else{
         if (!this.transferReq) {
           this.transferReq = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.fragment.transferRequest", this);
           this.getView().addDependent(this.transferReq);
@@ -117,6 +120,7 @@ sap.ui.define([
         this.onGetItemReq();
         this.transferReq.open();
         this.closeLoadingFragment();
+       }
       },
 
       onGetItemReq: function(){
@@ -162,7 +166,6 @@ sap.ui.define([
           // this.onGetListOfUOM();
       },
       
-  
       onSelectItemName: function(){
         var itemCode = sap.ui.getCore().byId("reqItemName").getSelectedKey();
         sap.ui.getCore().byId("reqtemCode").setValue(itemCode);
@@ -325,6 +328,8 @@ sap.ui.define([
           var sServerName = localStorage.getItem("ServerID");
           var sUrl = sServerName + "/b1s/v1/InventoryTransferRequests";
           var oBody = {
+            "FromWarehouse":  localStorage.getItem("wheseID"),
+            "ToWarehouse": that.getView().byId("toWID").getSelectedKey(),  
             "DocDate": that.getView().byId("DP8").getValue(),
             "StockTransferLines": []};          
           
@@ -335,11 +340,11 @@ sap.ui.define([
               "Quantity": StoredItem[i].Quantity,
               "UoMEntry": StoredItem[i].AbsEntry,
               "UoMCode": StoredItem[i].UoMCode,
-              "ToWarehouse": StoredItem[i].WarehouseCode,
+              "WarehouseCode": that.getView().byId("toWID").getSelectedKey(),
               "FromWarehouseCode": localStorage.getItem("wheseID")
               });
             }
-            console.log(oBody);
+            // console.log(oBody);
           oBody = JSON.stringify(oBody);        
               $.ajax({
                 url: sUrl,
@@ -374,6 +379,74 @@ sap.ui.define([
                   
          },
 
+  
+  onShowEdit: function(oEvent){
+          var that = this;
+          that.openLoadingFragment();
+        
+          that.onPressEdit();
+          
+          var myInputControl = oEvent.getSource(); // e.g. the first item
+          var boundData = myInputControl.getBindingContext('oModel').getObject();
+          listpath = myInputControl.getBindingContext('oModel').getPath();
+          var indexItem = listpath.split("/");
+          indS =indexItem[2];
+          
+         
+          sap.ui.getCore().byId("reqEItemC").setValue(boundData.ItemCode);
+          sap.ui.getCore().byId("reqEItemN").setValue(boundData.ItemName);
+          sap.ui.getCore().byId("reqEItemU").setValue(boundData.UoMCode);
+          sap.ui.getCore().byId("reqEItemQ").setValue(boundData.Quantity);
+      
+          sap.ui.getCore().byId('reqEItemC').setEnabled(false);
+          sap.ui.getCore().byId('reqEItemN').setEnabled(false);
+          sap.ui.getCore().byId('reqEItemU').setEnabled(false);
+       
+          this.closeLoadingFragment();
+          
+        },
+      
+      
+      onSaveEdit: function(){
+        var StoredItem = this.oModel.getData().TransferRequest; 
+        StoredItem[indS].Quantity = sap.ui.getCore().byId("reqEItemQ").getValue();
+        this.oModel.refresh();
+        this.closeLoadingFragment();
+        this.onCloseEdit()
+      },
+      
+        onPressEdit: function(){
+          if (!this.onEditReq) {
+            this.onEditReq = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.fragment.onEditRequest", this);
+            this.getView().addDependent(this.onEditReq);
+          }
+          this.onEditReq.open();
+        },
+      
+        onCloseEdit: function(){
+          if(this.onEditReq){
+              this.onEditReq.close();
+          }
+        },
+      
+        onDeleteItem(){
+          var that = this;
+          var StoredItem = that.oModel.getData().TransferRequest;
+        
+          MessageBox.information("Are you sure you want to delete this Item??", {
+            actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+            title: "Delete Item",
+            icon: MessageBox.Icon.QUESTION,
+            styleClass:"sapUiSizeCompact",
+            onClose: function (sButton) {
+              if(sButton == "YES"){
+                StoredItem.splice(indS,1);
+                that.oModel.refresh();
+              }
+            }
+          });
+          this.onCloseEdit();
+        },
          
   });
 });

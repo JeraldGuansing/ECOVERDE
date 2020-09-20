@@ -39,7 +39,7 @@
                             number="{oModel>Quantity}"
                             numberUnit="{oModel>UoMCode}"
                             type="Active"
-                            press = "onPressItem"
+                            press = "onShowEdit"
                             icon="sap-icon://product"
                             intro="{oModel>ItemName}">
                             <attributes>

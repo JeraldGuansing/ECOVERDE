@@ -1,0 +1,90 @@
+ <mvc:View controllerName="com.ecoverde.ECOVERDE.controller.CreateCount"
+  displayBlock="true"
+  xmlns="sap.m"
+	xmlns:f="sap.ui.layout.form" 
+	xmlns:core="sap.ui.core" 
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+  xmlns:t="sap.ui.table"
+  xmlns:tnt="sap.tnt"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+  <App id="CreateCount" >
+    <Page title="Inventory Counting" showNavButton="true" navButtonPress="onPressNavBack">
+     <List>
+        <InputListItem label="Count Date">
+          	 	<DatePicker
+              id="DP8"
+              displayFormat="YYYY-MM-dd"
+              valueFormat="yyyyMMdd"
+              change=""
+              class="sapUiSmallMarginBottom"/>
+        </InputListItem>
+
+        <InputListItem id="CountType" label="Count Type">
+          	  <ComboBox id="CountTypeID" selectionChange="onSelectCountType"  placeholder="Select Count Type" items="{oModel>/countType}">
+                 <core:Item key="{oModel>Code}" text="{oModel>type}" />
+              </ComboBox>
+        </InputListItem>
+
+         <InputListItem  id="CounterType" label="Inventory Counter">
+          	  <ComboBox id="CounterTyp" selectionChange="onSelectUType" placeholder="Select Counter Type" items="{oModel>/counterType}">
+                 <core:Item key="{oModel>Code}" text="{oModel>ustype}" />
+              </ComboBox>
+        </InputListItem>
+
+        <InputListItem id="regID">
+          <ComboBox id="userID" placeholder="Select Counter" items="{oModel>/Counters}">
+              <core:Item key="{oModel>InternalKey}" text="{oModel>UserCode}" />
+          </ComboBox>
+        </InputListItem>
+
+        <InputListItem id="empID">
+          <ComboBox id="employeeID" placeholder="Select Counter" items="{oModel>/Employee}">
+              <core:Item key="{oModel>EmployeeID}" text="{oModel>FirstName}"/>
+          </ComboBox>
+        </InputListItem>
+
+
+          <InputListItem id="Mcounter" label="Individual">
+          	<Button icon="sap-icon://drop-down-list" />
+          </InputListItem>
+
+          <InputListItem id="Mvalidator" label="Team">
+          	<Button icon="sap-icon://drop-down-list" />
+          </InputListItem>
+     </List>
+    
+
+      <html:br></html:br>
+        <content>
+                <List id="projectlistid" items="{oModel>/SelectedItemCount}">
+                    <ObjectListItem title="{oModel>ItemCode}"
+                            number="{oModel>Quantity}"
+                            numberUnit="{oModel>UoMCode}"
+                            type="Active"
+                            press = "onShowEdit"
+                            icon="sap-icon://database"
+                            intro="{oModel>ItemName}">
+                            <firstStatus>
+				                      <ObjectStatus text=" {oModel>ProjName}"/>
+                            </firstStatus>
+                            <attributes>
+                              <ObjectAttribute title="{oModel>Barcode}"/>
+                            </attributes>
+                    </ObjectListItem>
+                </List>
+        </content>
+        <footer>
+            <Bar>
+             <contentLeft>
+				      	<Button text="Item" press="onPressAddItem" icon="sap-icon://activities"/>
+			      	</contentLeft>
+      
+              <contentRight>
+				      	<Button text="Save" press="onConfirmAddCounnt" icon="sap-icon://save"/>
+			      	</contentRight>
+            </Bar>
+        </footer>
+    </Page>
+  </App>
+</mvc:View>

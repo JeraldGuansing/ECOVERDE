@@ -1,0 +1,22 @@
+ <mvc:View controllerName="com.ecoverde.ECOVERDE.controller.viewCount"
+  displayBlock="true"
+  xmlns="sap.m"
+  xmlns:mvc="sap.ui.core.mvc">
+  <App id="viewCount" >
+      <Page showHeader="true" title="Invenotry Count" showNavButton="true" navButtonPress="onPressNavBack">
+          <List id="InvCID" items="{oModel>/DocumentLines}">
+                    <ObjectListItem title="{oModel>CountDate}"
+                            number="{oModel>DocObjectCodeEx}"
+                            numberUnit="{oModel>GrossTotal} {oModel>CountingType}"
+                            type="Active"
+                            press = "onPressItem"
+                            icon="sap-icon://add-product"
+                            intro="{oModel>ItemDescription}">
+                            <firstStatus>
+				                      <ObjectStatus text=" {oModel>UoMCode}"/>
+                            </firstStatus>
+                    </ObjectListItem>
+                </List>
+      </Page>
+  </App>
+</mvc:View>

@@ -1,16 +1,17 @@
 sap.ui.define([
-  "com/ecoverde/ECOVERDE/controller/BaseController",
+  "sap/ui/core/mvc/Controller",
   "sap/m/MessageToast",
   "sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/m/Token",
   "sap/m/MessageBox",
-  "sap/ui/core/Fragment"
-], function(Controller,MessageToast, JSONModel, Filter, FilterOperator, Token, MessageBox,Fragment) {
+  "sap/ui/core/Fragment",
+  "sap/ui/core/Core"
+], function(Controller,MessageToast, JSONModel, Filter, FilterOperator, Token, MessageBox,Fragment,Core) {
   "use strict";
 
-  return Controller.extend("com.ecoverde.ECOVERDE.controller.invantoryCount", {
+  return Controller.extend("com.ecoverde.ECOVERDE.controller.viewCount", {
     onInit: function(){
       var that = this;
 	    var oView = this.getView();
@@ -40,16 +41,11 @@ sap.ui.define([
       
     },
 
-    onCreateInventoryC: function(){
-			this.router = this.getOwnerComponent().getRouter();
-			this.router.navTo("CreateCount");
-      },
 
-      onCreateInventoryV: function(){
-        this.router = this.getOwnerComponent().getRouter();
-        this.router.navTo("inventoryView");
-        },
-  
+    onPressNavBack: function(){
+      this.router = this.getOwnerComponent().getRouter();
+      this.router.navTo("inventoryCountMenu");
+    },
 
   });
 });

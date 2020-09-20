@@ -96,7 +96,9 @@ sap.ui.define([
                   },
                   error: function (xhr, status, error) {
                     that.closeLoadingFragment();
-                    sap.m.MessageToast.show("Incorrect UserName/Password");
+                    //sap.m.MessageToast.show(xhr.responseJSON.error.message.value);
+                    console.log(status)
+                    console.log(xhr)
                   },
                   success: function (json) {
                     that.onGetUserdet();

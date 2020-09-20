@@ -192,7 +192,7 @@ onPostreturn: function(){
           xhrFields: {withCredentials: true},
           error: function (xhr, status, error) {
             that.closeLoadingFragment();
-            sap.m.MessageToast.show("Unable to post the transaction due to\n" + error);
+            sap.m.MessageToast.show(xhr.responseJSON.error.message.value);
             },
           success: function (json) {
            
@@ -238,7 +238,8 @@ onGetItemRet: function(){
             },
             error: function (xhr, status, error) {
               this.closeLoadingFragment();
-              console.log("Error Occured");
+              sap.m.MessageToast(xhr.responseJSON.error.message.value);
+              console.log(xhr.responseJSON.error.message.value);
             },
             success: function (json) {
               this.oModel.getData().itemMaster  = json.value;
@@ -381,6 +382,76 @@ onSelectUoM: function(){
         itmBar =  sap.ui.getCore().byId("retItemCode").getValue();
         uomntry = sap.ui.getCore().byId("retUOM").getSelectedKey();
         that.onGetBarcode(); 
+      },
+
+
+onShowEdit: function(oEvent){
+        var that = this;
+        that.openLoadingFragment();
+      
+        that.onPressEdit();
+        
+        var myInputControl = oEvent.getSource(); // e.g. the first item
+        var boundData = myInputControl.getBindingContext('oModel').getObject();
+        listpath = myInputControl.getBindingContext('oModel').getPath();
+        var indexItem = listpath.split("/");
+        indS =indexItem[2];
+        
+       
+        sap.ui.getCore().byId("editCodeRet").setValue(boundData.ItemCode);
+        sap.ui.getCore().byId("editNameRet").setValue(boundData.ItemName);
+        sap.ui.getCore().byId("editUoMRet").setValue(boundData.UoMCode);
+        sap.ui.getCore().byId("editQtyRet").setValue(boundData.Quantity);
+    
+        sap.ui.getCore().byId('editCodeRet').setEnabled(false);
+        sap.ui.getCore().byId('editNameRet').setEnabled(false);
+        sap.ui.getCore().byId('editUoMRet').setEnabled(false);
+     
+        this.closeLoadingFragment();
+        
+      },
+    
+    
+    onSaveEdit: function(){
+      var StoredItem = this.oModel.getData().goodsReturn; 
+      StoredItem[indS].Quantity = sap.ui.getCore().byId("editQtyRet").getValue();
+      this.oModel.refresh();
+      this.closeLoadingFragment();
+      this.onCloseEdit()
+    },
+    
+      onPressEdit: function(){
+        if (!this.editReturn) {
+          this.editReturn = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.fragment.editReturn", this);
+          this.getView().addDependent(this.editReturn);
+          this.oModel.refresh();
+        }
+        this.editReturn.open();
+      },
+    
+      onCloseEdit: function(){
+        if(this.editIssuance){
+            this.editIssuance.close();
+        }
+      },
+    
+      onDeleteItem(){
+        var that = this;
+        var StoredItem = that.oModel.getData().goodsReturn;
+      
+        MessageBox.information("Are you sure you want to delete this Item??", {
+          actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+          title: "Delete Item",
+          icon: MessageBox.Icon.QUESTION,
+          styleClass:"sapUiSizeCompact",
+          onClose: function (sButton) {
+            if(sButton == "YES"){
+              StoredItem.splice(indS,1);
+              that.oModel.refresh();
+            }
+          }
+        });
+        this.onCloseEdit();
       },
 
   });

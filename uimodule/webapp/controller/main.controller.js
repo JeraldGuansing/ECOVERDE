@@ -73,7 +73,7 @@ sap.ui.define([
 				this.onMenuButtonPress();
 				break;
 			case "Count":
-				this.router.navTo("Reservation");
+				this.router.navTo("inventoryCountMenu");
 				this.onMenuButtonPress();
 				break;
 			case "History":
@@ -130,8 +130,9 @@ sap.ui.define([
 				  withCredentials: true
 				},
 				error: function (xhr, status, error) {
-				  console.log("Error Occured");
-				  that.closeLoadingFragment();
+				//sap.m.MessageToast.show(xhr.responseJSON.error.message.value);
+				console.log("Error Occured");
+				this.closeLoadingFragment();
 				},
 				success: function (json) {
 				this.closeLoadingFragment();
@@ -139,7 +140,6 @@ sap.ui.define([
 				  this.router = this.getOwnerComponent().getRouter();
 				  this.router.navTo("login");
 				  this.onMenuButtonPress();
-				
 				},
 				context: this
 			  });

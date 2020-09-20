@@ -135,9 +135,9 @@ onSaveDial:function(){
           that.oModel.getData().projectList = response.value;
           that.oModel.refresh();
           that.closeLoadingFragment()
-        }, error: function() { 
+        }, error: function(xhr, status, error) { 
           that.closeLoadingFragment()
-          console.log(respnse);
+          sap.m.MessageToast.show(xhr.responseJSON.error.message.value);
         }
     })
   },

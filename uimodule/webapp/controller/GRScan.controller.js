@@ -591,9 +591,9 @@ sap.ui.define([
         BcodUntContainer = response.value;
         that.oModel.getData().BarcodeUnit = BcodUntContainer;
         //that.oModel.refresh();
-      }, error: function() { 
+      }, error: function(xhr, status, error) { 
         that.closeLoadingFragment()
-        console.log("Error Occur");
+        console.log(xhr.responseJSON.error.message.value);
       }
   })
  

@@ -1,0 +1,19 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<TableSelectDialog
+		noDataText="No User found"
+		title="Select Product"
+		search=".handleSearch"
+		confirm=".handleClose"
+		cancel=".handleClose"
+		items="">
+		<columns>
+			<Column width="12em">
+				<header>
+					<Text text="" />
+				</header>
+			</Column>
+		</columns>
+	</TableSelectDialog>
+</core:FragmentDefinition>

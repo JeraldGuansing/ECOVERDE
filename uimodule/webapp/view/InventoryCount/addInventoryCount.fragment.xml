@@ -1,0 +1,23 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<TableSelectDialog
+        multiSelect="true"
+		noDataText="No Item found"
+        search=".handleSearch"
+		title="Select Item"
+        confirm="handleClose"
+		items="{oModel>/itemMaster}"
+         id="table1">
+    <ColumnListItem>
+			<cells>
+            	<ObjectIdentifier title="{oModel>ItemCode}" text="{oModel>ItemName}" />
+			</cells>
+	</ColumnListItem>
+		<columns>
+			<Column width="12em">
+			    <Text text="List of items"/>
+			</Column>
+		</columns>
+	</TableSelectDialog>    
+</core:FragmentDefinition>

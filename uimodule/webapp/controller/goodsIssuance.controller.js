@@ -403,6 +403,73 @@ onSelectItemCode: function(){
     that.onGetBarcode(); 
   },
 
+  onShowEdit: function(oEvent){
+    var that = this;
+    that.openLoadingFragment();
+  
+    that.onPressEdit();
+    
+    var myInputControl = oEvent.getSource(); // e.g. the first item
+    var boundData = myInputControl.getBindingContext('oModel').getObject();
+    listpath = myInputControl.getBindingContext('oModel').getPath();
+    var indexItem = listpath.split("/");
+    indS =indexItem[2];
+    
+   
+    sap.ui.getCore().byId("eidsCodeID").setValue(boundData.ItemCode);
+    sap.ui.getCore().byId("idisCodeName").setValue(boundData.ItemName);
+    sap.ui.getCore().byId("idisUoM").setValue(boundData.UoMCode);
+    sap.ui.getCore().byId("idisQty").setValue(boundData.Quantity);
+
+    sap.ui.getCore().byId('eidsCodeID').setEnabled(false);
+    sap.ui.getCore().byId('idisCodeName').setEnabled(false);
+    sap.ui.getCore().byId('idisUoM').setEnabled(false);
+ 
+    this.closeLoadingFragment();
+    
+  },
+
+
+onSaveEdit: function(){
+  var StoredItem = this.oModel.getData().goodsIssue; 
+  StoredItem[indS].Quantity = sap.ui.getCore().byId("idisQty").getValue();;
+  this.closeLoadingFragment();
+  this.onCloseEdit()
+},
+
+  onPressEdit: function(){
+    if (!this.editIssuance) {
+      this.editIssuance = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.fragment.editIssuance", this);
+      this.getView().addDependent(this.editIssuance);
+      this.oModel.refresh();
+    }
+    this.editIssuance.open();
+  },
+
+  onCloseEdit: function(){
+    if(this.editIssuance){
+        this.editIssuance.close();
+    }
+  },
+
+  onDeleteItem(){
+    var that = this;
+    var StoredItem = that.oModel.getData().goodsIssue;
+  
+    MessageBox.information("Are you sure you want to delete this Item??", {
+      actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+      title: "Delete Item",
+      icon: MessageBox.Icon.QUESTION,
+      styleClass:"sapUiSizeCompact",
+      onClose: function (sButton) {
+        if(sButton == "YES"){
+          StoredItem.splice(indS,1);
+          that.oModel.refresh();
+        }
+      }
+    });
+    this.onCloseEdit();
+  },
 
   });
 });

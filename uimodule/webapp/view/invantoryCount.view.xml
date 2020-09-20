@@ -1,12 +1,43 @@
- <mvc:View controllerName="com.ecoverde.undefined.controller.invantoryCount"
+ <mvc:View controllerName="com.ecoverde.ECOVERDE.controller.invantoryCount"
   displayBlock="true"
   xmlns="sap.m"
-  xmlns:mvc="sap.ui.core.mvc">
+	xmlns:f="sap.ui.layout.form" 
+	xmlns:core="sap.ui.core" 
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+  xmlns:t="sap.ui.table"
+   xmlns:tnt="sap.tnt"
+	xmlns:html="http://www.w3.org/1999/xhtml">
   <App id="invantoryCount" >
-    <pages>
-      <Page title="{i18n>title}">
-        <content></content>
+   <Page showHeader="false">
+          <VBox>
+            <FlexBox
+              height="100px"
+              alignItems="Start"
+              justifyContent="Center">
+                <Image src="./resources/img/ecoverde.png"/>
+              </FlexBox>
+          </VBox>
+   	<f:SimpleForm
+          layout="ResponsiveGridLayout"
+          editable="true"
+          title="Inventory Count/Posting"
+          adjustLabelSpan="false"
+          labelSpanXL="2"
+          labelSpanL="2"
+          labelSpanM="2"
+          labelSpanS="5">
+	  </f:SimpleForm>
+      <content>
+        <TileContainer height="210px">
+            <StandardTile icon="sap-icon://accelerated" title="Create Inventory Count" press="onCreateInventoryC" />
+            <StandardTile icon="sap-icon://simulate" title="Inventory Count" press="onCreateInventoryV" />
+		  	</TileContainer>
+          </content>
+      <footer>
+        <Bar>
+        </Bar>
+		  </footer>  
       </Page>
-    </pages>
   </App>
 </mvc:View>

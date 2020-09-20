@@ -6,7 +6,7 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
   xmlns:t="sap.ui.table"
-   xmlns:tnt="sap.tnt"
+  xmlns:tnt="sap.tnt"
 	xmlns:html="http://www.w3.org/1999/xhtml">
   <App id="purchaseOrderList100" >
     <Page showHeader="false">

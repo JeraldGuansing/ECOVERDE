@@ -9,7 +9,7 @@
    xmlns:tnt="sap.tnt"
 	xmlns:html="http://www.w3.org/1999/xhtml">
   <App id="inventoryTransfer" >
-     <Page showHeader="true" title="Inventory Transfer" showNavButton="true" navButtonPress="onPressIssuance">    
+     <Page showHeader="true" title="Inventory Transfer" showNavButton="true" navButtonPress="onPressNavback">    
        <content>
           <List>
             <InputListItem label="Warehouse Code">
