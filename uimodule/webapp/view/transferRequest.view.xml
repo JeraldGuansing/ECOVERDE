@@ -10,11 +10,11 @@
   <App id="transferRequest" >
      <Page showHeader="true" title="Transfer Request" showNavButton="true" navButtonPress="onPressNavback">
         <List>
-        <InputListItem label="From Warehouse">
+        <InputListItem label="To Warehouse">
           	  <Input id="fromWID"/>
         </InputListItem>
         
-        <InputListItem label="To Warehouse">
+        <InputListItem label="From Warehouse">
           <ComboBox id="toWID" items="{oModel>/warehouses}" placeholder="Select Warehouse">
               <core:Item key="{oModel>WarehouseCode}" text="{oModel>WarehouseName}" />
           </ComboBox>

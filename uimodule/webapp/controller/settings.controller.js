@@ -40,7 +40,7 @@ sap.ui.define([
 
     onPressNavBackButton: function(){
       this.router = this.getOwnerComponent().getRouter();
-      this.router.navTo("login");
+      this.router.navTo("login",null, true);
     },
   });
 });

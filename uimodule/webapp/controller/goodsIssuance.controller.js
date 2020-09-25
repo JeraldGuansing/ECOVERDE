@@ -72,7 +72,7 @@ initialize: function(vFromId){
 
 onPressIssuance: function(){
         this.router = this.getOwnerComponent().getRouter();
-        this.router.navTo("goodsIssuance");
+        this.router.navTo("goodsIssuance",null, true);
       },
 
  
@@ -106,7 +106,7 @@ onCloseIssuance: function(){
 
 onPressNavBack: function(){
       this.router = this.getOwnerComponent().getRouter();
-      this.router.navTo("goodsIssueMenu");
+      this.router.navTo("goodsIssueMenu",null, true);
     },
 
 onGetBarcode: function(){

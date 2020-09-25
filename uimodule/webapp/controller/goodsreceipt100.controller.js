@@ -18,7 +18,7 @@ sap.ui.define([
       //showNavButton="true" navButtonPress="onPressBack"
     onGotoScanview: function(){
       this.router = this.getOwnerComponent().getRouter();
-      this.router.navTo("BarcodeScanning");
+      this.router.navTo("BarcodeScanning",null, true);
     },
   });
 });

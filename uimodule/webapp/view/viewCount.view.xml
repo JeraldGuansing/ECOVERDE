@@ -4,19 +4,18 @@
   xmlns:mvc="sap.ui.core.mvc">
   <App id="viewCount" >
       <Page showHeader="true" title="Invenotry Count" showNavButton="true" navButtonPress="onPressNavBack">
-          <List id="InvCID" items="{oModel>/DocumentLines}">
+          <List id="InvCID" items="{oModel>/CountSheet}">
                     <ObjectListItem title="{oModel>CountDate}"
-                            number="{oModel>DocObjectCodeEx}"
+                            number="Doc No.:{oModel>DocumentNumber}"
                             numberUnit="{oModel>GrossTotal} {oModel>CountingType}"
                             type="Active"
-                            press = "onPressItem"
-                            icon="sap-icon://add-product"
-                            intro="{oModel>ItemDescription}">
-                            <firstStatus>
-				                      <ObjectStatus text=" {oModel>UoMCode}"/>
-                            </firstStatus>
+                            press = "onUpdateEdit"
+                            icon="sap-icon://activity-items"
+                            intro="{oModel>DocObjectCodeEx}">
                     </ObjectListItem>
                 </List>
+
+      
       </Page>
   </App>
 </mvc:View>

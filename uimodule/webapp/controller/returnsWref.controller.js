@@ -76,7 +76,7 @@ closeLoadingFragment : function(){
 
 onPressNavBack: function(){
     this.router = this.getOwnerComponent().getRouter();
-    this.router.navTo("goodsReturnList");
+    this.router.navTo("goodsReturnList",null, true);
   },
 
   onReturnList: function(){
@@ -96,7 +96,13 @@ onPressNavBack: function(){
       success: function(response){
       
       try {
-        that.oModel.getData().goodsReturn  = response.value[0].DocumentLines; 
+
+        const returnITM = response.value[0].DocumentLines.filter(function(RTI){
+          return RTI.LineStatus == "bost_Open";
+          })
+
+        that.oModel.getData().goodsReturn  = returnITM;
+        // console.log(that.oModel.getData().goodsReturn); 
       }
       catch(err) {
         that.initialize();
@@ -196,7 +202,7 @@ onPressNavBack: function(){
           });
         }
       }
-      console.log(oBody);
+      // console.log(oBody);
       oBody = JSON.stringify(oBody);
       $.ajax({
         url: sUrl,
@@ -219,7 +225,7 @@ onPressNavBack: function(){
                   icon: MessageBox.Icon.INFORMATION,
                   styleClass:"sapUiSizeCompact",
                   onClose: function () {
-                    // that.getView().destroy();
+                    // that.onReturnOpenPO();
                     that.onPressNavBack();
                   }
                 });
@@ -227,6 +233,54 @@ onPressNavBack: function(){
               },context: this
             });
 
+  },
+
+
+onReturnOpenPO: function(){
+    var that = this;
+    var sServerName = localStorage.getItem("ServerID");
+    var StoredItem = this.oModel.getData().goodsReturn;
+
+    
+      for(var i =0;i < StoredItem.length; i++){
+      var POref = StoredItem[i].BaseEntry;
+      if(StoredItem[i].Quantity != 0){
+
+      var sUrl = sServerName + "/b1s/v1/PurchaseOrders(" + POref + ")?";
+    
+      var rBody = {
+        "DocumentStatus": "bost_Open",
+        "DocumentLines": 
+          {
+          "LineNum": StoredItem[i].LineNum,
+          "RemainingOpenInventoryQuantity":StoredItem[i].Quantity,
+          "LineStatus": "bost_Open"
+          }
+        };
+
+        rBody = JSON.stringify(rBody);
+
+        $.ajax({
+          url: sUrl,
+          type: "PATCH",
+          data: rBody,
+          headers: {
+            'Content-Type': 'application/json'},
+          crossDomain: true,
+          xhrFields: {withCredentials: true},
+          error: function (xhr, status, error) {
+            that.closeLoadingFragment();
+            sap.m.MessageToast.show("Unable to post the Item:\n" + xhr.responseJSON.error.message.value);
+            },
+          success: function (json) {
+            console.log(POref + " Reopen")
+            that.closeLoadingFragment();
+                },context: this
+              });
+
+
+       }
+      }
   },
 
   });

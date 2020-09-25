@@ -109,8 +109,9 @@ onCopyReq: function(evt) {
       localStorage.setItem("FromWhseID", oList[i].InventoryTransferRequests.FromWarehouse);
       localStorage.setItem("Reference1", oList[i].InventoryTransferRequests.Reference1);
       localStorage.setItem("FromWhseNM", oList[i].Warehouses.WarehouseName);
-      this.clearSelection();
       this.onCopyRequest();
+      this.clearSelection();
+      
     },
 
 clearSelection: function(evt) {

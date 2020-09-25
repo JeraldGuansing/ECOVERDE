@@ -49,8 +49,8 @@ sap.ui.define([
         this.oModel = new JSONModel("model/item.json");
         this.getView().setModel(this.oModel, "oModel");
 
-        this.getView().byId("Vcode").setText(localStorage.getItem("VendorCode"));
-        this.getView().byId("Vname").setText(localStorage.getItem("VendorName"));
+        // this.getView().byId("Vcode").setText(localStorage.getItem("VendorCode"));
+        // this.getView().byId("Vname").setText(localStorage.getItem("VendorName"));
 
         var today = new Date();
         var dd = String(today.getDate()).padStart(2, '0');
@@ -245,10 +245,9 @@ sap.ui.define([
       var sServerName = localStorage.getItem("ServerID");
       var sUrl = sServerName + "/b1s/v1/InventoryGenEntries";
       var oBody = {
-        "CardCode": localStorage.getItem("VendorCode"),
         "DocDate": that.getView().byId("DP8").getValue(),
         "DocumentLines": []};          
-      
+    
       var StoredItem = this.oModel.getData().value;
       for(var i = 0;i < StoredItem.length;i++){
         oBody.DocumentLines.push({
@@ -259,6 +258,7 @@ sap.ui.define([
           "WarehouseCode": localStorage.getItem("wheseID")
           });
         }
+        console.log(oBody)
       oBody = JSON.stringify(oBody);
       // console.log(oBody);        
           $.ajax({
@@ -296,7 +296,7 @@ sap.ui.define([
 
     onWithoutRef: function(){
 			this.router = this.getOwnerComponent().getRouter();
-			this.router.navTo("goodsReceipt");
+			this.router.navTo("goodsReceipt",null, true);
       },
      
     openLoadingFragment: function(){
@@ -336,7 +336,7 @@ sap.ui.define([
     onGetItem: function(){
       this.openLoadingFragment();
       var sServerName = localStorage.getItem("ServerID");
-      var sUrl = sServerName + "/b1s/v1/Items?$select=ItemCode,ItemName&$filter=BarCode ne 'null' and Mainsupplier eq '" + localStorage.getItem("VendorCode") + "'";
+      var sUrl = sServerName + "/b1s/v1/Items?$select=ItemCode,ItemName&$filter=BarCode ne 'null'";
       
       $.ajax({
         url: sUrl,

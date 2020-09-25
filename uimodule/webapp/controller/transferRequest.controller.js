@@ -71,7 +71,7 @@ sap.ui.define([
 
     onPressNavback: function(){
 			this.router = this.getOwnerComponent().getRouter();
-			this.router.navTo("transferView");
+			this.router.navTo("transferView",null, true);
       },
 
   ongetWHSEList: function(){
@@ -328,8 +328,8 @@ sap.ui.define([
           var sServerName = localStorage.getItem("ServerID");
           var sUrl = sServerName + "/b1s/v1/InventoryTransferRequests";
           var oBody = {
-            "FromWarehouse":  localStorage.getItem("wheseID"),
-            "ToWarehouse": that.getView().byId("toWID").getSelectedKey(),  
+            "FromWarehouse": that.getView().byId("toWID").getSelectedKey(),
+            "ToWarehouse": localStorage.getItem("wheseID"),  
             "DocDate": that.getView().byId("DP8").getValue(),
             "StockTransferLines": []};          
           
@@ -340,8 +340,8 @@ sap.ui.define([
               "Quantity": StoredItem[i].Quantity,
               "UoMEntry": StoredItem[i].AbsEntry,
               "UoMCode": StoredItem[i].UoMCode,
-              "WarehouseCode": that.getView().byId("toWID").getSelectedKey(),
-              "FromWarehouseCode": localStorage.getItem("wheseID")
+              "WarehouseCode": localStorage.getItem("wheseID"),
+              "FromWarehouseCode": that.getView().byId("toWID").getSelectedKey()
               });
             }
             // console.log(oBody);

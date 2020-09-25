@@ -151,7 +151,7 @@ sap.ui.define([
   
       onGotoReceived: function(){
         this.router = this.getOwnerComponent().getRouter();
-        this.router.navTo("GRwReference");
+        this.router.navTo("GRwReference",null, true);
         },
       
   });

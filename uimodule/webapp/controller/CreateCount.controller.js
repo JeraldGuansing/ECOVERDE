@@ -308,7 +308,7 @@ sap.ui.define([
           success: function (json) {
             //console.log(json);
             that.closeLoadingFragment();
-                  MessageBox.information("Item successfully added new inventory counting \nDocumentEntry:" + json.DocumentEntry, {
+                  MessageBox.information("Item successfully added new inventory counting \nDocumentNumber:" + json.DocumentNumber, {
                     actions: [MessageBox.Action.OK],
                     title: "Inventory Counting",
                     icon: MessageBox.Icon.INFORMATION,
@@ -328,7 +328,7 @@ sap.ui.define([
   
   onPressNavBack: function(){
           this.router = this.getOwnerComponent().getRouter();
-          this.router.navTo("inventoryCountMenu");
+          this.router.navTo("inventoryCountMenu",null, true);
         },
 
   });

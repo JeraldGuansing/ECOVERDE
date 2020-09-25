@@ -159,7 +159,8 @@ sap.ui.define([
 						that.onWithRef();
 						that.onMenuButtonPress();
 					}else if (sButton === "NO"){
-						that.onSelectVendorShow();
+						// that.onSelectVendorShow();
+						that.onWithoutRef();
 						that.onMenuButtonPress();
 					}
 				}

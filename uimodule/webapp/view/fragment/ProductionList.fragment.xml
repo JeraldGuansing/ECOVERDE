@@ -1,0 +1,24 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+	<TableSelectDialog
+      
+		noDataText="No Item found"
+        search=".handleSearch"
+		title="Select Production Order"
+        confirm="handleClose"
+		items="{oModel>/ProductionList}"
+         id="tblList">
+    <ColumnListItem>
+			<cells>
+            	<ObjectIdentifier title="Document Number: {oModel>DocumentNumber}" text="Customer Code: {oModel>CustomerCode}" />
+			</cells>
+	</ColumnListItem>
+		<columns>
+			<Column width="12em">
+			    <Text text="List of items"/>
+			</Column>
+		</columns>
+	</TableSelectDialog>    
+</core:FragmentDefinition>

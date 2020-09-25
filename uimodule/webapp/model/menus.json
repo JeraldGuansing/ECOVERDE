@@ -24,7 +24,7 @@
 		}, 
 		{
 			"title": "Inventory Count/Posting",
-			"icon": "sap-icon://add-product",
+			"icon": "sap-icon://collections-management",
 			"expanded": true,
 			"key": "Count"
 		},

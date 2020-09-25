@@ -50,9 +50,9 @@
              <!-- <contentLeft>
 				      	<Button text="Add" press="onPressAddr" icon="sap-icon://add"/>
 			      	</contentLeft> -->
-              <contentMidle>
+              <contentMiddle>
 				      	<Button text="Post" press="onConfirmPosting" icon="sap-icon://manager-insight"/>
-			      	</contentMidle>
+			      	</contentMiddle>
             </Bar>
         </footer>
       </Page>

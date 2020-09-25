@@ -20,13 +20,13 @@
              <!-- <Input id="myBarcode"/>
               <Button text="Scan" press="ontest"></Button> -->
       <List>        
-        <InputListItem label="Vendor Code">
+        <!-- <InputListItem label="Vendor Code">
           	  <Label id="Vcode" />
         </InputListItem>
         
         <InputListItem label="Vendor Name">
                 <Label id="Vname" />
-        </InputListItem>
+        </InputListItem> -->
   
         <InputListItem label="Posting Date">
              	<DatePicker

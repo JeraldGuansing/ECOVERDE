@@ -43,7 +43,15 @@
     ],
     "Counters":[],
     "Employee":[],
-    "addingCount":[]
+    "addingCount":[],
+    "CountSheet":[],
+    "CountItem":[],
+    "ProductionList": [],
+    "ProductionItem": [],
+    "SelectedProd":[],
+    "ProdItemDetails":[],
+    "ProdItemUOM":[],
+    "SelectedItemProd":[]
 
 
 

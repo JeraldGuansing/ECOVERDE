@@ -1,0 +1,29 @@
+ <mvc:View controllerName="com.ecoverde.ECOVERDE.controller.updateCount"
+  displayBlock="true"
+  xmlns="sap.m"
+  xmlns:mvc="sap.ui.core.mvc">
+  <App id="updateCount" >
+      <Page showHeader="true" title="Invenotry Count" showNavButton="true" navButtonPress="onPressNavBack">
+          <List id="InvITM" items="{oModel>/CountItem}">
+                    <ObjectListItem title="{oModel>ItemCode}"
+                            number="{oModel>CountedQuantity}"
+                            numberUnit="{oModel>UoMCode}"
+                            type="Active"
+                            press = "onShowEdit"
+                            icon="sap-icon://add-product"
+                            intro="{oModel>ItemDescription}">
+                    </ObjectListItem>
+                </List>
+        <footer>
+		      <Bar>
+              <contentLeft>
+				      	<Button text="Add" press="onPressAddr" icon="sap-icon://add"/>
+			      	</contentLeft>
+              <contentRight>
+                <Button text="Update" press="onConfirmUpdate" icon="sap-icon://request"/>
+              </contentRight>
+			    </Bar>
+		    </footer>
+      </Page>
+  </App>
+</mvc:View>

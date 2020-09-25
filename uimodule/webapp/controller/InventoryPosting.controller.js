@@ -9,13 +9,8 @@ sap.ui.define([
   "sap/ui/core/Fragment"
 ], function(Controller,MessageToast, JSONModel, Filter, FilterOperator, Token, MessageBox,Fragment) {
   "use strict";
-  var gitemUOMcode;
-  var fitemUOMcode;
-  var itmBar;
-  var uomntry;
   var listpath;
   var indS;
-  var iBarc;
   return Controller.extend("com.ecoverde.ECOVERDE.controller.InventoryPosting", {
 
     onInit: function(){

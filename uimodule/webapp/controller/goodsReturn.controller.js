@@ -65,7 +65,7 @@ initialize: function(vFromId){
 
 onPressNavBack: function(){
       this.router = this.getOwnerComponent().getRouter();
-      this.router.navTo("goodsIssueMenu");
+      this.router.navTo("goodsIssueMenu",null, true);
     },
 
 onPressAddr: function(){
@@ -138,7 +138,7 @@ onSaveItem: function(){
       }
     },
 
-    onConfirmPosting: function(){
+onConfirmPosting: function(){
       var itemJSON = this.oModel.getData().goodsReturn;
       if(parseInt(itemJSON.length) == 0){
         sap.m.MessageToast.show("Please Input item First");
@@ -283,6 +283,7 @@ onGetListOfAbst: function(){
             that.oModel.getData().UoMEntry = response.value;
             that.oModel.refresh();
             that.onGetListOfUOM();
+            that.closeLoadingFragment()
           }, error: function() { 
             that.closeLoadingFragment()
             console.log("Error Occur");
@@ -355,8 +356,6 @@ onGetBarcode: function(){
             that.closeLoadingFragment()
         },      
         
-
-
 onSelectItemCode: function(){
           var itemName = sap.ui.getCore().byId("retItemCode").getSelectedKey();
           sap.ui.getCore().byId("retItemName").setValue(itemName);

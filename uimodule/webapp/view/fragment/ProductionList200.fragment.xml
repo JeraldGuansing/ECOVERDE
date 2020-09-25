@@ -1,0 +1,48 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+	<TableSelectDialog
+        multiSelect="true"
+		noDataText="No Item found"
+        search=".handleSearch"
+		title="Select Production Item"
+        confirm="onSelectProdItem"
+		items="{oModel>/ProductionItem}"
+         id="tblList2">
+    <ColumnListItem>
+			<cells>
+            	<ObjectIdentifier title="{oModel>ItemNo}"/>
+				  <Text text="{oModel>ItemName}"/>
+                 <Text text="{oModel>BaseQuantity}"/>
+                <Text text="{oModel>UoMName}"/>
+			</cells>
+          
+	</ColumnListItem>
+		<columns>
+			<Column width="7em">
+			    <Text text="Items Code"/>
+			</Column>
+		</columns>
+        
+		<columns>
+			<Column width="10em">
+			    <Text text="Item Name"/>
+			</Column>
+		</columns>
+
+    	<columns>
+			<Column width="7em">
+			    <Text text="Quantity"/>
+			</Column>
+		</columns>
+
+        <columns>
+			<Column width="5em">
+			    <Text text="UOM"/>
+			</Column>
+		</columns>
+
+
+	</TableSelectDialog>    
+</core:FragmentDefinition>

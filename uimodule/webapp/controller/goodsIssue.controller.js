@@ -43,7 +43,7 @@ initialize: function(vFromId){
 
 onPressIssuance: function(){
     this.router = this.getOwnerComponent().getRouter();
-    this.router.navTo("goodsIssuance");
+    this.router.navTo("goodsIssuance",null, true);
   },
 
 onSelectParamV: function(){
@@ -182,13 +182,19 @@ onSaveDial:function(){
   
 onWithoutRef: function(){
     this.router = this.getOwnerComponent().getRouter();
-    this.router.navTo("goodsReturn");
+    this.router.navTo("goodsReturn",null, true);
   },
 
 onWithRef: function (){
     this.router = this.getOwnerComponent().getRouter();
-    this.router.navTo("goodsReturnList");
+    this.router.navTo("goodsReturnList",null, true);
   },
+
+  onProj: function (){
+    this.router = this.getOwnerComponent().getRouter();
+    this.router.navTo("issuanceProject",null, true);
+  },
+
 
 onWithout: function (){
   },
