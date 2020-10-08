@@ -61,34 +61,6 @@ sap.ui.define([
       this.router.navTo("goodsIssueMenu",null, true);
     },
 
-    onPressAdd: function(){
-      if (!this.addProd) {
-        this.addProd = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.fragment.AddProduction", this);
-        this.getView().addDependent(this.addProd);
-      }
-   
-      this.onGetItem();
-      this.addProd.open();
-  
-      sap.ui.getCore().byId("PRItemCode").setValue("");
-      sap.ui.getCore().byId("PRItemCode").setSelectedKey("");
-      sap.ui.getCore().byId("PRItemName").setValue("");
-      sap.ui.getCore().byId("PRItemName").setSelectedKey("");
-      sap.ui.getCore().byId("PRUOM").setValue("");
-      sap.ui.getCore().byId("PRUOM").setSelectedKey("");
-      sap.ui.getCore().byId("PRQtyID").setValue("");
-    
-   
-   
-    },
-
-    onCloseAdd: function(){
-      if(this.addProd){
-          this.addProd.close();
-      }
-      this.closeLoadingFragment();
-    },
-
     openLoadingFragment: function(){
       if (! this.oDialog) {
             this.oDialog = sap.ui.xmlfragment("busyLogin","com.ecoverde.ECOVERDE.view.fragment.BusyDialog", this);   
@@ -101,151 +73,7 @@ sap.ui.define([
         this.oDialog.close();
       }
     },
-
-    onGetListOfAbst: function(){
-      var that = this;
-      gitemUOMcode = fitemUOMcode;
-     
-      var sServerName = localStorage.getItem("ServerID");
-      var sUrl = sServerName + "/b1s/v1/BarCodes?$filter=ItemNo eq '" + gitemUOMcode + "'";
-      $.ajax({
-        url: sUrl,
-        type: "GET",
-        dataType: 'json',
-        crossDomain: true,
-        xhrFields: {
-          withCredentials: true},
-        success: function(response){
-          that.oModel.getData().UoMEntry = response.value;
-          that.oModel.refresh();
-          that.onGetListOfUOM();
-        }, error: function() { 
-          that.closeLoadingFragment();
-          console.log("Error Occur");
-        }
-    })
-    //Get UOMList
-    
-      },
   
-
-    onSelectItemCode: function(){
-      var itemName = sap.ui.getCore().byId("PRItemCode").getSelectedKey();
-      sap.ui.getCore().byId("PRItemName").setValue(itemName);
-      this.openLoadingFragment();
-      fitemUOMcode = sap.ui.getCore().byId("PRItemCode").getValue();
-      this.onGetListOfAbst();
-      // this.onGetListOfUOM();
-  },
-  
-
-  onSelectItemName: function(){
-    var itemCode = sap.ui.getCore().byId("PRItemName").getSelectedKey();
-    sap.ui.getCore().byId("PRItemCode").setValue(itemCode);
-    //localStorage.setItem("sBarcode", sap.ui.getCore().byId("itmID").getValue());
-    this.openLoadingFragment();
-    fitemUOMcode = sap.ui.getCore().byId("PRItemCode").getValue();
-    this.onGetListOfAbst();
-    // getBarcode here
-  },
-
-  
-    onAddItem: function(){
-      var that = this;
-      that.openLoadingFragment();
-      var sItmID = sap.ui.getCore().byId("PRItemCode").getValue();
-      var sItmName = sap.ui.getCore().byId("PRItemName").getValue();
-      var sQtyID = sap.ui.getCore().byId("PRQtyID").getValue();
-      var sUoMID = sap.ui.getCore().byId("PRUOM").getValue();
-      var AbsEntryID = sap.ui.getCore().byId("PRUOM").getSelectedKey();
-
-      if(sItmID == ""){
-        sap.m.MessageToast.show("Please select Item Code");
-        that.closeLoadingFragment();
-        return;
-      }else if(sItmName == ""){
-        sap.m.MessageToast.show("Please select Item Name");
-        that.closeLoadingFragment();
-        return;
-      }else if(sUoMID == ""){
-        sap.m.MessageToast.show("Please select Item UoM");
-        that.closeLoadingFragment();
-        return;
-      }else if(sQtyID == "" || sQtyID <= 0 ){
-        sap.m.MessageToast.show("Please input quantity");
-        that.closeLoadingFragment();
-        return;
-      }else{
-
-        ///>>>>>>>GetBarcode
-        var StoredBarc = that.oModel.getData().BarcodeUnit; 
-        var getStrBarc = "";
-        if(StoredBarc.length != 0){
-          getStrBarc = StoredBarc[0].Barcode;
-        }
-        
-        var StoredItem = that.oModel.getData().value;        
-        const oITM = StoredItem.filter(function(OIT){
-        return OIT.ItemCode == sItmID && OIT.BarCode == getStrBarc;
-         })
-      var cResult = parseInt(oITM.length);
-      if(cResult == 0){
-        that.oModel.getData().value.push({
-          "ItemCode": sItmID,
-          "ItemName":sItmName,
-          "BarCode": getStrBarc,
-          "Quantity": sQtyID,
-          "UoMCode": sUoMID,
-          "AbsEntry":AbsEntryID
-        });
-        that.closeLoadingFragment();
-      }else{
-        oITM[0].Quantity = parseInt(oITM[0].Quantity) + parseInt(sQtyID);
-        that.closeLoadingFragment();
-      }
-      that.closeLoadingFragment();
-      that.oModel.refresh();
-      that.onCloseAdd();
-      }
-      
-    },
-
-
-    onShowEdit: function(oEvent){
-      var that = this;
-      that.openLoadingFragment();
-    
-      that.onPressEdit();
-      
-      var myInputControl = oEvent.getSource(); // e.g. the first item
-      var boundData = myInputControl.getBindingContext('oModel').getObject();
-      listpath = myInputControl.getBindingContext('oModel').getPath();
-      var indexItem = listpath.split("/");
-      indS =indexItem[2];
-      fitemUOMcode = boundData.ItemCode;
-      that.onGetListOfAbst();
-      that.onGetListOfUOM();
-    
-        sap.ui.getCore().byId("eItemID").setValue(boundData.ItemCode);
-        sap.ui.getCore().byId("eItemName").setValue(boundData.ItemName);
-        sap.ui.getCore().byId("iUOMID").setValue(boundData.UoMCode);
-        sap.ui.getCore().byId("curiUOMID").setValue(boundData.UoMCode);
-        sap.ui.getCore().byId("iUOMID").setSelectedKey(boundData.AbsEntry);
-        sap.ui.getCore().byId("eQtyID").setValue(boundData.Quantity);
-    
-        sap.ui.getCore().byId('eItemID').setEnabled(false);
-        sap.ui.getCore().byId('eItemName').setEnabled(false);
-       
-    
-        sap.ui.getCore().byId("eBarcode").setVisible(false);
-        sap.ui.getCore().byId("curiUOMID").setVisible(false);
-        sap.ui.getCore().byId("bttnSave").setEnabled(false);
-    
-       
-        
-        that.closeLoadingFragment();
-      },
-
   onShowListItem: function(){
     this.openLoadingFragment();
     if (!this.ProdList) {
@@ -316,7 +144,7 @@ handleClose: function (oEvent) {
   },
 
   onShowItemProd: function(){
-    this.openLoadingFragment();
+   
     this.onGetProdItem();
     if (!this.ProdItem) {
       this.ProdItem = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.fragment.ProductionList200", this);
@@ -324,16 +152,17 @@ handleClose: function (oEvent) {
     }
    
     this.ProdItem.open();
-    this.closeLoadingFragment();
+ 
   },
 
   onGetProdItem: function(){
+    this.openLoadingFragment();
       var selectedProd =  this.oModel.getData().SelectedProd;
       ITMDEL = {};
       arrrITM = [];
       const UOMName ={};
       var sServerName = localStorage.getItem("ServerID");
-      var sUrl = sServerName + "/b1s/v1/ProductionOrders?$select=ProductionOrderLines&$filter=DocumentNumber eq "+ selectedProd[0].DocumentNumber +" and Warehouse eq '" + localStorage.getItem("wheseID") + "'";
+      var sUrl = sServerName + "/b1s/v1/ProductionOrders?$select=AbsoluteEntry,ProductionOrderLines&$filter=DocumentNumber eq "+ selectedProd[0].DocumentNumber +" and Warehouse eq '" + localStorage.getItem("wheseID") + "'";
       
       $.ajax({
         url: sUrl,
@@ -349,20 +178,24 @@ handleClose: function (oEvent) {
               console.log("Error Occured");
             },
             success: function (json) {
+              localStorage.setItem("DocEntry",json.value[0].AbsoluteEntry);
               var res = json.value[0].ProductionOrderLines;
               var BaseQuantity;
               var Warehouse;
               var UoMEntry;
               var UoMCode;
-            
+              var projName;
+              var LineNumber;
+              
               for(var i = 0;i < res.length;i++){
                 fitemUOMcode = res[i].ItemNo;
                 itmUoM = res[i].UoMEntry;
                 BaseQuantity = res[i].BaseQuantity;
+                LineNumber = res[i].LineNumber;
                 Warehouse = res[i].Warehouse;
                 UoMEntry = res[i].UoMEntry;
                 UoMCode = res[i].UoMCode;
-              
+                projName = res[i].Project;
                 var sUrlI = sServerName + "/b1s/v1/Items?$select=ItemCode,ItemName&$filter=ItemCode eq '" + fitemUOMcode + "'";
       
                 $.ajax({
@@ -377,8 +210,8 @@ handleClose: function (oEvent) {
                         this.closeLoadingFragment();
                         console.log("Error Occured");},
                       success: function (json) {
-                      ITMDEL.ItemCode = json.value[0].ItemCode
-                      ITMDEL.ItemName = json.value[0].ItemName
+                      ITMDEL.ItemCode = json.value[0].ItemCode;
+                      ITMDEL.ItemName = json.value[0].ItemName;
                       }})
 
                       var sUrlU = sServerName + "/b1s/v1/UnitOfMeasurements?$select=Code,AbsEntry&$filter=AbsEntry eq " + itmUoM;
@@ -402,49 +235,205 @@ handleClose: function (oEvent) {
                             "BaseQuantity": BaseQuantity,
                             "Warehouse": Warehouse,
                             "UoMEntry" : UoMEntry,
-                            "UoMCode": UoMCode
+                            "UoMCode": UoMCode,
+                            "LineNumber": LineNumber,
+                            "ProjectName": projName,
                           });
                         }
 
                       })
+                      this.closeLoadingFragment();
                 }
               this.oModel.getData().ProductionItem = arrrITM;
+              // console.log(this.oModel.getData().ProductionItem)
               this.oModel.refresh();
+              
             },
             context: this
-          })
-       
+          })         
   },
-
 
   onSelectProdItem: function (oEvent) {
-    // reset the filter
-    var oBinding = oEvent.getSource().getBinding("items");
-    oBinding.filter([]);
-    this.oModel.getData().SelectedProd = [];
-    var aContexts = oEvent.getParameter("selectedContexts");
-    if (aContexts && aContexts.length) {
-      console.log(aContexts)
-      var getJSONITEM = aContexts.map(function (oContext) { 
-      return oContext.getObject().ItemNo; 
-    
-    }).join(",");
-      var splitITEM = getJSONITEM.split(",");
-    
+    var arr = [];
+     var aItems = sap.ui.getCore().byId('tblList2').getItems();
+      var aSelectedItems = [];
+      for (var i=0; i<aItems.length;i++) {
+           if (aItems[i].getSelected() == true) {
+                aSelectedItems.push(aItems[i].oBindingContexts.oModel.sPath);
+           }
+      }
      
-    //   for(var i = 0;i < splitITEM.length; i++){
-    //   this.oModel.getData().SelectedItemProd.push({
-    //     "ItemCode": splitITEM[i]
-    //   });
-    // }
-      // console.log(this.oModel.getData().SelectedProd)
-      this.oModel.refresh();
-    
-     
-    }
+      for(let a = 0;a < aSelectedItems.length;a++){
+        var indexItem = aSelectedItems[a].split("/");
+        arr.push(indexItem[2]);
+      }
 
+      var ol = this.oModel.getData().ProductionItem;
+      for(let x = 0;x < arr.length;x++){
+        this.oModel.getData().SelectedItemProd.push(
+          {
+            "ItemCode": ol[x].ItemNo,
+            "Quantity":ol[x].BaseQuantity,
+            "UoMCode":ol[x].UoMName,
+            "ItemName":ol[x].ItemName,
+            "UoMC":ol[x].UoMCode,
+            "UoMEntry": ol[x].UoMEntry,
+            "DocumentNumber": ol[x].DocumentNumber,
+            "ProjectName": ol[x].ProjectName,
+            "LineNumber": ol[x].LineNumber
+          }
+        )
+      }
+     
+      this.oModel.refresh();
+      
   },
 
+onshowEditDialog: function(){
+    if (!this.editItemisP) {
+      this.editItemisP = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.fragment.editIssueProject", this);
+      this.getView().addDependent(this.editItemisP);
+    }
+    this.editItemisP.open();
+  },
+  
+  onPressOpenEdit:function(oEvent){
+  var that = this;
+  that.openLoadingFragment();
 
+  that.onshowEditDialog();
+  
+  var myInputControl = oEvent.getSource(); // e.g. the first item
+  var boundData = myInputControl.getBindingContext('oModel').getObject();
+  listpath = myInputControl.getBindingContext('oModel').getPath();
+  var indexItem = listpath.split("/");
+  indS =indexItem[2];
+   
+    sap.ui.getCore().byId("isProdID").setValue(boundData.DocumentNumber);
+    sap.ui.getCore().byId("isPEItemC").setValue(boundData.ItemCode);
+    sap.ui.getCore().byId("isPEItemN").setValue(boundData.ItemName);
+    sap.ui.getCore().byId("isPEItemU").setValue(boundData.UoMCode);
+    sap.ui.getCore().byId("isPEItemQ").setValue(boundData.Quantity);
+
+    sap.ui.getCore().byId('isProdID').setEnabled(false);
+    sap.ui.getCore().byId('isPEItemC').setEnabled(false);
+    sap.ui.getCore().byId('isPEItemN').setEnabled(false);
+    sap.ui.getCore().byId('isPEItemU').setEnabled(false);
+ 
+    that.closeLoadingFragment();
+},
+
+
+onSaveEditItem: function(){
+  var StoredItem = this.oModel.getData().SelectedItemProd;
+  var QtyE = sap.ui.getCore().byId("isPEItemQ").getValue();
+  if(parseInt(QtyE) == "" || parseInt(QtyE) ==0){
+    sap.m.MessageToast.Show("Please Enter Quantity");
+  }else{
+  StoredItem[indS].Quantity = QtyE;
+
+  this.onPressCloseEdit();
+  that.oModel.refresh();
+}
+
+},
+
+onPressCloseEdit: function(){
+    if(this.editItemisP){
+        this.editItemisP.close();
+    }
+  },
+
+onDeleteItem(oEvent){
+    var that = this;
+    var StoredItem = that.oModel.getData().SelectedItemProd;
+  
+    MessageBox.information("Are you sure you want to delete this Item??", {
+      actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+      title: "Delete Item",
+      icon: MessageBox.Icon.QUESTION,
+      styleClass:"sapUiSizeCompact",
+      onClose: function (sButton) {
+        if(sButton == "YES"){
+          StoredItem.splice(indS,1);
+          that.oModel.refresh();
+        }
+      }
+    });
+    this.onPressCloseEdit();
+  },
+  
+  onConfirmPosting: function(){
+    var that = this;
+  
+    var itemJSON = this.oModel.getData().SelectedItemProd;
+    if(parseInt(itemJSON.length) == 0){
+      sap.m.MessageToast.show("Please Scan/Input item First");
+    }
+    else{
+
+    MessageBox.information("Are you sure you want to [POST] this transaction?", {
+      actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+      title: "POST Issuance to project",
+      icon: MessageBox.Icon.QUESTION,
+      styleClass:"sapUiSizeCompact",
+      onClose: function (sButton) {
+        if(sButton === "YES"){
+          that.onPostingGR();
+        }}
+    });
+    }
+  },
+  
+  onPostingGR: function(){
+  
+    var that = this;
+    that.openLoadingFragment();
+    var sServerName = localStorage.getItem("ServerID");
+    var sUrl = sServerName + "/b1s/v1/InventoryGenExits";
+    var oBody = {
+      "DocDate": that.getView().byId("DP8").getValue(),
+      "DocumentLines": []};          
+  
+    var StoredItem = this.oModel.getData().SelectedItemProd;
+    for(var i = 0;i < StoredItem.length;i++){
+      oBody.DocumentLines.push({
+        "BaseLine": StoredItem[i].LineNumber,
+        "Quantity": StoredItem[i].Quantity,
+        "UoMEntry": StoredItem[i].UoMEntry,
+        "BaseEntry": localStorage.getItem("DocEntry"),
+        "Project":  StoredItem[i].ProjectName
+        });
+      }
+      console.log(oBody)
+    oBody = JSON.stringify(oBody);        
+        $.ajax({
+          url: sUrl,
+          type: "POST",
+          data: oBody,
+          headers: {
+            'Content-Type': 'application/json'},
+          crossDomain: true,
+          xhrFields: {withCredentials: true},
+          error: function (xhr, status, error) {
+            that.closeLoadingFragment();
+            sap.m.MessageToast.show(xhr.responseJSON.error.message.value);
+            },
+          success: function (json) {
+                  MessageBox.information("Production Order successfully Issued,\nNew Doc Number Created:" + json.DocNum, {
+                    actions: [MessageBox.Action.OK],
+                    title: "Issuance to Project",
+                    icon: MessageBox.Icon.INFORMATION,
+                    styleClass:"sapUiSizeCompact"
+                  });
+                   
+                    
+                  this.onPressIssuance();
+                  this.oModel.refresh();
+                  
+                  that.closeLoadingFragment();
+                },context: this
+              });
+   },
   });
 });

@@ -10,7 +10,7 @@ sap.ui.define([
   "sap/ui/core/Core"
 ], function(Controller,MessageToast, JSONModel, Filter, FilterOperator, Token, MessageBox,Fragment,Core) {
   "use strict";
-
+ 
   return Controller.extend("com.ecoverde.ECOVERDE.controller.goodsIssue", {
 onInit: function(){
       var that = this;
@@ -266,6 +266,7 @@ onSaveVendor:function(){
       this.oncheckinGRPO();
     }
 },
+
 
   });
 });

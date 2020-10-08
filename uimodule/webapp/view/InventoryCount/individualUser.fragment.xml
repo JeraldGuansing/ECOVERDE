@@ -1,0 +1,23 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<TableSelectDialog
+        multiSelect="true"
+		noDataText="No Item found"
+        search=".handleSearch"
+		title="Select User"
+        confirm="onGetMuser"
+		items="{oModel>/Counters}"
+         id="invTbl1">
+    <ColumnListItem>
+			<cells>
+            	<ObjectIdentifier title="{oModel>UserCode}"/>
+			</cells>
+	</ColumnListItem>
+		<columns>
+			<Column width="12em">
+			    <Text text="List"/>
+			</Column>
+		</columns>
+	</TableSelectDialog>    
+</core:FragmentDefinition>

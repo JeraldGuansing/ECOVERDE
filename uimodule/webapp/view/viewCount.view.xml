@@ -11,7 +11,7 @@
                             type="Active"
                             press = "onUpdateEdit"
                             icon="sap-icon://activity-items"
-                            intro="{oModel>DocObjectCodeEx}">
+                            intro="Count Date">
                     </ObjectListItem>
                 </List>
 

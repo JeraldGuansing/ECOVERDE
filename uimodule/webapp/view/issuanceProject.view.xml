@@ -14,7 +14,7 @@
           	<Button icon="sap-icon://drop-down-list" />
           </InputListItem>
       </List>     -->
-       <!-- <html:br></html:br> -->
+       <html:br></html:br>
         <content>
             <List>        
               <InputListItem label="Posting Date">
@@ -30,14 +30,13 @@
                             number="{oModel>Quantity}"
                             numberUnit="{oModel>UoMCode}"
                             type="Active"
-                            press = "onShowEdit"
+                            press = "onPressOpenEdit"
                             icon="sap-icon://database"
                             intro="{oModel>ItemName}">
-                            <firstStatus>
-				                      <ObjectStatus text=" {oModel>ProjName}"/>
-                            </firstStatus>
+                          
                             <attributes>
-                              <ObjectAttribute title="{oModel>Barcode}"/>
+                              <ObjectAttribute title="Order No.: {oModel>DocumentNumber}"/>
+                              <ObjectAttribute title="Project: {oModel>ProjectName}"/>
                             </attributes>
                     </ObjectListItem>
                 </List>

@@ -472,12 +472,14 @@ onCloseEditItem: function(){
 onSaveEdit: function(){
       var that = this;
       var StoredItem = that.oModel.getData().DocumentLines;
-      // if(sap.ui.getCore().byId("qtyIDref").getValue() !=0){
+      
+
+      if(sap.ui.getCore().byId("qtyIDref").getValue() != ""){
       StoredItem[indS].RemainingOpenQuantity = parseInt(StoredItem[indS].RemainingOpenQuantity) - parseInt(sap.ui.getCore().byId("qtyIDref").getValue());
       StoredItem[indS].receivedQty = parseInt(sap.ui.getCore().byId("qtyIDref").getValue());
-      // }else{
-      //   //StoredItem.splice(indS,1);
-      // }
+      }else{
+        sap.m.MessageToast.Show("Please Enter Quantity");
+      }
       
       that.oModel.refresh();
       that.onCloseEditItem();

@@ -411,7 +411,7 @@ onShowEdit: function(oEvent){
       },
     
     
-    onSaveEdit: function(){
+onSaveEdit: function(){
       var StoredItem = this.oModel.getData().goodsReturn; 
       StoredItem[indS].Quantity = sap.ui.getCore().byId("editQtyRet").getValue();
       this.oModel.refresh();
@@ -419,7 +419,7 @@ onShowEdit: function(oEvent){
       this.onCloseEdit()
     },
     
-      onPressEdit: function(){
+onPressEdit: function(){
         if (!this.editReturn) {
           this.editReturn = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.fragment.editReturn", this);
           this.getView().addDependent(this.editReturn);
@@ -428,13 +428,13 @@ onShowEdit: function(oEvent){
         this.editReturn.open();
       },
     
-      onCloseEdit: function(){
-        if(this.editIssuance){
-            this.editIssuance.close();
+onCloseEdit: function(){
+        if(this.editReturn){
+            this.editReturn.close();
         }
       },
     
-      onDeleteItem(){
+onDeleteItem(){
         var that = this;
         var StoredItem = that.oModel.getData().goodsReturn;
       
@@ -451,6 +451,159 @@ onShowEdit: function(oEvent){
           }
         });
         this.onCloseEdit();
+      },
+
+onScan: function() {
+        var that = this;
+          cordova.plugins.barcodeScanner.scan(
+               function (result) {
+                 var sBarcode = result.text;
+                 localStorage.setItem("sBarcode", sBarcode);
+                
+                 that.openLoadingFragment();
+                 that.onScanBarcode();
+               },
+               function (error) {
+         });
+      },
+      
+onScanBarcode: function(){
+       var that = this;
+      
+       var sServerName = localStorage.getItem("ServerID");
+       var vBarcode = localStorage.getItem("sBarcode");
+       var sUrl = sServerName + "/b1s/v1/BarCodes?$filter=Barcode eq '" + vBarcode + "' and Mainsupplier eq '" + localStorage.getItem("VendorCode") + "'";
+      
+       $.ajax({
+         url: sUrl,
+         type: "GET",
+         dataType: 'json',
+         crossDomain: true,
+         xhrFields: {
+           withCredentials: true},
+         success: function(response){
+           that.oModel.getData().Barcode = response.value;
+           that.oModel.refresh();
+      
+           that.onGetBarcodeItem();
+           that.closeLoadingFragment();
+          
+         }, error: function() { 
+           sap.m.MessageToast.show(vBarcode +"\nBarcode Not Found \nin the Scanning Barcode!");
+           that.closeLoadingFragment()
+           console.log("Error Occur");
+         }
+      })
+         that.closeLoadingFragment()
+      },
+      
+onGetBarcodeItem: function(){
+        var that = this;
+        var vBarcode = localStorage.getItem("sBarcode");
+        var gotBarcode = that.oModel.getData().Barcode;
+        const oITM = gotBarcode.filter(function(OIT){
+        return OIT.Barcode == vBarcode;
+        })
+        var barItemCode = "";
+          if(oITM.length != 0){
+          barItemCode = oITM[0].ItemNo;
+        }
+        var sServerName = localStorage.getItem("ServerID");
+        var sUrl = sServerName + "/b1s/v1/Items?$select=ItemCode,ItemName&$filter=ItemCode eq '" + barItemCode + "'";
+        $.ajax({
+          url: sUrl,
+          type: "GET",
+          dataType: 'json',
+          crossDomain: true,
+          xhrFields: {
+            withCredentials: true},
+          success: function(response){
+            that.oModel.getData().itemMaster = response.value;
+            //UOMDetails
+            that.onGetBarcodeUOM();
+          }, error: function() { 
+            sap.m.MessageToast.show(vBarcode +"\nBarcode Not Found \nin the Getting barcode Details!");
+            that.closeLoadingFragment()
+            console.log("Error Occur");
+          }
+      })
+      },
+      
+onGetBarcodeUOM: function(){
+        var that = this;
+        var vBarcode = localStorage.getItem("sBarcode");
+        var gotBarcode = that.oModel.getData().Barcode;
+        const BITM = gotBarcode.filter(function(BIT){
+        return BIT.Barcode == vBarcode;
+        })
+        var barItemCode = "";
+        var AbsEntry = "";
+         if(gotBarcode.length != 0){ 
+        barItemCode = BITM[0].ItemNo;
+        AbsEntry = BITM[0].UoMEntry;
+        }
+      
+        var gotItemDT = that.oModel.getData().itemMaster;
+        const oITM = gotItemDT.filter(function(OIT){
+        return OIT.ItemCode == barItemCode;
+        })
+        var ItemName = "";
+        if(gotItemDT.length != 0){
+        ItemName = oITM[0].ItemName;
+        }else{
+          sap.m.MessageToast.show(vBarcode +"\nBarcode Not Found \nin the Getting barcode details in the system!");
+          return;
+        }
+      
+        var sServerName = localStorage.getItem("ServerID");
+        var sUrl = sServerName + "/b1s/v1/UnitOfMeasurements?$select=Code,AbsEntry&$filter=AbsEntry eq " + AbsEntry;
+        $.ajax({
+          url: sUrl,
+          type: "GET",
+          dataType: 'json',
+          crossDomain: true,
+          xhrFields: {
+            withCredentials: true},
+          success: function(response){
+            that.oModel.getData().UoMCode = response.value;
+            
+            var UoMDetail = that.oModel.getData().UoMCode;
+           
+            const oUoM = UoMDetail.filter(function(UOM){
+            return UOM.AbsEntry == AbsEntry;
+            })
+      
+            var gUoMCode = oUoM[0].Code;
+      
+            var saveData = that.oModel.getData().goodsReturn;
+            const svd = saveData.filter(function(SAVD){
+              return SAVD.ItemCode === barItemCode && SAVD.BarCode === vBarcode;
+              })
+      
+            var sResult = parseInt(svd.length);
+           
+            if(sResult === 0){
+              that.oModel.getData().goodsReturn.push({
+                "ItemCode":barItemCode, 
+                "ItemName": ItemName,
+                "Barcode": vBarcode,
+                "Quantity": 1,
+                "UoMCode": gUoMCode,
+                "UoMEntry":AbsEntry
+              });
+            }else{
+              svd[0].Quantity = parseInt(svd[0].Quantity) + 1;
+             } 
+      
+             //console.log(that.oModel.getData().value);
+             that.oModel.refresh();
+          }, error: function() { 
+            sap.m.MessageToast.show(vBarcode +"\nBarcode Not Found \nin the getting UOM Details!");
+            that.closeLoadingFragment()
+            console.log("Error Occur");
+          }
+      })
+      
       },
 
   });

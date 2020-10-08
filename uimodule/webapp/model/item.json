@@ -18,6 +18,9 @@
     "nextPage": [],
     "prevPage": [],
     "warehouses":[],
+    "warehousesItem":[],
+    "SelectedWhseItem":[],
+    "displayWHItem": [],   
     "TransferRequest":[],
     "InventoryTransfer":[],
     "SelectedItemCount":[],
@@ -51,9 +54,14 @@
     "SelectedProd":[],
     "ProdItemDetails":[],
     "ProdItemUOM":[],
-    "SelectedItemProd":[]
-
-
-
-    
+    "SelectedItemProd":[],
+    "InvItem":[],
+    "IndvidualUser":[],
+    "IndvidualEmp":[],
+    "MultipleUser":[],
+    "MultipleEmp":[],
+    "teamUser":[],
+    "teamEmp": [],
+    "SelectedInvCount":[],
+    "SelectedTmCount":[]    
 }

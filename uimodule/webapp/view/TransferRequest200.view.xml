@@ -1,0 +1,70 @@
+ <mvc:View controllerName="com.ecoverde.ECOVERDE.controller.TransferRequest200"
+  displayBlock="true"
+  xmlns="sap.m"
+	xmlns:f="sap.ui.layout.form" 
+	xmlns:core="sap.ui.core" 
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+  xmlns:t="sap.ui.table"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+  <App id="TransferRequest200" >
+      <Page showHeader="true" title="Transfer Request" showNavButton="true" navButtonPress="onPressNavback">
+        <List>
+        <InputListItem label="To Warehouse">
+          	  <Input id="fromWID"/>
+        </InputListItem>
+        
+        <InputListItem label="From Warehouse">
+         	  <Input id="toWID"/>
+        </InputListItem>
+  
+        <InputListItem label="Posting Date">
+             	<DatePicker
+              id="DP8"
+              displayFormat="MM/dd/YYYY"
+              valueFormat="yyyyMMdd"
+              change=""
+              class="sapUiSmallMarginBottom"/>
+        </InputListItem>
+      
+     </List>
+      <html:br></html:br>
+
+
+             <content>
+                <List items="{oModel>/TransferRequest}">
+                  <items>
+                    <ObjectListItem id="list" title="{oModel>ItemCode}"
+                            number="{oModel>Quantity}"
+                            type="Active"
+                            press = "onShowEdit"
+                            icon="sap-icon://add-product"
+                            intro="{oModel>ItemName}">
+                      
+                                <firstStatus>
+                                  <ObjectStatus text="{oModel>UoMCode}"/>
+                                </firstStatus>
+                                <attributes>
+                                  <ObjectAttribute title="{oModel>BarCode}"/>
+                                </attributes>
+                          </ObjectListItem>
+                  </items>
+                </List>
+            </content>
+    <footer>
+			<Bar>
+				<contentLeft>
+					<Button text="Add" press="onPressAddI" icon="sap-icon://add"/>
+				</contentLeft>
+        <contentMiddle>
+					<Button text="Scan" press="onTest" icon="sap-icon://camera"/>
+				</contentMiddle>
+        <contentRight>
+					<Button text="Post" press="onConfirmPosting" icon="sap-icon://manager-insight"/>
+				</contentRight>
+			</Bar>
+		</footer>
+
+  </Page>
+  </App>
+</mvc:View>

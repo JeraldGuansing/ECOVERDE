@@ -62,7 +62,6 @@ sap.ui.define([
 
       },
 
-
     onScan: function() {
        var that = this;
          cordova.plugins.barcodeScanner.scan(
@@ -480,6 +479,7 @@ sap.ui.define([
       type: "GET",
       dataType: 'json',
       crossDomain: true,
+      async: false,
       xhrFields: {
         withCredentials: true},
       success: function(response){
@@ -508,6 +508,7 @@ sap.ui.define([
             url: sUrl,
             type: "GET",
             dataType: 'json',
+            async: false,
             crossDomain: true,
             xhrFields: {
               withCredentials: true},

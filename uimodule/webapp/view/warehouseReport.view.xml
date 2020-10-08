@@ -4,7 +4,10 @@
 	xmlns:f="sap.ui.layout.form" 
 	xmlns:core="sap.ui.core" 
 	xmlns:l="sap.ui.layout"
-	xmlns:mvc="sap.ui.core.mvc">
+	xmlns:mvc="sap.ui.core.mvc"
+  xmlns:t="sap.ui.table"
+  xmlns:tnt="sap.tnt"
+	xmlns:html="http://www.w3.org/1999/xhtml">
   <App id="warehouseReport" >
      <Page title="Warehouse Report" showHeader="false">
         <content>
@@ -20,30 +23,63 @@
             
             <InputListItem label="Warehouse">
                 <ComboBox id="whsID" 
-								  items="{/value/}"
-								  change="onSelectKey">
-                <core:ListItem key="{WarehouseCode}" text="{WarehouseName}"/>
+								  items="{oModel>/warehouses}"
+								  change="onPresSelectItem">
+                <core:ListItem key="{oModel>WarehouseCode}" text="{oModel>WarehouseName}"/>
                 </ComboBox>
               </InputListItem>
               
-              <InputListItem label="From">
-                  <ComboBox id="fromID" placeholder="" required="true">
-                  <core:Item key="{key}" text="{text}" />
-                </ComboBox>
-              </InputListItem>
-
-              <InputListItem label="To">
-                <ComboBox id="toID" placeholder="" required="true">
-                  <core:Item key="{key}" text="{text}" />
-                </ComboBox>
+              <InputListItem>
+          	    <Button id="BtnItm" icon="sap-icon://drop-down-list" press="onPresSelectItem"/>
+                <Button id="BtnTrn" icon="sap-icon://key-user-settings" press="getContextByIndex"/>
               </InputListItem>
               </List>
         </content>
+
+
+       <t:Table id="tblID1" rows="{oModel>/displayWHItem}" selectionMode="MultiToggle" ariaLabelledBy="title">
+                <t:columns>
+                    <t:Column width="10em">
+                      <Label text="Item Code" />
+                      <t:template>
+                        <Text text="{oModel>ItemCode}" wrapping="false" />
+                      </t:template>
+                    </t:Column>
+
+                    <t:Column width="10rem">
+                      <Label text="Item Name" />
+                      <t:template>
+                        <Text text="{oModel>ItemName}" wrapping="false" />
+                      </t:template>
+                    </t:Column>
+
+                    <t:Column width="5rem">
+                      <Label text="Instock"/>
+                      <t:template>
+                        <Text text="{oModel>InStock}" wrapping="false" />
+                      </t:template>
+                    </t:Column>
+                    
+                    <t:Column width="5rem">
+                      <Label text="Committed" />
+                      <t:template>
+                        <Text text="{oModel>Committed}" wrapping="false" />
+                      </t:template>
+                    </t:Column>
+
+                    <t:Column width="5rem">
+                      <Label text="Ordered" />
+                      <t:template>
+                        <Text text="{oModel>Ordered}" wrapping="false" />
+                      </t:template>
+                    </t:Column>
+                </t:columns>
+            </t:Table>
         <footer>
             <Bar>
-                <contentMiddle>
+                <!-- <contentMiddle>
                     <Button text="View" press="onWhseList" icon="sap-icon://tree"/>
-                </contentMiddle>
+                </contentMiddle> -->
             </Bar>
         </footer>
       </Page>

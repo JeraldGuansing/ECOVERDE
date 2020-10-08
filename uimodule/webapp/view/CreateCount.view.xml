@@ -44,25 +44,29 @@
           </ComboBox>
         </InputListItem>
 
-
           <InputListItem id="Mcounter" label="Individual">
-          	<Button icon="sap-icon://drop-down-list" />
+           	<Button id="invIDs" text="0"/>
+          	<Button text="User" press="onShowMultipleU"/>
+            <Button id="invIDe" text="0"/>
+            <Button text="Empl" press="onShowMultipleE"/>
           </InputListItem>
 
           <InputListItem id="Mvalidator" label="Team">
-          	<Button icon="sap-icon://drop-down-list" />
+          	  <Button id="teamIDs" text="0"/>
+              <Button text="User" press="onShowTeamU"/>
+               <Button id="teamIDe" text="0"/>
+              <Button text="Empl" press="onShowTeamE"/>
           </InputListItem>
      </List>
     
-
       <html:br></html:br>
         <content>
                 <List id="projectlistid" items="{oModel>/SelectedItemCount}">
                     <ObjectListItem title="{oModel>ItemCode}"
-                            number="{oModel>Quantity}"
-                            numberUnit="{oModel>UoMCode}"
+                            number="{oModel>InStock}"
+                            numberUnit="{oModel>UoMName}"
                             type="Active"
-                            press = "onShowEdit"
+                            press = "onViewItem"
                             icon="sap-icon://database"
                             intro="{oModel>ItemName}">
                             <firstStatus>

@@ -49,9 +49,9 @@
              <contentLeft>
 				      	<Button text="Add" press="onPressAddr" icon="sap-icon://add"/>
 			      	</contentLeft>
-              <!-- <contentMiddle>
+              <contentMiddle>
 				      	<Button text="Scan" press="onScan" icon="sap-icon://camera"/>
-			      	</contentMiddle> -->
+			      	</contentMiddle>
               <contentRight>
 				      	<Button text="Post" press="onConfirmPosting" icon="sap-icon://manager-insight"/>
 			      	</contentRight>

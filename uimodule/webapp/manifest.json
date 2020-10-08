@@ -230,6 +230,13 @@
           "target": [
             "issuanceProject"
           ]
+        },
+        {
+          "name": "TransferRequest200",
+          "pattern": "TransferRequest200",
+          "target": [
+            "TransferRequest200"
+          ]
         }
         
       ],
@@ -432,6 +439,16 @@
           "viewPath": "com.ecoverde.ECOVERDE.view",
           "viewType": "XML",
           "viewName": "issuanceProject",
+          "parent": "main",
+          "controlId": "pageContainer",
+          "controlAggregation": "pages",
+          "viewLevel": 3
+          
+        },
+        "TransferRequest200": {
+          "viewPath": "com.ecoverde.ECOVERDE.view",
+          "viewType": "XML",
+          "viewName": "TransferRequest200",
           "parent": "main",
           "controlId": "pageContainer",
           "controlAggregation": "pages",

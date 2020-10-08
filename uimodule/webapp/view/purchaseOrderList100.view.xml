@@ -35,7 +35,7 @@
           <Toolbar>
             <SearchField id="sField" search="onSearchDoc" width="100%" />
           </Toolbar>
-            <t:Table id="tblID" rows="{oModel>/value}" cellClick="" selectionMode="Single" ariaLabelledBy="title">
+            <t:Table id="tblID" rows="{oModel>/value}" cellClick="" enableSelectAll="false" selectionMode="" ariaLabelledBy="title">
                 <t:columns>
                     <t:Column width="5em">
                       <Label text="Doc Num" />
