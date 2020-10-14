@@ -11,13 +11,13 @@
   <App id="goodsIssuance" >
     <Page title="Goods Issuance" showNavButton="true" navButtonPress="onPressNavBack">
    <List>        
-        <InputListItem label="Vendor Code">
+        <!-- <InputListItem label="Vendor Code">
           	  <Label id="Vcode" />
-        </InputListItem>
+        </InputListItem> -->
         
-        <InputListItem label="Vendor Name">
+        <!-- <InputListItem label="Vendor Name">
                 <Label id="Vname" />
-        </InputListItem>
+        </InputListItem> -->
         
         <InputListItem label="Project Name">
             	<Label id="projDesc" />

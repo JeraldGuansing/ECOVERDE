@@ -20,14 +20,16 @@
              <!-- <Input id="myBarcode"/>
               <Button text="Scan" press="ontest"></Button> -->
       <List>        
-        <!-- <InputListItem label="Vendor Code">
-          	  <Label id="Vcode" />
+        <InputListItem label="Type:">
+            <ComboBox id="TransactionID" selectionChange=""  placeholder="Select Transaction Type" items="{oModel>/GRType}">
+                <core:Item key="{oModel>FldValue}" text="{oModel>Descr}" />
+            </ComboBox>
         </InputListItem>
         
-        <InputListItem label="Vendor Name">
+        <!-- <InputListItem label="Vendor Name">
                 <Label id="Vname" />
-        </InputListItem> -->
-  
+        </InputListItem> 
+   -->
         <InputListItem label="Posting Date">
              	<DatePicker
               id="DP8"
@@ -38,8 +40,6 @@
       
      </List>
       <html:br></html:br>
-
-
              <content>
                 <List items="{oModel>/value}">
                   <items>

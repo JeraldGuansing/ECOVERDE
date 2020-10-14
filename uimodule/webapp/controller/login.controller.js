@@ -97,9 +97,8 @@ sap.ui.define([
                   },
                   error: function (xhr, status, error) {
                     that.closeLoadingFragment();
-                    //sap.m.MessageToast.show(xhr.responseJSON.error.message.value);
+                    sap.m.MessageToast.show("Access Deined");
                     console.log(status)
-                    console.log(xhr)
                   },
                   success: function (json) {
                     that.onGetUserdet();

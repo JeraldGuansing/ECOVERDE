@@ -70,8 +70,22 @@ sap.ui.define([
           withCredentials: true},
         success: function(response){
          try {
-          that.oModel.getData().InventoryTransfer = response.value[0].StockTransferLines
-          //console.log(that.oModel.getData())
+          // that.oModel.getData().InventoryTransfer = response.value[0].StockTransferLines
+          var inLane = response.value[0].StockTransferLines;
+          for(let s = 0; s < inLane.length;s++){ 
+         
+            that.oModel.getData().InventoryTransfer.push({
+              "ItemCode" : inLane[s].ItemCode,
+              "ItemDescription": inLane[s].ItemDescription,
+              "RemainingOpenQuantity" : inLane[s].RemainingOpenQuantity,
+              "receivedQty": 0,
+              "UoMEntry": inLane[s].UoMEntry,
+              "UoMCode": inLane[s].UoMCode,
+              "BaseLine": inLane[s].BaseLine
+            });
+         
+            console.log(inLane[s].ItemCode);
+          }
         }
         catch(err) {
           that.initialize();
@@ -120,23 +134,31 @@ sap.ui.define([
         sap.ui.getCore().byId("invItemC").setValue(boundData.ItemCode);
         sap.ui.getCore().byId("invItemN").setValue(boundData.ItemDescription);
         sap.ui.getCore().byId("invItemU").setValue(boundData.UoMCode);
-        sap.ui.getCore().byId("invItemQ").setValue(boundData.Quantity);
+        sap.ui.getCore().byId("invItemQ").setValue(boundData.receivedQty);
     
         sap.ui.getCore().byId('invItemC').setEnabled(false);
         sap.ui.getCore().byId('invItemN').setEnabled(false);
         sap.ui.getCore().byId('invItemU').setEnabled(false);
      
         this.closeLoadingFragment();
-        
       },
     
     
   onSaveEdit: function(){
-      var StoredItem = this.oModel.getData().InventoryTransfer; 
-      StoredItem[indS].Quantity = sap.ui.getCore().byId("invItemQ").getValue();
+      var StoredItem = this.oModel.getData().InventoryTransfer;
+      var Rqty = parseInt(sap.ui.getCore().byId("invItemQ").getValue());
+      var Qty = parseInt(StoredItem[indS].RemainingOpenQuantity)
+      if(Rqty > Qty){
+      sap.m.MessageToast.show("Approve quantity exceed to request quantity")
+      }else if(Rqty == 0 || Rqty == ""){
+        sap.m.MessageToast.show("Please Input quantity");
+      }else{
+      StoredItem[indS].receivedQty = sap.ui.getCore().byId("invItemQ").getValue();
       this.oModel.refresh();
       this.closeLoadingFragment();
       this.onCloseEdit()
+    }
+
     },
     
   onPressEdit: function(){
@@ -173,7 +195,7 @@ sap.ui.define([
         this.onCloseEdit();
       },
 
-      onConfirmPosting: function(){
+  onConfirmPosting: function(){
         var itemJSON = this.oModel.getData().InventoryTransfer;
         if(parseInt(itemJSON.length) == 0){
           sap.m.MessageToast.show("Please Input item First");
@@ -211,7 +233,7 @@ sap.ui.define([
           for(var i = 0; i < x; i++){
           oBody.StockTransferLines.push({
             "ItemCode":posItem[i].ItemCode,
-            "Quantity":posItem[i].Quantity,
+            "Quantity":posItem[i].receivedQty,
             "UoMEntry":posItem[i].UoMEntry,
             "UoMCode": posItem[i].UoMCode,
             "BaseEntry": localStorage.getItem("DocEntry"),

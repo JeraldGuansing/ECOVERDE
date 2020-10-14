@@ -511,8 +511,8 @@ closeLoadingFragment : function(){
 onGetItem: function(){
     this.openLoadingFragment();
     var sServerName = localStorage.getItem("ServerID");
-    var sUrl = sServerName + "/b1s/v1/Items?$select=ItemCode,ItemName&$filter=BarCode ne 'null'&$filter=Mainsupplier eq '"+ localStorage.getItem("VendorCode"); +"'";
-    
+    var xsjsServer = sServerName.replace("50000", "4300");
+    var sUrl = xsjsServer + "/app_xsjs/ExecQuery.xsjs?procName=spAppGetAllItems&dbName=" + localStorage.getItem("dbName");  
     $.ajax({
       url: sUrl,
           type: "GET",
@@ -524,8 +524,8 @@ onGetItem: function(){
             this.closeLoadingFragment();
             console.log("Error Occured: " + error);
           },
-          success: function (json) {
-            this.oModel.getData().itemMaster  = json.value;
+          success: function (response) {
+            this.oModel.getData().itemMaster  = response;
             this.oModel.refresh();
             this.closeLoadingFragment();
           },

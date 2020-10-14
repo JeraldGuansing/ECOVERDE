@@ -33,7 +33,7 @@
         <content>
                 <List id="projectlistid" items="{oModel>/InventoryTransfer}">
                     <ObjectListItem title="{oModel>ItemCode}"
-                            number="{oModel>Quantity}"
+                            number="{oModel>receivedQty}/{oModel>RemainingOpenQuantity}"
                             numberUnit="{oModel>UoMCode}"
                             type="Active"
                             press = "onShowEdit"
@@ -47,12 +47,13 @@
         </content>
         <footer>
             <Bar>
-             <!-- <contentLeft>
-				      	<Button text="Add" press="onPressAddr" icon="sap-icon://add"/>
-			      	</contentLeft> -->
-              <contentMiddle>
+             <contentLeft>
+				      	<Button text="Scan" press="onScan" icon="sap-icon://camera"/>
+			      	</contentLeft>
+              
+              <contentRight>
 				      	<Button text="Post" press="onConfirmPosting" icon="sap-icon://manager-insight"/>
-			      	</contentMiddle>
+			      	</contentRight>
             </Bar>
         </footer>
       </Page>

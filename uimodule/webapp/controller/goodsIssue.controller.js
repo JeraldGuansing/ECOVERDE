@@ -52,8 +52,8 @@ onSelectParamV: function(){
       this.getView().addDependent(this.project);
     }
 
-    sap.ui.getCore().byId("isVendor").setValue("");
-    sap.ui.getCore().byId("isVendor").setSelectedKey("");
+    // sap.ui.getCore().byId("isVendor").setValue("");
+    // sap.ui.getCore().byId("isVendor").setSelectedKey("");
     sap.ui.getCore().byId("isProject").setValue("");
     sap.ui.getCore().byId("isProject").setSelectedKey("");
    
@@ -72,20 +72,16 @@ onCloseParamV: function(){
   },
 
 onSaveDial:function(){
-    var VendName = sap.ui.getCore().byId("isVendor").getValue();
+    // var VendName = sap.ui.getCore().byId("isVendor").getValue();
     var projName = sap.ui.getCore().byId("isProject").getValue();
     
-    if(VendName == ""){
-      sap.m.MessageToast.show("Please select Vendor");
-      this.closeLoadingFragment();
-      return;
-    }else if(projName == ""){
+    if(projName == ""){
       sap.m.MessageToast.show("Please select Project");
       this.closeLoadingFragment();
       return;
     }else{
-    localStorage.setItem("VendorName",sap.ui.getCore().byId("isVendor").getValue());
-    localStorage.setItem("VendorCode",sap.ui.getCore().byId("isVendor").getSelectedKey());
+    // localStorage.setItem("VendorName",sap.ui.getCore().byId("isVendor").getValue());
+    // localStorage.setItem("VendorCode",sap.ui.getCore().byId("isVendor").getSelectedKey());
     localStorage.setItem("ProjName",sap.ui.getCore().byId("isProject").getValue());
     localStorage.setItem("ProjCode",sap.ui.getCore().byId("isProject").getSelectedKey());
     this.onPressIssuance();

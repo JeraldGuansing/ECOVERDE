@@ -63,5 +63,6 @@
     "teamUser":[],
     "teamEmp": [],
     "SelectedInvCount":[],
-    "SelectedTmCount":[]    
+    "SelectedTmCount":[],
+    "GRType": []    
 }

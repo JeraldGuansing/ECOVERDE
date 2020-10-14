@@ -297,7 +297,7 @@ onshowEditDialog: function(){
     this.editItemisP.open();
   },
   
-  onPressOpenEdit:function(oEvent){
+onPressOpenEdit:function(oEvent){
   var that = this;
   that.openLoadingFragment();
 

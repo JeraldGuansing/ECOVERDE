@@ -73,7 +73,7 @@ sap.ui.define([
     onGetItem: function(){
       this.openLoadingFragment();
       var sServerName = localStorage.getItem("ServerID");
-      var sUrl = sServerName + "/b1s/v1/Items?$select=ItemCode,ItemName";
+      var sUrl = sServerName + "/b1s/v1/Items?$select=ItemCode,ItemName&$filter=Frozen eq 'tNO'";
       
       $.ajax({
         url: sUrl,
@@ -165,13 +165,14 @@ sap.ui.define([
   },
 
   onDisplayItemWH: function(){
+            this.clearSelection();
             var StoredItem = this.oModel.getData().warehousesItem;        
             this.oModel.getData().SelectedWhseItem = [];
             for(let i = 0;i < StoredItem.length;i++){
             this.openLoadingFragment();
             var sServerName = localStorage.getItem("ServerID");
             var sUrl = sServerName + "/b1s/v1/Items?$select=ItemWarehouseInfoCollection&$filter=ItemCode eq '" + StoredItem[i].ItemCode +"'";
-    
+
             $.ajax({
               url: sUrl,
                   type: "GET",
@@ -254,27 +255,32 @@ sap.ui.define([
         }
   },
 
-
+  clearSelection: function(evt) {
+    this.byId("tblID1").clearSelection();
+  },
   ontransfer:function(){
 
     var i = this.byId("tblID1").getSelectedIndices();
     var oList =  this.oModel.getData().displayWHItem;
-    
-    for(let x = 0;x < oList.length;x++){
-      if(oList[x].InStock != 0){
-      this.oModel.getData().TransferRequest.push({
-       
-        "ItemCode": oList[x].ItemCode,
-        "ItemName":oList[x].ItemName,
-        "BarCode": oList[x].BarCode,
-        "Quantity": 0,
-        "UoMCode": "",
-        "AbsEntry":  oList[x].UoMCode,
-        "WarehouseCode": oList[x].WarehouseCode
+  
+    for(let x = 0;x < i.length;x++){
+      var a = i[x];
+      if(oList[a].InStock != 0){
 
-        });
+          this.oModel.getData().TransferRequest.push({
+          "ItemCode": oList[a].ItemCode,
+          "ItemName":oList[a].ItemName,
+          "BarCode": oList[a].BarCode,
+          "Quantity": 0,
+          "UoMCode": "",
+          "AbsEntry":  oList[a].UoMCode,
+          "WarehouseCode": oList[a].WarehouseCode
+          });
+
+          
+        }
       }
-    }
+    
 
   if(this.oModel.getData().TransferRequest !=0){
    sessionStorage.setItem('TRequest',JSON.stringify(this.oModel.getData().TransferRequest));
@@ -286,6 +292,7 @@ sap.ui.define([
     this.router = this.getOwnerComponent().getRouter();
     this.router.navTo("TransferRequest200");
     }else{
+      this.clearSelection();
       sap.m.MessageToast.show("Please Unselect 0 Instock First");
     }
   },

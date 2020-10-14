@@ -31,7 +31,6 @@
 	        </f:SimpleForm>
         
        <content>
-
           <Toolbar>
             <SearchField id="sField" search="onSearchDoc" width="100%" />
           </Toolbar>

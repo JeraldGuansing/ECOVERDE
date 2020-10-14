@@ -12,10 +12,10 @@
      <Page showHeader="true" title="Inventory Transfer" showNavButton="true" navButtonPress="onPressNavback">    
        <content>
           <List>
-            <InputListItem label="Warehouse Code">
+            <InputListItem label="Whse Code">
                 <Input id="whseID" />
             </InputListItem> 
-             <InputListItem label="Warehouse Name">
+             <InputListItem label="Whse Name">
                 <Input id="whseNM" />
             </InputListItem> 
           </List>

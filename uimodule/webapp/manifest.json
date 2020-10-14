@@ -250,13 +250,14 @@
         "settings": {
           "viewType": "XML",
           "viewLevel": 1,
-          "viewName": "settings"
+          "viewName": "settings",
+          "transition": "fade"
         },
         "main": {
           "viewType": "XML",
           "viewLevel": 1,
           "viewName": "main",
-          "transition": "flip"
+          "transition": "fade"
         },
         "warehouseReport": {
                     "viewPath": "com.ecoverde.ECOVERDE.view",
@@ -265,7 +266,8 @@
                     "parent": "main",
                     "controlId": "pageContainer",
                     "controlAggregation": "pages",
-                    "viewLevel": 3
+                    "viewLevel": 3,
+                    "transition": "fade"
         },
         "goodsReceipt": {
                     "viewPath": "com.ecoverde.ECOVERDE.view",
@@ -274,7 +276,8 @@
                     "parent": "main",
                     "controlId": "pageContainer",
                     "controlAggregation": "pages",
-                    "viewLevel": 3
+                    "viewLevel": 3,
+                    "transition": "fade"
         },
         "homeScreen": {
                     "viewPath": "com.ecoverde.ECOVERDE.view",
@@ -283,7 +286,8 @@
                     "parent": "main",
                     "controlId": "pageContainer",
                     "controlAggregation": "pages",
-                    "viewLevel": 3
+                    "viewLevel": 3,
+                    "transition": "fade"
         },
         "purchaseOrderList": {
                     "viewPath": "com.ecoverde.ECOVERDE.view",
@@ -292,7 +296,8 @@
                     "parent": "main",
                     "controlId": "pageContainer",
                     "controlAggregation": "pages",
-                    "viewLevel": 3
+                    "viewLevel": 3,
+                    "transition": "fade"
         },
         "BarcodeScanning": {
           "viewPath": "com.ecoverde.ECOVERDE.view",
@@ -302,7 +307,7 @@
           "controlId": "pageContainer",
           "controlAggregation": "pages",
           "viewLevel": 3,
-          "transition": "flip"
+          "transition": "fade"
         },
         "GRwReference": {
           "viewPath": "com.ecoverde.ECOVERDE.view",
@@ -311,7 +316,8 @@
           "parent": "main",
           "controlId": "pageContainer",
           "controlAggregation": "pages",
-          "viewLevel": 3
+          "viewLevel": 3,
+          "transition": "fade"
         },
         "goodsIssueMenu": {
           "viewPath": "com.ecoverde.ECOVERDE.view",
@@ -320,7 +326,7 @@
           "parent": "main",
           "controlId": "pageContainer",
           "controlAggregation": "pages",
-          "viewLevel": 3
+          "transition": "fade"
         },
         "goodsIssuance": {
           "viewPath": "com.ecoverde.ECOVERDE.view",
@@ -330,7 +336,7 @@
           "controlId": "pageContainer",
           "controlAggregation": "pages",
           "viewLevel": 3,
-          "transition": "flip"
+          "transition": "fade"
         },
         "goodsReturn": {
           "viewPath": "com.ecoverde.ECOVERDE.view",
@@ -340,7 +346,7 @@
           "controlId": "pageContainer",
           "controlAggregation": "pages",
           "viewLevel": 3,
-          "transition": "flip"
+          "transition": "fade"
         },
         "goodsReturnList": {
           "viewPath": "com.ecoverde.ECOVERDE.view",
@@ -349,7 +355,8 @@
           "parent": "main",
           "controlId": "pageContainer",
           "controlAggregation": "pages",
-          "viewLevel": 3
+          "viewLevel": 3,
+          "transition": "fade"
         },
         "transferView": {
           "viewPath": "com.ecoverde.ECOVERDE.view",
@@ -358,7 +365,8 @@
           "parent": "main",
           "controlId": "pageContainer",
           "controlAggregation": "pages",
-          "viewLevel": 3
+          "viewLevel": 3,
+          "transition": "fade"
         },
         "returnWref": {
           "viewPath": "com.ecoverde.ECOVERDE.view",
@@ -376,7 +384,8 @@
           "parent": "main",
           "controlId": "pageContainer",
           "controlAggregation": "pages",
-          "viewLevel": 3
+          "viewLevel": 3,
+          "transition": "fade"
         },
         "InventoryTransfer": {
           "viewPath": "com.ecoverde.ECOVERDE.view",
@@ -385,7 +394,8 @@
           "parent": "main",
           "controlId": "pageContainer",
           "controlAggregation": "pages",
-          "viewLevel": 3
+          "viewLevel": 3,
+          "transition": "fade"
         },
         "InventoryPost": {
           "viewPath": "com.ecoverde.ECOVERDE.view",
@@ -394,7 +404,8 @@
           "parent": "main",
           "controlId": "pageContainer",
           "controlAggregation": "pages",
-          "viewLevel": 3
+          "viewLevel": 3,
+          "transition": "fade"
         },
         "inventoryCountMenu": {
           "viewPath": "com.ecoverde.ECOVERDE.view",
@@ -403,7 +414,8 @@
           "parent": "main",
           "controlId": "pageContainer",
           "controlAggregation": "pages",
-          "viewLevel": 3       
+          "viewLevel": 3,
+          "transition": "fade"       
         },
         "CreateCount": {
           "viewPath": "com.ecoverde.ECOVERDE.view",
@@ -413,7 +425,7 @@
           "controlId": "pageContainer",
           "controlAggregation": "pages",
           "viewLevel": 3,
-          "transition": "flip"
+          "transition": "fade"
         },
         "inventoryView": {
           "viewPath": "com.ecoverde.ECOVERDE.view",
@@ -422,8 +434,8 @@
           "parent": "main",
           "controlId": "pageContainer",
           "controlAggregation": "pages",
-          "viewLevel": 3
-         
+          "viewLevel": 3,
+          "transition": "fade"
         },
         "updateCount": {
           "viewPath": "com.ecoverde.ECOVERDE.view",
@@ -442,7 +454,8 @@
           "parent": "main",
           "controlId": "pageContainer",
           "controlAggregation": "pages",
-          "viewLevel": 3
+          "viewLevel": 3,
+          "transition": "fade"
           
         },
         "TransferRequest200": {
@@ -452,8 +465,8 @@
           "parent": "main",
           "controlId": "pageContainer",
           "controlAggregation": "pages",
-          "viewLevel": 3
-          
+          "viewLevel": 3,
+          "transition": "fade"
         }
       }
     }

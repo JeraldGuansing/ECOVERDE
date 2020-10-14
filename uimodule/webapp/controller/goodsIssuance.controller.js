@@ -56,8 +56,8 @@ initialize: function(vFromId){
         this.getView().setModel(this.oModel, "oModel");
 
         this.getView().byId("projDesc").setText(localStorage.getItem("ProjName"));
-        this.getView().byId("Vcode").setText(localStorage.getItem("VendorCode"));
-        this.getView().byId("Vname").setText(localStorage.getItem("VendorName"));
+        // this.getView().byId("Vcode").setText(localStorage.getItem("VendorCode"));
+        // this.getView().byId("Vname").setText(localStorage.getItem("VendorName"));
 
 
         var today = new Date();
@@ -277,8 +277,8 @@ onPostIssue: function(){
 onGetItemIssue: function(){
   this.openLoadingFragment();
   var sServerName = localStorage.getItem("ServerID");
-  var sUrl = sServerName + "/b1s/v1/Items?$select=ItemCode,ItemName&$filter=BarCode ne 'null' and Mainsupplier eq '" + localStorage.getItem("VendorCode") + "'&$orderby=ItemCode";
-  
+  var xsjsServer = sServerName.replace("50000", "4300");
+  var sUrl = xsjsServer + "/app_xsjs/ExecQuery.xsjs?procName=spAppGetAllItems&dbName=" + localStorage.getItem("dbName");
   $.ajax({
     url: sUrl,
         type: "GET",

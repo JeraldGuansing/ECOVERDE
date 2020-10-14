@@ -37,11 +37,11 @@
                             <f:FormContainer>
                                 <f:formElements>
 
-                                    <f:FormElement label="Vendor">
+                                    <!-- <f:FormElement label="Vendor">
                                         <ComboBox id="isVendor" showButton="true" placeholder="Select Item Vendor" selectionChange="onSelectUoM" items="{oModel>/VendorList}">
                                             <core:Item key="{oModel>CardCode}" text="{oModel>CardName}" />
                                         </ComboBox>
-                                    </f:FormElement>
+                                    </f:FormElement> -->
 
                                      <f:FormElement label="Project">
                                         <ComboBox id="isProject" placeholder="Select Project" selectionChange="" items="{oModel>/projectList}">

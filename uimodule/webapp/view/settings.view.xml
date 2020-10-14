@@ -16,7 +16,6 @@
                 <Image src="./resources/img/ecoverde.png"/>
               </FlexBox>
             </VBox>
-
         <content>
           <Panel xmlns="sap.m" class="sapUiResponsiveContentPadding" width="auto" expandable="false" expanded="true">		
             	<f:SimpleForm editable="true" layout="ResponsiveGridLayout" width="100%">

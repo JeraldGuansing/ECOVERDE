@@ -28,6 +28,7 @@ sap.ui.define([
             },
             onAfterShow: function(evt) {
                 //This event is fired every time when the NavContainer has made this child control visible.
+                oView.getController().onGetTransactionType();
             },
             onBeforeFirstShow: function(evt) {
                 //This event is fired before the NavContainer shows this child control for the first time.
@@ -44,6 +45,7 @@ sap.ui.define([
       },
 
   initialize: function(vFromId){
+
         this.oModel.setData({UoMCode:[]});
         this.oModel.updateBindings(true);
         this.oModel = new JSONModel("model/item.json");
@@ -59,8 +61,9 @@ sap.ui.define([
         
         today =  yyyy+ mm + dd;
         this.byId("DP8").setValue(today);
-
-      },
+    
+        this.onGetTransactionType();
+    },
 
     onScan: function() {
        var that = this;
@@ -245,6 +248,7 @@ sap.ui.define([
       var sUrl = sServerName + "/b1s/v1/InventoryGenEntries";
       var oBody = {
         "DocDate": that.getView().byId("DP8").getValue(),
+        "U_App_GRTransType": this.getView().byId('TransactionID').getValue(),
         "DocumentLines": []};          
     
       var StoredItem = this.oModel.getData().value;
@@ -335,8 +339,9 @@ sap.ui.define([
     onGetItem: function(){
       this.openLoadingFragment();
       var sServerName = localStorage.getItem("ServerID");
-      var sUrl = sServerName + "/b1s/v1/Items?$select=ItemCode,ItemName&$filter=BarCode ne 'null'";
-      
+      // var sUrl = sServerName + "/b1s/v1/Items?$select=ItemCode,ItemName&$filter=BarCode ne 'null'";
+      var xsjsServer = sServerName.replace("50000", "4300");
+      var sUrl = xsjsServer + "/app_xsjs/ExecQuery.xsjs?procName=spAppGetAllItems&dbName=" + localStorage.getItem("dbName");
       $.ajax({
         url: sUrl,
             type: "GET",
@@ -348,14 +353,13 @@ sap.ui.define([
               this.closeLoadingFragment();
               console.log("Error Occured");
             },
-            success: function (json) {
-              this.oModel.getData().itemMaster  = json.value;
+            success: function (response) {
+              this.oModel.getData().itemMaster  = response;
               this.oModel.refresh();
               this.closeLoadingFragment();
             },
             context: this
           })
-
     },
 
     //next
@@ -683,6 +687,31 @@ sap.ui.define([
   
   },
 
+  onGetTransactionType: function(){
+    this.openLoadingFragment();
+    var sServerName = localStorage.getItem("ServerID");
+    // var sUrl = sServerName + "/b1s/v1/Items?$select=ItemCode,ItemName&$filter=BarCode ne 'null'";
+    var xsjsServer = sServerName.replace("50000", "4300");
+    var sUrl = xsjsServer + "/app_xsjs/ExecQuery.xsjs?procName=spAppGetGRType&dbName=" + localStorage.getItem("dbName");
+    $.ajax({
+      url: sUrl,
+          type: "GET",
+          crossDomain: true,
+          xhrFields: {
+          withCredentials: true
+          },
+          error: function (xhr, status, error) {
+            this.closeLoadingFragment();
+            console.log("Error Occured");
+          },
+          success: function (response) {
+            this.oModel.getData().GRType  = response;
+            this.oModel.refresh();
+            this.closeLoadingFragment();
+          },
+          context: this
+        })
+  },
 
   });
 });

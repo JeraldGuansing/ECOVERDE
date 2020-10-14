@@ -42,12 +42,12 @@ sap.ui.define([
 
     onCreateInventoryC: function(){
 			this.router = this.getOwnerComponent().getRouter();
-			this.router.navTo("CreateCount",null, true);
+			this.router.navTo("CreateCount");
       },
 
       onCreateInventoryV: function(){
         this.router = this.getOwnerComponent().getRouter();
-        this.router.navTo("inventoryView",null, true);
+        this.router.navTo("inventoryView");
         },
   
 

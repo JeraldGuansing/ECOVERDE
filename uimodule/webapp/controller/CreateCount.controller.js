@@ -210,8 +210,9 @@ sap.ui.define([
   onGetItem: function(){
       this.openLoadingFragment();
       var sServerName = localStorage.getItem("ServerID");
-      var sUrl = sServerName + "/b1s/v1/Items?$select=ItemCode,ItemName&$filter=BarCode ne 'null'";
-            
+      var xsjsServer = sServerName.replace("50000", "4300");
+      var sUrl = xsjsServer + "/app_xsjs/ExecQuery.xsjs?procName=spAppGetItems&dbName=" + localStorage.getItem("dbName");  
+   
         $.ajax({
           url: sUrl,
           type: "GET",
@@ -223,7 +224,7 @@ sap.ui.define([
             this.closeLoadingFragment();
             sap.m.MessageToast(xhr.responseJSON.error.message.value);
           },success: function (json) {
-              this.oModel.getData().itemMaster  = json.value;
+              this.oModel.getData().itemMaster  = json;
                     this.oModel.refresh();
                     this.closeLoadingFragment();
                   },

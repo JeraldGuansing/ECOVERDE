@@ -227,8 +227,9 @@ onCloseIssuance: function(){
 onGetItemRet: function(){
       this.openLoadingFragment();
       var sServerName = localStorage.getItem("ServerID");
-      var sUrl = sServerName + "/b1s/v1/Items?$select=ItemCode,ItemName&$filter=BarCode ne 'null'&$filter=Mainsupplier eq '"+ localStorage.getItem("VendorCode") +"'";
-      
+      var xsjsServer = sServerName.replace("50000", "4300");
+      var sUrl = xsjsServer + "/app_xsjs/ExecQuery.xsjs?procName=spAppGetAllItems&dbName=" + localStorage.getItem("dbName");  
+    
       $.ajax({
         url: sUrl,
             type: "GET",
