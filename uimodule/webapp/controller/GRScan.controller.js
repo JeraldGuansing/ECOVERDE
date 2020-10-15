@@ -693,6 +693,7 @@ sap.ui.define([
     // var sUrl = sServerName + "/b1s/v1/Items?$select=ItemCode,ItemName&$filter=BarCode ne 'null'";
     var xsjsServer = sServerName.replace("50000", "4300");
     var sUrl = xsjsServer + "/app_xsjs/ExecQuery.xsjs?procName=spAppGetGRType&dbName=" + localStorage.getItem("dbName");
+    
     $.ajax({
       url: sUrl,
           type: "GET",
@@ -703,6 +704,9 @@ sap.ui.define([
           error: function (xhr, status, error) {
             this.closeLoadingFragment();
             console.log("Error Occured");
+          },
+          beforeSend: function (xhr) {
+            xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:P@ssw0rd810~"));
           },
           success: function (response) {
             this.oModel.getData().GRType  = response;

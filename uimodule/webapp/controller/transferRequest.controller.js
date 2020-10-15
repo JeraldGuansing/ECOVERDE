@@ -136,6 +136,9 @@ sap.ui.define([
               xhrFields: {
               withCredentials: true
               },
+              beforeSend: function (xhr) {
+                xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:P@ssw0rd810~"));
+              },
               error: function (xhr, status, error) {
                 this.closeLoadingFragment();
                 console.log("Error Occured" +  xhr.responseJSON.error.message.value);

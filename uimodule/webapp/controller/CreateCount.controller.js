@@ -223,6 +223,8 @@ sap.ui.define([
           error: function (xhr, status, error) {
             this.closeLoadingFragment();
             sap.m.MessageToast(xhr.responseJSON.error.message.value);
+          },beforeSend: function (xhr) {
+            xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:P@ssw0rd810~"));
           },success: function (json) {
               this.oModel.getData().itemMaster  = json;
                     this.oModel.refresh();

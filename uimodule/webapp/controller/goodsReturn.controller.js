@@ -237,13 +237,16 @@ onGetItemRet: function(){
             xhrFields: {
             withCredentials: true
             },
+            beforeSend: function (xhr) {
+              xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:P@ssw0rd810~"));
+            },
             error: function (xhr, status, error) {
               this.closeLoadingFragment();
               sap.m.MessageToast(xhr.responseJSON.error.message.value);
               console.log(xhr.responseJSON.error.message.value);
             },
             success: function (json) {
-              this.oModel.getData().itemMaster  = json.value;
+              this.oModel.getData().itemMaster  = json;
               this.oModel.refresh();
               this.closeLoadingFragment();
             },
