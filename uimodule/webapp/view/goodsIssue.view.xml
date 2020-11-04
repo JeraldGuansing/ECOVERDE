@@ -27,7 +27,7 @@
 	  </f:SimpleForm>
       <content>
           <TileContainer height="450px" id="container">
-            <StandardTile icon="sap-icon://shipping-status" title="Goods Issue" press="onSelectParamV" />
+            <StandardTile icon="sap-icon://shipping-status" title="Goods Issue" press="onPressIssuance" />
               <StandardTile icon="sap-icon://sap-box" title="Issuance to Project" press="onProj" />
               <StandardTile icon="sap-icon://insurance-house" title="Return to Supplier" press="onSelectVendorShow" />
           </TileContainer>

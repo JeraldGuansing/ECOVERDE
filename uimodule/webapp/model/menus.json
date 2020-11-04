@@ -1,11 +1,5 @@
 {
 	"navigation": [{
-			"title": "Warehouse Report",
-			"icon": "sap-icon://electronic-medical-record",
-			"expanded": true,
-			"key": "warehouseReport"
-			
-		}, {
 			"title": "Goods Receipt",
 			"icon": "sap-icon://receipt",
 			"expanded": true,
@@ -29,11 +23,12 @@
 			"key": "Count"
 		},
 		{
-			"title": "Transaction History",
-			"icon": "sap-icon://record",
+			"title": "Warehouse Report",
+			"icon": "sap-icon://electronic-medical-record",
 			"expanded": true,
-			"key": "History"
-        }
+			"key": "warehouseReport"
+			
+		}
 	],
 	"VendorList":[]
 }

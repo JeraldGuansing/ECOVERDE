@@ -84,7 +84,7 @@ sap.ui.define([
               "BaseLine": inLane[s].BaseLine
             });
          
-            console.log(inLane[s].ItemCode);
+            // console.log(inLane[s].ItemCode);
           }
         }
         catch(err) {

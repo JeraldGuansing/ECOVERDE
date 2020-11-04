@@ -9,32 +9,40 @@
 	xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:tnt="sap.tnt">
   <App id="GrReference" >
-      <Page title="Good Receipt PO" showNavButton="true" navButtonPress="onWithRef">
+      <Page showHeader="false" title="Good Receipt PO" showNavButton="true" navButtonPress="onWithRef">
             <content>
-              <List>
-                
-            <InputListItem label="Doc Num">
-                    <Label id="docID" />
-            </InputListItem>
+      	<Panel id="expandablePanel" headerText="Panel with a header text" expandAnimation="true" expanded="true" expandable="true" expand="onExpand" width="auto" class="sapUiResponsiveMargin">
+            	<headerToolbar>
+                <OverflowToolbar style="Clear">
+                  <ToolbarSpacer/>
+                  <Button icon="sap-icon://nav-back" press="onWithRef"/>
+                </OverflowToolbar>
+              </headerToolbar>
+            <content>
+                <List>   
+                    <InputListItem label="Doc Num">
+                            <Label id="docID" />
+                    </InputListItem>
 
-            <InputListItem label="Vendor Code">
-                  <Label id="venID" />
-            </InputListItem>
-            
-            <InputListItem label="Vendor Name">
-                    <Label id="venName" />
-            </InputListItem>
-      
-            <InputListItem label="Posting Date">
-                  <DatePicker
-                  id="DP8"
-                  displayFormat="YYYY-MM-dd"
-                  valueFormat="yyyyMMdd"
-                  change=""
-                  class="sapUiSmallMarginBottom"/>
-            </InputListItem>
-          
-        </List>
+                    <InputListItem label="Vendor Code">
+                          <Label id="venID" />
+                    </InputListItem>
+                    
+                    <InputListItem label="Vendor Name">
+                            <Label id="venName" />
+                    </InputListItem>
+              
+                    <InputListItem label="Posting Date">
+                          <DatePicker
+                          id="DP8"
+                          displayFormat="YYYY-MM-dd"
+                          valueFormat="yyyyMMdd"
+                          change=""
+                          class="sapUiSmallMarginBottom"/>
+                    </InputListItem>
+                </List>
+              </content>
+       </Panel>
       <html:br></html:br>
                 <List>
                   <InputListItem id="inptID" label="Receiving Option:">
@@ -64,7 +72,7 @@
 				      	<Button text="Scan" press="onScan" icon="sap-icon://camera"/>
 			      	</contentMiddle>
               <contentRight>
-				      	<Button text="Post" press="onConfirmPosting" icon="sap-icon://manager-insight"/>
+				      	<Button text="Post" press="onCheckPost" icon="sap-icon://manager-insight"/>
 			      	</contentRight>
             </Bar>
         </footer>

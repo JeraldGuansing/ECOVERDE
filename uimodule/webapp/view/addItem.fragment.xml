@@ -29,19 +29,19 @@
                                 <f:formElements>
                                 
                                     <f:FormElement label="Item Code">
-                                        <ComboBox id="itmID" selectionChange="onSelectItemCode"  placeholder="Select Item Code" items="{oModel>/itemMaster}">
-                                            <core:Item key="{oModel>ItemName}" text="{oModel>ItemCode}" />
+                                        <ComboBox id="itmID" change="onvalidationCode" placeholder="Select Item Code" items="{oModel>/itemMaster}">
+                                            <core:Item key="{oModel>ItemName}" text="{oModel>ItemCode}"/>
                                         </ComboBox>
                                     </f:FormElement>
 
                                     <f:FormElement label="Item Name">
-                                        <ComboBox id="itmName" selectionChange="onSelectItemName" placeholder="Select Description" items="{oModel>/itemMaster}">
-                                            <core:Item key="{oModel>ItemCode}" text="{oModel>ItemName}" />
+                                        <ComboBox showSecondaryValues= "true" id="itmName" change="onvalidationDesk" placeholder="Select Description" items="{oModel>/itemMaster}">
+                                            <core:Item key="{oModel>ItemCode}" text="{oModel>ItemName}"/>
                                         </ComboBox>
                                     </f:FormElement>
 
                                        <f:FormElement label="UoM Code">
-                                        <ComboBox id="uomID" selectionChange="onGetBarcodeOnAdd" placeholder="Select UoMCode" items="{oModel>/UoMCode}">
+                                        <ComboBox id="uomID" change="onvalidationUOM" placeholder="Select UoMCode" items="{oModel>/UoMCode}">
                                             <core:Item key="{oModel>AbsEntry}" text="{oModel>Code}" />
                                         </ComboBox>
                                     </f:FormElement>

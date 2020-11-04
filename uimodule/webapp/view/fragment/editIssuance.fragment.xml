@@ -50,7 +50,7 @@
                                     </f:FormElement>
 
                                     <f:FormElement label="Quantity">
-                                       <Input id="idisQty" liveChange="onEnableBttn" type="Number"/>
+                                       <Input id="idisQty" type="Number"/>
                                     </f:FormElement>
                                     
                                 </f:formElements>

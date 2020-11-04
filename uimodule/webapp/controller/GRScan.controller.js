@@ -44,6 +44,7 @@ sap.ui.define([
 
       },
 
+      
   initialize: function(vFromId){
 
         this.oModel.setData({UoMCode:[]});
@@ -51,9 +52,8 @@ sap.ui.define([
         this.oModel = new JSONModel("model/item.json");
         this.getView().setModel(this.oModel, "oModel");
 
-        // this.getView().byId("Vcode").setText(localStorage.getItem("VendorCode"));
-        // this.getView().byId("Vname").setText(localStorage.getItem("VendorName"));
-
+        this.getView().byId("TransactionID").setValue("");
+        
         var today = new Date();
         var dd = String(today.getDate()).padStart(2, '0');
         var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
@@ -191,7 +191,8 @@ sap.ui.define([
           const svd = saveData.filter(function(SAVD){
             return SAVD.ItemCode === barItemCode && SAVD.BarCode === vBarcode;
             })
-
+          fitemUOMcode = barItemCode;
+          that.onGetPrice();
           var sResult = parseInt(svd.length);
          
           if(sResult === 0){
@@ -199,6 +200,7 @@ sap.ui.define([
               "ItemCode":barItemCode, 
               "ItemName": ItemName,
               "BarCode": vBarcode,
+              "Price": that.oModel.getData().itemPrice,
               "Quantity": 1,
               "UoMCode": gUoMCode,
               "AbsEntry":AbsEntry
@@ -235,33 +237,165 @@ sap.ui.define([
         onClose: function (sButton) {
           if(sButton === "YES"){
             that.onPostingGR();
+            that.onCloseApproval();
           }}
       });
       }
     },
-    
+    // ItemGroup
     onPostingGR: function(){
     
       var that = this;
       that.openLoadingFragment();
       var sServerName = localStorage.getItem("ServerID");
       var sUrl = sServerName + "/b1s/v1/InventoryGenEntries";
+      var StoredItem = that.oModel.getData().value;
+
+      const OITM = StoredItem.filter(function(ITM){
+        return ITM.ItemGroup == 100 || ITM.ItemGroup == 101 || ITM.ItemGroup == 102 || ITM.ItemGroup == 103 || ITM.ItemGroup == 104;
+      })
+
+      console.log(OITM)
+
+      var oBody = {
+        "DocDate": that.getView().byId("DP8").getValue(),
+        "U_App_GRTransType": that.getView().byId('TransactionID').getValue(),
+        // "Document_ApprovalRequests": [
+        //   {
+        //       "ApprovalTemplatesID": 15,
+        //       "Remarks": sap.ui.getCore().byId("GRremarksID").getValue()
+        //   }
+        // ],
+        "DocumentLines": []
+      };          
+    
+      
+      for(var i = 0;i < OITM.length;i++){
+        oBody.DocumentLines.push({
+          "ItemCode": OITM[i].ItemCode,
+          "Quantity": OITM[i].Quantity,
+          "UoMEntry": OITM[i].AbsEntry,
+          "UoMCode": OITM[i].UoMCode,
+          "Price": "",
+          "WarehouseCode": localStorage.getItem("wheseID")
+          });
+        }
+        // console.log(oBody)
+      oBody = JSON.stringify(oBody);       
+          $.ajax({
+            url: sUrl,
+            type: "POST",
+            data: oBody,
+            headers: {
+              'Content-Type': 'application/json'},
+            crossDomain: true,
+            xhrFields: {withCredentials: true},
+            error: function (xhr, status, error) {
+              that.closeLoadingFragment();
+            },
+            success: function (json) { 
+              that.closeLoadingFragment();
+           
+            },context: this
+          });
+     
+          const NITM = StoredItem.filter(function(NTM){
+            return NTM.ItemGroup == 105 || NTM.ItemGroup == 106 || NTM.ItemGroup == 107;
+          })
+          console.log(NITM)
+          var oBody2 = {
+            "DocDate": that.getView().byId("DP8").getValue(),
+            "U_App_GRTransType": that.getView().byId('TransactionID').getValue(),
+            "DocumentLines": []
+          };          
+        
+          for(var i = 0;i < NITM.length;i++){
+            oBody2.DocumentLines.push({
+              "ItemCode": NITM[i].ItemCode,
+              "Quantity": NITM[i].Quantity,
+              "UoMEntry": NITM[i].AbsEntry,
+              "UoMCode": NITM[i].UoMCode,
+              // "Price": NITM[i].Price.replace('PHP ',''),
+              "WarehouseCode": localStorage.getItem("wheseID")
+              });
+            }
+            // console.log(oBody)
+          oBody2 = JSON.stringify(oBody2);       
+              $.ajax({
+                url: sUrl,
+                type: "POST",
+                data: oBody2,
+                headers: {
+                  'Content-Type': 'application/json'},
+                crossDomain: true,
+                xhrFields: {withCredentials: true},
+                error: function (xhr, status, error) {
+                  that.closeLoadingFragment();
+                },
+                success: function (json) { 
+                  that.closeLoadingFragment();
+                },context: this
+            });
+     
+            MessageBox.information("Item received successfully: " + NITM.length + "\n" + "Item received for Approval: " + OITM.length, {
+              actions: [MessageBox.Action.OK],
+              title: "Goods Receipt",
+              icon: MessageBox.Icon.INFORMATION,
+              styleClass:"sapUiSizeCompact",
+              onClose: function () {
+                  that.oModel.getData().value = [];
+                  that.oModel.refresh();
+              }
+            })
+    },
+
+    onConfirmPosting1: function(){
+      var that = this;
+    
+      var itemJSON = this.oModel.getData().value;
+      if(parseInt(itemJSON.length) == 0){
+        sap.m.MessageToast.show("Please Scan/Input item First");
+      }
+      else{
+
+      MessageBox.information("Are you sure you want to [POST] this transaction?", {
+        actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+        title: "POST Goods Receipt w/out PO",
+        icon: MessageBox.Icon.QUESTION,
+        styleClass:"sapUiSizeCompact",
+        onClose: function (sButton) {
+          if(sButton === "YES"){
+            that.onPostingGR1();
+            that.onCloseApproval();
+          }}
+      });
+      }
+    },
+    
+    onPostingGR1: function(){
+    
+      var that = this;
+      that.openLoadingFragment();
+      var sServerName = localStorage.getItem("ServerID");
+      var sUrl = sServerName + "/b1s/v1/InventoryGenEntries";
+      var StoredItem = this.oModel.getData().value;
       var oBody = {
         "DocDate": that.getView().byId("DP8").getValue(),
         "U_App_GRTransType": this.getView().byId('TransactionID').getValue(),
-        "DocumentLines": []};          
-    
-      var StoredItem = this.oModel.getData().value;
+        "DocumentLines": []
+      };          
+      
       for(var i = 0;i < StoredItem.length;i++){
         oBody.DocumentLines.push({
           "ItemCode": StoredItem[i].ItemCode,
           "Quantity": StoredItem[i].Quantity,
           "UoMEntry": StoredItem[i].AbsEntry,
           "UoMCode": StoredItem[i].UoMCode,
+          // "Price": StoredItem[i].Price.replace('PHP ',''),
           "WarehouseCode": localStorage.getItem("wheseID")
           });
         }
-        console.log(oBody)
+        // console.log(oBody)
       oBody = JSON.stringify(oBody);
       // console.log(oBody);        
           $.ajax({
@@ -297,7 +431,69 @@ sap.ui.define([
               
      },
 
-    onWithoutRef: function(){
+  onShowApproval: function(){
+      var itemJSON = this.oModel.getData().value;
+      if(parseInt(itemJSON.length) == 0){
+        sap.m.MessageToast.show("Please Input item First");
+      }
+      else{
+      if (!this.GRapprv) {
+        this.GRapprv = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.Approvals.GRApproval", this);
+        this.getView().addDependent(this.GRapprv);
+        this.oModel.refresh();
+      }
+      sap.ui.getCore().byId("GRremarksID").setValue("");
+      this.GRapprv.open();
+      }
+    
+    },
+    
+  onCloseApproval: function(){
+      if(this.GRapprv){
+          this.GRapprv.close();
+      }
+    },
+    
+  onCheckPost: function(){
+      var that = this;
+      var itemJSON = that.oModel.getData().value;
+      if(parseInt(itemJSON.length) == 0){
+        sap.m.MessageToast.show("Please Input item First");
+      }
+      else{
+      var x = [];
+      var sServerName = localStorage.getItem("ServerID");
+      var sUrl = sServerName + "/b1s/v1/ApprovalTemplates?$filter=Name eq '" + "GR-01" + "' and IsActive eq 'tYES'";
+      $.ajax({
+        url: sUrl,
+            type: "GET",
+            crossDomain: true,
+            xhrFields: {
+            withCredentials: true
+            },
+            error: function (xhr, status, error) {
+              that.closeLoadingFragment();
+              console.log("Error Occured" + xhr.responseJSON.error.message.value);
+              //sap.m.MessageToast.show("Please check approval template setup for  [GI Approval]");
+              // return;
+            },
+            success: function (json) {
+              x  = json.value;
+              that.closeLoadingFragment();
+            },
+            context: that
+          })
+          if(x.length !=0){
+            that.onGetItemGroup();
+            that.onShowApproval();
+          }else{
+            that.onGetItemGroup();
+            that.onPostingGR1();
+          }
+        }
+    },
+     
+  onWithoutRef: function(){
 			this.router = this.getOwnerComponent().getRouter();
 			this.router.navTo("goodsReceipt",null, true);
       },
@@ -322,18 +518,22 @@ sap.ui.define([
     },
 
     onAddItem: function(){
-       
+    if(this.getView().byId("TransactionID").getValue() == ""){
+        sap.m.MessageToast.show("Please Select Transaction Type First");
+    }else{
       if (!this.addItemDialog) {
           this.addItemDialog = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.addItem", this);
           this.getView().addDependent(this.addItemDialog);
       }
         this.onGetItem();
        // this.onGetUOM();
+          sap.ui.getCore().byId("itmID").setValue("");
           sap.ui.getCore().byId("itmID").setSelectedKey("");
           sap.ui.getCore().byId("itmName").setSelectedKey("");
           sap.ui.getCore().byId("uomID").setSelectedKey("");
           sap.ui.getCore().byId("qtyID").setValue("");
           this.addItemDialog.open();
+        }
     },
 
     onGetItem: function(){
@@ -362,15 +562,70 @@ sap.ui.define([
           })
     },
 
+    onGetPrice: function(){
+      var sServerName = localStorage.getItem("ServerID");
+      var sUrl = sServerName + "/b1s/v1/Items?$select=MovingAveragePrice,&$filter=ItemCode eq '" + fitemUOMcode + "'";
+        $.ajax({
+          url: sUrl,
+          type: "GET",
+          crossDomain: true,
+          xhrFields: {
+          withCredentials: true
+                  },
+          error: function (xhr, status, error) {
+            this.closeLoadingFragment();
+            sap.m.MessageToast(xhr.responseJSON.error.message.value);
+          },success: function (json) {
+              this.oModel.getData().itemPrice  = json.value[0];
+                    this.oModel.refresh();
+                    this.closeLoadingFragment();
+                  },
+                  context: this
+                })
+                // console.log(this.oModel.getData().itemPrice)
+    },
+
     //next
     onGetAddItem: function(){
       var that = this;
+
+      var StoredBar = that.oModel.getData().itemMaster;
+      const vOITM = StoredBar.filter(function(OITM){
+      return OITM.ItemCode == sap.ui.getCore().byId("itmID").getValue();
+    })
+   
+      if(vOITM.length == 0){
+        sap.m.MessageToast.show("Invalid Item Code");
+        return;
+      }else{
+       
+        var StoredDes = that.oModel.getData().itemMaster;
+        const vOITMD = StoredDes.filter(function(OITMD){
+        return OITMD.ItemName == sap.ui.getCore().byId("itmName").getValue();
+      })
+  
+        if(vOITMD.length == 0){
+          sap.m.MessageToast.show("Invalid Item Name");
+          return;
+        }else{
+  
+          var StoredUOM = that.oModel.getData().UoMCode;
+          const vUOM = StoredUOM.filter(function(UOM){
+          return UOM.Code == sap.ui.getCore().byId("uomID").getValue();
+        })
+    
+          if(vUOM.length == 0){
+            sap.m.MessageToast.show("Invalid UOM");
+            return;
+          }else{
+
       that.openLoadingFragment();
       var sItmID = sap.ui.getCore().byId("itmID").getValue();
       var sItmName = sap.ui.getCore().byId("itmName").getValue();
       var sQtyID = sap.ui.getCore().byId("qtyID").getValue();
       var sUoMID = sap.ui.getCore().byId("uomID").getValue();
       var AbsEntryID = sap.ui.getCore().byId("uomID").getSelectedKey();
+
 
       if(sItmID == ""){
         sap.m.MessageToast.show("Please select Item Code");
@@ -389,18 +644,31 @@ sap.ui.define([
         that.closeLoadingFragment();
         return;
       }else{
+        
+        const formatter = new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'PHP',
+          minimumFractionDigits: 2
+        })
 
+
+        that.onGetPrice();
         ///>>>>>>>GetBarcode
         var StoredBarc = that.oModel.getData().BarcodeUnit; 
         var getStrBarc = "";
         if(StoredBarc.length != 0){
           getStrBarc = StoredBarc[0].Barcode;
         }
+       
+        var getPR = this.oModel.getData().itemPrice.MovingAveragePrice;
+
+        var getTotalPR = parseInt(getPR) * parseInt(sQtyID);
+        
         
         var StoredItem = that.oModel.getData().value;        
         const oITM = StoredItem.filter(function(OIT){
-        return OIT.ItemCode == sItmID && OIT.BarCode == getStrBarc;
-         })
+        return OIT.ItemCode == sItmID && OIT.BarCode == getStrBarc;})
+
       var cResult = parseInt(oITM.length);
       if(cResult == 0){
         that.oModel.getData().value.push({
@@ -408,7 +676,10 @@ sap.ui.define([
           "ItemName":sItmName,
           "BarCode": getStrBarc,
           "Quantity": sQtyID,
+          "ItemPrice": getPR,
+          "Price": formatter.format(getTotalPR),
           "UoMCode": sUoMID,
+          "ItemGroup": "",
           "AbsEntry":AbsEntryID
         });
         that.closeLoadingFragment();
@@ -419,8 +690,10 @@ sap.ui.define([
       that.closeLoadingFragment();
       that.oModel.refresh();
       that.onCloseAdd();
+          }
+        }
       }
-      
+    }
     },
 
     onGetBarcodeOnAdd: function(){
@@ -461,6 +734,68 @@ sap.ui.define([
         // this.onGetListOfUOM();
     },
     
+    onvalidationCode: function(){
+
+      var StoredBar = this.oModel.getData().itemMaster;
+      const vOITM = StoredBar.filter(function(OITM){
+      return OITM.ItemCode == sap.ui.getCore().byId("itmID").getValue();
+    })
+   
+      if(vOITM.length == 0){
+        sap.m.MessageToast.show("Invalid Item Code");
+        return;
+      }else{
+        this.onSelectItemCode();
+      }
+    },
+
+    onvalidationDesk: function(){
+      var StoredBar = this.oModel.getData().itemMaster;
+      const vOITM = StoredBar.filter(function(OITM){
+      return OITM.ItemName == sap.ui.getCore().byId("itmName").getValue();
+    })
+
+      if(vOITM.length == 0){
+        sap.m.MessageToast.show("Invalid Item Name");
+        return;
+      }else{
+        this.onSelectItemName();
+      }
+
+    },
+
+
+    onvalidationUOM: function(){
+
+      var StoredUOM = this.oModel.getData().UoMCode;
+      const vUOM = StoredUOM.filter(function(UOM){
+      return UOM.Code == sap.ui.getCore().byId("uomID").getValue();
+    })
+
+      if(vUOM.length == 0){
+        sap.m.MessageToast.show("Invalid UOM");
+        return;
+      }else{
+        this.onGetBarcodeOnAdd();
+      }
+
+    },
+
+    onvalidationUOMED: function(){
+
+      var StoredUOM = this.oModel.getData().UoMCode;
+      const vUOM = StoredUOM.filter(function(UOM){
+      return UOM.Code == sap.ui.getCore().byId("iUOMID").getValue();
+    })
+
+      if(vUOM.length == 0){
+        sap.m.MessageToast.show("Invalid UOM");
+        return;
+      }else{
+        this.onGetBarcodeOnAdd();
+      }
+
+    },
 
     onSelectItemName: function(){
       var itemCode = sap.ui.getCore().byId("itmName").getSelectedKey();
@@ -481,9 +816,7 @@ sap.ui.define([
     $.ajax({
       url: sUrl,
       type: "GET",
-      dataType: 'json',
       crossDomain: true,
-      async: false,
       xhrFields: {
         withCredentials: true},
       success: function(response){
@@ -511,8 +844,6 @@ sap.ui.define([
           $.ajax({
             url: sUrl,
             type: "GET",
-            dataType: 'json',
-            async: false,
             crossDomain: true,
             xhrFields: {
               withCredentials: true},
@@ -542,6 +873,8 @@ sap.ui.define([
   },
 
   onShowEdit: function(oEvent){
+
+
   var that = this;
   that.openLoadingFragment();
 
@@ -553,6 +886,7 @@ sap.ui.define([
   var indexItem = listpath.split("/");
   indS =indexItem[2];
   fitemUOMcode = boundData.ItemCode;
+
   that.onGetListOfAbst();
   that.onGetListOfUOM();
 
@@ -569,10 +903,9 @@ sap.ui.define([
 
     sap.ui.getCore().byId("eBarcode").setVisible(false);
     sap.ui.getCore().byId("curiUOMID").setVisible(false);
-    sap.ui.getCore().byId("bttnSave").setEnabled(false);
+    // sap.ui.getCore().byId("bttnSave").setEnabled(false);
 
-   
-    
+      
     that.closeLoadingFragment();
   },
 
@@ -605,9 +938,20 @@ sap.ui.define([
       that.closeLoadingFragment()
   },
 
+  
   onSaveEdit: function(){
-   
+    var StoredUOM = this.oModel.getData().UoMCode;
+    const vUOM = StoredUOM.filter(function(UOM){
+    return UOM.Code == sap.ui.getCore().byId("iUOMID").getValue();
+    })
+
+    if(vUOM.length == 0){
+      sap.m.MessageToast.show("Invalid UOM");
+      return;
+    }else{
+
     var that = this;
+    fitemUOMcode = sap.ui.getCore().byId("eItemID").getValue();
     var editQty = sap.ui.getCore().byId("eQtyID").getValue();
     var editUOM = sap.ui.getCore().byId("iUOMID").getValue();
     if(editQty == "" || editQty <= 0){
@@ -617,6 +961,8 @@ sap.ui.define([
       sap.m.MessageToast.show("Please Select UoM");
       return;
     }
+
+    this.onGetPrice();
     this.openLoadingFragment();
     var StoredItem = that.oModel.getData().value;
     var curItemCode = sap.ui.getCore().byId("eItemID").getValue();
@@ -632,28 +978,41 @@ sap.ui.define([
     if(getupBarC.length != 0 ){
       editBarcode = getupBarC[0].Barcode;
     }
+    
+
+    const formatter = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'PHP',
+      minimumFractionDigits: 2
+    })
 
     const updelItem = StoredItem.filter(function(OIT){
     return OIT.ItemCode == curItemCode && OIT.UoMCode ==editUOM;})
-
+   
       if(parseInt(updelItem.length) != 0){
-        
+        var comPrice;
         if(editUOM == curUOM){
           updelItem[0].Quantity = parseInt(editQty);
+          updelItem[0].Price = formatter.format(parseInt(editQty) * parseInt(updelItem[0].ItemPrice));
         }else{
           updelItem[0].Quantity = parseInt(updelItem[0].Quantity) + parseInt(editQty);
-          StoredItem.splice(indS,1);   
+          comPrice = parseInt(updelItem[0].Quantity) + parseInt(editQty);
+          updelItem[0].Price =  formatter.format(comPrice * parseInt(updelItem[0].ItemPrice));    
+          StoredItem.splice(indS,1);  
         }
-       
+      
       }else{
         StoredItem[indS].Quantity = editQty;
+        StoredItem[indS].Price = formatter.format(parseInt(editQty) * parseInt(StoredItem[indS].ItemPrice)); 
         StoredItem[indS].UoMCode = editUOM;
         StoredItem[indS].AbsEntry = editAbs; 
+      
       }
-       
+   
       that.oModel.refresh();
       that.closeLoadingFragment();
       that.onCloseEdit();
+    }
   },
 
   onDeleteItem(oEvent){
@@ -688,7 +1047,7 @@ sap.ui.define([
   },
 
   onGetTransactionType: function(){
-    this.openLoadingFragment();
+    // this.openLoadingFragment();
     var sServerName = localStorage.getItem("ServerID");
     // var sUrl = sServerName + "/b1s/v1/Items?$select=ItemCode,ItemName&$filter=BarCode ne 'null'";
     var xsjsServer = sServerName.replace("50000", "4300");
@@ -697,6 +1056,9 @@ sap.ui.define([
     $.ajax({
       url: sUrl,
           type: "GET",
+          beforeSend: function (xhr) {
+            xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:P@ssw0rd810~"));
+          },
           crossDomain: true,
           xhrFields: {
           withCredentials: true
@@ -704,9 +1066,6 @@ sap.ui.define([
           error: function (xhr, status, error) {
             this.closeLoadingFragment();
             console.log("Error Occured");
-          },
-          beforeSend: function (xhr) {
-            xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:P@ssw0rd810~"));
           },
           success: function (response) {
             this.oModel.getData().GRType  = response;
@@ -716,6 +1075,36 @@ sap.ui.define([
           context: this
         })
   },
+
+  onGetItemGroup: function(){
+    var that = this;
+    var s = that.oModel.getData().value;  
+    for(let g = 0;g< s.length; g++){
+  
+    this.closeLoadingFragment();
+    var sServerName = localStorage.getItem("ServerID");
+    var sUrl = sServerName + "/b1s/v1/Items?$select=ItemsGroupCode&$filter=ItemCode eq '" + s[g].ItemCode + "'";
+    $.ajax({
+      url: sUrl,
+      type: "GET",
+      dataType: 'json',
+      crossDomain: true,
+      xhrFields: {
+        withCredentials: true},
+      success: function(response){
+        s[g].ItemGroup = response.value[0].ItemsGroupCode;
+        that.oModel.refresh();
+      
+      }, error: function() { 
+        that.closeLoadingFragment()
+        console.log("Error Occur");
+      }
+    })
+  
+    }
+    // console.log(s)
+  },
+
 
   });
 });

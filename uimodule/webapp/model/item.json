@@ -64,5 +64,8 @@
     "teamEmp": [],
     "SelectedInvCount":[],
     "SelectedTmCount":[],
-    "GRType": []    
+    "GRType": [],
+    "GIType": [],
+    "itemPrice": [],
+    "AlertSMS": []    
 }

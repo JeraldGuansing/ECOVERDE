@@ -9,10 +9,9 @@
 	controllerName="com.ecoverde.ECOVERDE.controller.main">
 	<tnt:ToolPage id="toolPage">
 		<tnt:header>
-			<f:ShellBar class="myShellBar" showMenuButton="true" homeIconPressed="onIconPress" showCopilot="false"
-				menuButtonPressed="onMenuButtonPress" showNotifications="true" 	notificationsNumber="2">
+			<f:ShellBar id="shellid" class="myShellBar" showMenuButton="true" homeIconPressed="onIconPress" showCopilot="false"
+				menuButtonPressed="onMenuButtonPress" showNotifications="true" notificationsPressed="onAlert">
 			</f:ShellBar>
-			
 		</tnt:header>
 		<tnt:sideContent>
 			

@@ -1,0 +1,33 @@
+ <mvc:View controllerName="com.ecoverde.ECOVERDE.controller.appAlert"
+  displayBlock="true"
+        xmlns="sap.m"
+	xmlns:f="sap.ui.layout.form" 
+	xmlns:core="sap.ui.core" 
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+        xmlns:t="sap.ui.table"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+        class="sapUiBodyBackground sapContrastPlus">
+    <Page showHeader="true" title="Notification">
+    <VBox class="sapUiSmallMargin">
+        <List id="projectlistid" items="{oModel>/AlertSMS}">
+                    <ObjectListItem title="{oModel>Description}"
+                            type="Navigation"
+                            press = "onShowEdit"
+                            intro="{oModel>DateCreated}">
+                            <attributes>
+                              <ObjectAttribute title="{oModel>Subject}"/>
+                              <ObjectAttribute title="{oModel>DocNum}"/>
+                            </attributes>
+                    </ObjectListItem>
+        </List>
+        </VBox>
+       <footer>
+            <Bar>
+            <contentMiddle>
+                <Button text="Refresh" press="onGetAlert" icon="sap-icon://synchronize" />
+              </contentMiddle>
+            </Bar>
+          </footer>          
+      </Page>
+</mvc:View>

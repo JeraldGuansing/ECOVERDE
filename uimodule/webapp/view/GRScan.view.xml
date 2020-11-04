@@ -45,6 +45,7 @@
                   <items>
                     <ObjectListItem id="list" title="{oModel>ItemCode}"
                             number="{oModel>Quantity}"
+                            numberUnit="{oModel>Price}"
                             type="Active"
                             press = "onShowEdit"
                             icon="sap-icon://add-product"
@@ -69,7 +70,7 @@
 					<Button text="Scan" press="onScan" icon="sap-icon://camera"/>
 				</contentMiddle>
         <contentRight>
-					<Button text="Post" press="onConfirmPosting" icon="sap-icon://manager-insight"/>
+					<Button text="Post" press="onCheckPost" icon="sap-icon://manager-insight"/>
 				</contentRight>
 			</Bar>
 		</footer>

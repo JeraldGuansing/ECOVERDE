@@ -14,6 +14,7 @@ sap.ui.define([
   var listpath;
   var indS;
   return Controller.extend("com.ecoverde.ECOVERDE.controller.TransferRequest200", {
+    
     onInit: function(){
       var oView = this.getView();
       oView.addEventDelegate({
@@ -105,11 +106,11 @@ sap.ui.define([
        
       },
 
-    onGetItemReq: function(){
+onGetItemReq: function(){
         
         var sServerName = localStorage.getItem("ServerID");
-        var sUrl = sServerName + "/b1s/v1/Items?$select=ItemCode,ItemName&$filter=BarCode ne 'null' or BarCode ne ''&$orderby=ItemCode";
-        
+        var xsjsServer = sServerName.replace("50000", "4300");
+        var sUrl = xsjsServer + "/app_xsjs/ExecQuery.xsjs?procName=spAppGetAllItems&dbName=" + localStorage.getItem("dbName");  
         $.ajax({
           url: sUrl,
               type: "GET",
@@ -117,21 +118,23 @@ sap.ui.define([
               xhrFields: {
               withCredentials: true
               },
+              beforeSend: function (xhr) {
+                xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:P@ssw0rd810~"));
+              },
               error: function (xhr, status, error) {
                 this.closeLoadingFragment();
                 console.log("Error Occured" +  xhr.responseJSON.error.message.value);
               },
               success: function (json) {
-                this.oModel.getData().itemMaster  = json.value;
+                this.oModel.getData().itemMaster  = json;
                 this.oModel.refresh();
-               
               },
               context: this
             })
       
         },
 
-    onCloseAddI: function(){
+onCloseAddI: function(){
           if(this.transferReq){
               this.transferReq.close();
           }
@@ -139,7 +142,7 @@ sap.ui.define([
         
         },
 
-      onSelectItemCode: function(){
+onSelectItemCode: function(){
           var itemName = sap.ui.getCore().byId("reqtemCode").getSelectedKey();
           sap.ui.getCore().byId("reqItemName").setValue(itemName);
           this.openLoadingFragment();
@@ -158,8 +161,85 @@ onSelectItemName: function(){
         // getBarcode here
       },
 
+onvalidationCode: function(){
+
+        var StoredBar = this.oModel.getData().itemMaster;
+        const vOITM = StoredBar.filter(function(OITM){
+        return OITM.ItemCode == sap.ui.getCore().byId("itmID").getValue();
+      })
+     
+        if(vOITM.length == 0){
+          sap.m.MessageToast.show("Invalid Item Code");
+          return;
+        }else{
+          this.onSelectItemCode();
+        }
+      },
+  
+onvalidationDesk: function(){
+        var StoredBar = this.oModel.getData().itemMaster;
+        const vOITM = StoredBar.filter(function(OITM){
+        return OITM.ItemName == sap.ui.getCore().byId("itmName").getValue();
+      })
+  
+        if(vOITM.length == 0){
+          sap.m.MessageToast.show("Invalid Item Name");
+          return;
+        }else{
+          this.onSelectItemName();
+        }
+  
+      },
+  
+  
+onvalidationUOM: function(){
+  
+        var StoredUOM = this.oModel.getData().UoMCode;
+        const vUOM = StoredUOM.filter(function(UOM){
+        return UOM.Code == sap.ui.getCore().byId("uomID").getValue();
+      })
+  
+        if(vUOM.length == 0){
+          sap.m.MessageToast.show("Invalid UOM");
+          return;
+        }else{
+          this.onGetListOfUOM();
+        }
+  
+      },
+
 onSaveAddItem: function(){
           var that = this;
+          var StoredBar = that.oModel.getData().itemMaster;
+          const vOITM = StoredBar.filter(function(OITM){
+          return OITM.ItemCode == sap.ui.getCore().byId("itmID").getValue();
+        })
+       
+          if(vOITM.length == 0){
+            sap.m.MessageToast.show("Invalid Item Code");
+            return;
+          }else{
+           
+            var StoredDes = that.oModel.getData().itemMaster;
+            const vOITMD = StoredDes.filter(function(OITMD){
+            return OITMD.ItemName == sap.ui.getCore().byId("itmName").getValue();
+          })
+      
+            if(vOITMD.length == 0){
+              sap.m.MessageToast.show("Invalid Item Name");
+              return;
+            }else{
+      
+              var StoredUOM = that.oModel.getData().UoMCode;
+              const vUOM = StoredUOM.filter(function(UOM){
+              return UOM.Code == sap.ui.getCore().byId("uomID").getValue();
+            })
+        
+              if(vUOM.length == 0){
+                sap.m.MessageToast.show("Invalid UOM");
+                return;
+              }else{
+
           that.openLoadingFragment();
           var sItmID = sap.ui.getCore().byId("reqtemCode").getValue();
           var sItmName = sap.ui.getCore().byId("reqItemName").getValue();
@@ -218,7 +298,9 @@ onSaveAddItem: function(){
           that.oModel.refresh();
           that.onCloseAddI();
           }
-          
+        }
+      }
+    }
         },
 
 onConfirmPosting: function(){

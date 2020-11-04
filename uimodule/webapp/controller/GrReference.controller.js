@@ -148,6 +148,34 @@ onScanBarcode: function(){
         that.closeLoadingFragment()
     },
 
+onConfirmPosting1: function(){
+      var that = this;
+      var itemJSON = that.oModel.getData().forPosting;
+      if(parseInt(itemJSON.length) == 0){
+        sap.m.MessageToast.show("Please Scan/Input item First");
+      }
+      else{
+
+      
+      if(parseInt(itemJSON.length) == 0){
+        sap.m.MessageToast.show("Please Scan/Input item First");
+      }
+      else{
+
+      MessageBox.information("Are you sure you want to [POST] this transaction?", {
+        actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+        title: "POST Goods Receipt w/out PO",
+        icon: MessageBox.Icon.QUESTION,
+        styleClass:"sapUiSizeCompact",
+        onClose: function (sButton) {
+          if(sButton === "YES"){
+            that.onPostingGR1();
+          }}
+      });
+      }
+    }
+    },
+
 onConfirmPosting: function(){
       var that = this;
       var itemJSON = that.oModel.getData().forPosting;
@@ -169,7 +197,7 @@ onConfirmPosting: function(){
         styleClass:"sapUiSizeCompact",
         onClose: function (sButton) {
           if(sButton === "YES"){
-            that.onPostingGR();
+            that.onPostingGR1();
           }}
       });
       }
@@ -178,17 +206,143 @@ onConfirmPosting: function(){
     
 onPostingGR: function(){
       var that = this;
+    
       var oView = that.getView();
       that.openLoadingFragment();
       var sServerName = localStorage.getItem("ServerID");
       var sUrl = sServerName + "/b1s/v1/PurchaseDeliveryNotes";
+      var StoredItem = this.oModel.getData().forPosting;
+    // if "Quantity": StoredItem[i].Quantity,
+
+    const oGRPO = StoredItem.filter(function(GRP){
+    return GRP.Quantity <= GRP.ReceivingQty;
+    })
+
+  
       var oBody = {
         "CardCode": localStorage.getItem("VendorCode"),
         "DocType": "dDocument_Items",
         "DocDate": oView.byId("DP8").getValue(),
         "DocumentLines": []};          
       
+    
+      for(var i = 0;i < oGRPO.length;i++){
+        if(oGRPO[i].Quantity !=0){      
+          oBody.DocumentLines.push({
+            "ItemCode": oGRPO[i].ItemCode,
+            "Quantity": oGRPO[i].Quantity,
+            "TaxCode": oGRPO[i].TaxCode,
+            "UnitPrice": oGRPO[i].UnitPrice,  
+            "BaseEntry" : localStorage.getItem("DocEntry"),
+            "BaseType": "22",
+            "BaseLine": oGRPO[i].lineNum,
+            "WarehouseCode": localStorage.getItem("wheseID")
+          });
+        }
+      }
+      // console.log(oBody);
+          oBody = JSON.stringify(oBody);
+          $.ajax({
+            url: sUrl,
+            type: "POST",
+            data: oBody,
+            headers: {
+              'Content-Type': 'application/json'},
+            crossDomain: true,
+            xhrFields: {withCredentials: true},
+            error: function (xhr, status, error) {
+              that.closeLoadingFragment();
+              // sap.m.MessageToast.show("Unable to post the Item:\n" + xhr.responseJSON.error.message.value);
+              },
+            success: function (json) {
+              that.closeLoadingFragment();    
+                }
+              });
+
+          const GRPO = StoredItem.filter(function(GR){
+            return GR.Quantity > GR.ReceivingQty;
+            });
+            
+              var oBody2 = {
+                "CardCode": localStorage.getItem("VendorCode"),
+                "DocType": "dDocument_Items",
+                "DocDate": oView.byId("DP8").getValue(),
+                "Document_ApprovalRequests": [
+                  {
+                      "ApprovalTemplatesID": 8,
+                      "Remarks": "GRPO more than PO Qty"
+                  }
+                ],
+                "DocumentLines": []
+              };          
+              
+              for(var i = 0;i < GRPO.length;i++){
+                if(GRPO[i].Quantity !=0){      
+                  oBody2.DocumentLines.push({
+                    "ItemCode": GRPO[i].ItemCode,
+                    "Quantity": GRPO[i].Quantity,
+                    "TaxCode": GRPO[i].TaxCode,
+                    "UnitPrice": GRPO[i].UnitPrice,  
+                    "BaseEntry" : localStorage.getItem("DocEntry"),
+                    "BaseType": "22",
+                    "BaseLine": GRPO[i].lineNum,
+                    "WarehouseCode": localStorage.getItem("wheseID")
+                  });
+                }
+              }
+              
+        // console.log(oBody2);
+          oBody2 = JSON.stringify(oBody2);
+          
+          $.ajax({
+            url: sUrl,
+            type: "POST",
+            data: oBody2,
+            headers: {
+              'Content-Type': 'application/json'},
+            crossDomain: true,
+            xhrFields: {withCredentials: true},
+            error: function (xhr, status, error) {
+              that.closeLoadingFragment();
+              // that.onWithRef();    
+              },
+            success: function (json) {
+              that.closeLoadingFragment();
+              // that.onWithRef();    
+              }
+          });
+
+
+          MessageBox.information("Item received successfully: " + oGRPO.length + "\n" + "Item received for Approval: " + GRPO.length, {
+            actions: [MessageBox.Action.OK],
+            title: "Goods Receipt PO",
+            icon: MessageBox.Icon.INFORMATION,
+            styleClass:"sapUiSizeCompact",
+            onClose: function () {
+               that.onWithRef();   
+            }
+          })
+
+
+      
+     },
+
+onPostingGR1: function(){
+      var that = this;
+    
+      var oView = that.getView();
+      that.openLoadingFragment();
+      var sServerName = localStorage.getItem("ServerID");
+      var sUrl = sServerName + "/b1s/v1/PurchaseDeliveryNotes";
       var StoredItem = this.oModel.getData().forPosting;
+    // if "Quantity": StoredItem[i].Quantity,
+  
+      var oBody = {
+        "CardCode": localStorage.getItem("VendorCode"),
+        "DocType": "dDocument_Items",
+        "DocDate": oView.byId("DP8").getValue(),
+        "DocumentLines": []};          
+
       for(var i = 0;i < StoredItem.length;i++){
         if(StoredItem[i].Quantity !=0){      
           oBody.DocumentLines.push({
@@ -203,7 +357,6 @@ onPostingGR: function(){
           });
         }
       }
-        // console.log(oBody);  
           oBody = JSON.stringify(oBody);
           $.ajax({
             url: sUrl,
@@ -218,23 +371,15 @@ onPostingGR: function(){
               sap.m.MessageToast.show("Unable to post the Item:\n" + xhr.responseJSON.error.message.value);
               },
             success: function (json) {
-              //console.log(json);
               that.closeLoadingFragment();
                     MessageBox.information("Item successfully received \nCreated Doc number:" + json.DocNum, {
                       actions: [MessageBox.Action.OK],
                       title: "Goods Receipt PO",
                       icon: MessageBox.Icon.INFORMATION,
-                      styleClass:"sapUiSizeCompact",
-                      onClose: function () {
-                        // that.getView().destroy();
-                        that.onWithRef();
-                      }
-                    });
-                  
-                  },context: this
-                });
-
-                //Update Purchase Order;
+                      styleClass:"sapUiSizeCompact"
+                    })
+                }
+              });
      },
 
 onPressItem: function(oEvent){
@@ -312,6 +457,45 @@ onPressItem: function(oEvent){
         }
      },
 
+onCheckPost: function(){
+      var that = this;
+      var itemJSON = that.oModel.getData().forPosting;
+      if(parseInt(itemJSON.length) == 0){
+        sap.m.MessageToast.show("Please Input item First");
+      }
+      else{
+      var x = [];
+      var sServerName = localStorage.getItem("ServerID");
+      var sUrl = sServerName + "/b1s/v1/ApprovalTemplates?$filter=Name eq '" + "GRPO-01" + "' and IsActive eq 'tYES'";
+      $.ajax({
+        url: sUrl,
+            type: "GET",
+            dataType: 'json',
+            async: false,
+            crossDomain: true,
+            xhrFields: {
+            withCredentials: true
+            },
+            error: function (xhr, status, error) {
+              that.closeLoadingFragment();
+              console.log("Error Occured" + xhr.responseJSON.error.message.value);
+              sap.m.MessageToast.show("Please check approval template setup");
+              // return;
+            },
+            success: function (json) {
+              x  = json.value;
+              that.closeLoadingFragment();
+            },
+            context: that
+          })
+          if(x.length !=0){
+            that.onPostingGR();
+          }else{
+            that.onPostingGR1();
+          }
+        }
+    },
+
 
 onGetAddItem: function(){
       var that = this;
@@ -355,6 +539,7 @@ onGetAddItem: function(){
                 "lineNum": lineNum,
                 "ItemCode": itCode,
                 "Quantity": sQtyID,
+                "ReceivingQty": rQtyID,
                 "remainingQ": remQty,
                 "TaxCode": staxCode,
                 "UnitPrice": sunitPr
@@ -363,7 +548,7 @@ onGetAddItem: function(){
             }else{
               rITM[0].Quantity = parseInt(rITM[0].Quantity) + parseInt(sQtyID);
             }
-
+    
             this.oModel.refresh();
             //console.log(that.oModel.getData());
             this.onCloseAdd();    
@@ -556,28 +741,74 @@ onSelectItemName: function(){
 },
 
 
-onGetListOfAbst: function(){
-var that = this;
-var itemUOMcode = sap.ui.getCore().byId("itmID3").getValue()
-this.closeLoadingFragment();
-var sServerName = localStorage.getItem("ServerID");
-var sUrl = sServerName + "/b1s/v1/BarCodes?$filter=ItemNo eq '" + itemUOMcode + "'";
-$.ajax({
-  url: sUrl,
-  type: "GET",
-  dataType: 'json',
-  crossDomain: true,
-  xhrFields: {
-    withCredentials: true},
-  success: function(response){
-    that.oModel.getData().UoMEntry = response.value;
-    that.oModel.refresh();
-    that.onGetListOfUOM();
-  }, error: function() { 
-    that.closeLoadingFragment()
-    console.log("Error Occur");
-  }
+onvalidationCode: function(){
+
+  var StoredBar = this.oModel.getData().itemMaster;
+  const vOITM = StoredBar.filter(function(OITM){
+  return OITM.ItemCode == sap.ui.getCore().byId("itmID").getValue();
 })
+
+  if(vOITM.length == 0){
+    sap.m.MessageToast.show("Invalid Item Code");
+    return;
+  }else{
+    this.onSelectItemCode();
+  }
+},
+
+onvalidationDesk: function(){
+  var StoredBar = this.oModel.getData().itemMaster;
+  const vOITM = StoredBar.filter(function(OITM){
+  return OITM.ItemName == sap.ui.getCore().byId("itmName").getValue();
+})
+
+  if(vOITM.length == 0){
+    sap.m.MessageToast.show("Invalid Item Name");
+    return;
+  }else{
+    this.onSelectItemName();
+  }
+
+},
+
+
+onvalidationUOM: function(){
+  var StoredUOM = this.oModel.getData().UoMCode;
+  const vUOM = StoredUOM.filter(function(UOM){
+  return UOM.Code == sap.ui.getCore().byId("uomID").getValue();
+})
+  if(vUOM.length == 0){
+    sap.m.MessageToast.show("Invalid UOM");
+    return;
+  }else{
+    this.onGetBarcodeOnAdd();
+  }
+
+},
+
+
+onGetListOfAbst: function(){
+      var that = this;
+      var itemUOMcode = sap.ui.getCore().byId("itmID3").getValue()
+      this.closeLoadingFragment();
+      var sServerName = localStorage.getItem("ServerID");
+      var sUrl = sServerName + "/b1s/v1/BarCodes?$filter=ItemNo eq '" + itemUOMcode + "'";
+      $.ajax({
+        url: sUrl,
+        type: "GET",
+        dataType: 'json',
+        crossDomain: true,
+        xhrFields: {
+          withCredentials: true},
+        success: function(response){
+          that.oModel.getData().UoMEntry = response.value;
+          that.oModel.refresh();
+          that.onGetListOfUOM();
+        }, error: function() { 
+          that.closeLoadingFragment()
+          console.log("Error Occur");
+        }
+      })
 //Get UOMList
 
 },
@@ -648,6 +879,36 @@ onGetBarcodeOnAdd: function(){
 
 onAdditionalItem: function(){
   var that = this;
+  var StoredBar = that.oModel.getData().itemMaster;
+  const vOITM = StoredBar.filter(function(OITM){
+  return OITM.ItemCode == sap.ui.getCore().byId("itmID").getValue();
+})
+
+  if(vOITM.length == 0){
+    sap.m.MessageToast.show("Invalid Item Code");
+    return;
+  }else{
+   
+    var StoredDes = that.oModel.getData().itemMaster;
+    const vOITMD = StoredDes.filter(function(OITMD){
+    return OITMD.ItemName == sap.ui.getCore().byId("itmName").getValue();
+  })
+
+    if(vOITMD.length == 0){
+      sap.m.MessageToast.show("Invalid Item Name");
+      return;
+    }else{
+
+      var StoredUOM = that.oModel.getData().UoMCode;
+      const vUOM = StoredUOM.filter(function(UOM){
+      return UOM.Code == sap.ui.getCore().byId("uomID").getValue();
+    })
+
+      if(vUOM.length == 0){
+        sap.m.MessageToast.show("Invalid UOM");
+        return;
+      }else{
+  
   that.openLoadingFragment();
   var sItmID = sap.ui.getCore().byId("itmID3").getValue();
   var sItmName = sap.ui.getCore().byId("itmName3").getValue();
@@ -708,8 +969,10 @@ onAdditionalItem: function(){
   that.closeLoadingFragment();
   that.oModel.refresh();
   that.onCloseAddthree();
+         }
+      }
+    }
   }
-  
 },
 
 onWithRef: function(){

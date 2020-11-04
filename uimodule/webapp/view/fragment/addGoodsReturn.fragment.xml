@@ -38,27 +38,26 @@
                                 <f:formElements>
 
                                     <f:FormElement label="Item Code">
-                                    <ComboBox id="retItemCode" placeholder="Select Item Code" selectionChange="onSelectItemCode" items="{oModel>/itemMaster}">
+                                    <ComboBox id="retItemCode" placeholder="Select Item Code" change="onvalidationCode" items="{oModel>/itemMaster}">
                                             <core:Item key="{oModel>ItemName}" text="{oModel>ItemCode}" />
                                         </ComboBox>
                                     </f:FormElement>
 
                                     <f:FormElement label="Item Name">
-                                       <ComboBox id="retItemName" placeholder="Select Item Name"  selectionChange="onSelectItemName" items="{oModel>/itemMaster}">
+                                       <ComboBox id="retItemName" placeholder="Select Item Name"  change="onvalidationDesk" items="{oModel>/itemMaster}">
                                             <core:Item key="{oModel>ItemCode}" text="{oModel>ItemName}" />
                                         </ComboBox>
                                     </f:FormElement>
 
                                     <f:FormElement label="UoM Code">
-                                        <ComboBox id="retUOM" placeholder="Select Item UOM"  selectionChange="onSelectUoM" items="{oModel>/UoMCode}">
+                                        <ComboBox id="retUOM" placeholder="Select Item UOM"  change="onvalidationUOM" items="{oModel>/UoMCode}">
                                             <core:Item key="{oModel>AbsEntry}" text="{oModel>Code}" />
                                         </ComboBox>
                                     </f:FormElement>
 
                                 
-
                                     <f:FormElement label="Quantity">
-                                       <Input id="retQtyID" placeholder="Input Quantity" liveChange="onEnableBttn" type="Number"/>
+                                       <Input id="retQtyID" placeholder="Input Quantity" type="Number"/>
                                             
                                     </f:FormElement>
                                     

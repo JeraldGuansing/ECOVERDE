@@ -46,24 +46,24 @@ onPressIssuance: function(){
     this.router.navTo("goodsIssuance",null, true);
   },
 
-onSelectParamV: function(){
-    if (!this.project) {
-      this.project = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.fragment.project", this);
-      this.getView().addDependent(this.project);
-    }
+// onSelectParamV: function(){
+//     if (!this.project) {
+//       this.project = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.fragment.project", this);
+//       this.getView().addDependent(this.project);
+//     }
 
-    // sap.ui.getCore().byId("isVendor").setValue("");
-    // sap.ui.getCore().byId("isVendor").setSelectedKey("");
-    sap.ui.getCore().byId("isProject").setValue("");
-    sap.ui.getCore().byId("isProject").setSelectedKey("");
+//     // sap.ui.getCore().byId("isVendor").setValue("");
+//     // sap.ui.getCore().byId("isVendor").setSelectedKey("");
+//     sap.ui.getCore().byId("isProject").setValue("");
+//     sap.ui.getCore().byId("isProject").setSelectedKey("");
    
     
-    this.onGetListVendor();
-    this.onGetListProject();
+//     this.onGetListVendor();
+//     this.onGetListProject();
    
-    this.project.open();
+//     this.project.open();
  
-  },
+//   },
 
 onCloseParamV: function(){
   if(this.project){
@@ -96,7 +96,7 @@ onSaveDial:function(){
   onGetListVendor: function(){
     var that = this;  
       var sServerName = localStorage.getItem("ServerID");
-      var sUrl = sServerName + "/b1s/v1/BusinessPartners?$select=CardCode,CardName&$filter=CardType eq 'cSupplier'";
+      var sUrl = sServerName + "/b1s/v1/BusinessPartners?$select=CardCode,CardName&$filter=CardType eq 'cSupplier' and Frozen eq 'tNO'&$orderby=CardName";
       $.ajax({
         url: sUrl,
         type: "GET",
@@ -186,7 +186,7 @@ onWithRef: function (){
     this.router.navTo("goodsReturnList",null, true);
   },
 
-  onProj: function (){
+onProj: function (){
     this.router = this.getOwnerComponent().getRouter();
     this.router.navTo("issuanceProject",null, true);
   },

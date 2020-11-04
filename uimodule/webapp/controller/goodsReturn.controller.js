@@ -87,6 +87,38 @@ onPressAddr: function(){
 
 onSaveItem: function(){
       var that = this;
+
+      var StoredBar = that.oModel.getData().itemMaster;
+      const vOITM = StoredBar.filter(function(OITM){
+      return OITM.ItemCode == sap.ui.getCore().byId("retItemCode").getValue();
+    })
+   
+      if(vOITM.length == 0){
+        sap.m.MessageToast.show("Invalid Item Code");
+        return;
+      }else{
+       
+        var StoredDes = that.oModel.getData().itemMaster;
+        const vOITMD = StoredDes.filter(function(OITMD){
+        return OITMD.ItemName == sap.ui.getCore().byId("retItemName").getValue();
+      })
+  
+        if(vOITMD.length == 0){
+          sap.m.MessageToast.show("Invalid Item Name");
+          return;
+        }else{
+  
+          var StoredUOM = that.oModel.getData().UoMCode;
+          const vUOM = StoredUOM.filter(function(UOM){
+          return UOM.Code == sap.ui.getCore().byId("retUOM").getValue();
+        })
+    
+          if(vUOM.length == 0){
+            sap.m.MessageToast.show("Invalid UOM");
+            return;
+          }else{
+
+
       that.openLoadingFragment();
       var sItmID = sap.ui.getCore().byId("retItemCode").getValue();
       var sItmName = sap.ui.getCore().byId("retItemName").getValue();
@@ -136,85 +168,12 @@ onSaveItem: function(){
         that.oModel.refresh();
         that.onCloseIssuance();
       }
+       }
+      }
+    }
     },
 
-onConfirmPosting: function(){
-      var itemJSON = this.oModel.getData().goodsReturn;
-      if(parseInt(itemJSON.length) == 0){
-        sap.m.MessageToast.show("Please Input item First");
-      }
-      else{
-      var that = this;
-      MessageBox.information("Are you sure you want to [POST] this transaction?", {
-        actions: [MessageBox.Action.YES, MessageBox.Action.NO],
-        title: "POST Goods Return",
-        icon: MessageBox.Icon.QUESTION,
-        styleClass:"sapUiSizeCompact",
-        onClose: function (sButton) {
-          if(sButton === "YES"){
-            that.onPostreturn();
-          }}
-      });
-    }
-      },
-    
-onPostreturn: function(){
-    
-        var that = this;
-        that.openLoadingFragment();
-        var sServerName = localStorage.getItem("ServerID");
-        var sUrl = sServerName + "/b1s/v1/PurchaseReturns";
-        var oBody = {
-          "CardCode": localStorage.getItem("VendorCode"),
-          "DocDate": that.getView().byId("DP8").getValue(),
-          "DocumentLines": []};
-        var posItem = this.oModel.getData().goodsReturn;
-
-        var x = posItem.length;
-        for(var i = 0; i < x; i++){
-        oBody.DocumentLines.push({
-          "ItemCode":posItem[i].ItemCode,
-          "Quantity":posItem[i].Quantity,
-          "UoMEntry":posItem[i].UoMEntry,
-          "UoMCode": posItem[i].UoMCode,
-          "WarehouseCode": localStorage.getItem("wheseID")
-          });
-        }
-        console.log(oBody);
-        oBody = JSON.stringify(oBody);
-        $.ajax({
-          url: sUrl,
-          type: "POST",
-          data: oBody,
-          headers: {
-            'Content-Type': 'application/json'},
-          crossDomain: true,
-          xhrFields: {withCredentials: true},
-          error: function (xhr, status, error) {
-            that.closeLoadingFragment();
-            sap.m.MessageToast.show(xhr.responseJSON.error.message.value);
-            },
-          success: function (json) {
-           
-                  MessageBox.information("Items successfully returned,\nDoc Number Created:" + json.DocNum, {
-                    actions: [MessageBox.Action.OK],
-                    title: "Goods Return",
-                    icon: MessageBox.Icon.INFORMATION,
-                    styleClass:"sapUiSizeCompact"
-                  });
-                    this.oModel.setData({goodsReturn:[]});
-                    this.oModel.updateBindings(true);
-                    this.oModel = new JSONModel("model/item.json");
-                    this.getView().setModel(this.oModel, "oModel");
-    
-                  this.oModel.refresh();
-                  
-                  that.closeLoadingFragment();
-                },context: this
-              });
-    
-      
-    },    
+  
 
 onCloseIssuance: function(){
       if(this.addgoodsReturn){
@@ -368,7 +327,229 @@ onSelectItemCode: function(){
           this.onGetListOfAbst();
           // this.onGetListOfUOM();
       },
+
+
+onConfirmPosting: function(){
+        var itemJSON = this.oModel.getData().goodsReturn;
+        if(parseInt(itemJSON.length) == 0){
+          sap.m.MessageToast.show("Please Input item First");
+        }
+        else{
+        var that = this;
+        MessageBox.information("Are you sure you want to [POST] this transaction?", {
+          actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+          title: "POST Goods Return",
+          icon: MessageBox.Icon.QUESTION,
+          styleClass:"sapUiSizeCompact",
+          onClose: function (sButton) {
+            if(sButton === "YES"){
+              that.onPostreturn();
+            }}
+        });
+      }
+        },
       
+onPostreturn: function(){
+      
+          var that = this;
+          that.openLoadingFragment();
+          var sServerName = localStorage.getItem("ServerID");
+          var sUrl = sServerName + "/b1s/v1/PurchaseReturns";
+          var oBody = {
+            "CardCode": localStorage.getItem("VendorCode"),
+            "DocDate": that.getView().byId("DP8").getValue(),
+            "Document_ApprovalRequests": [
+              {
+                  "ApprovalTemplatesID": 10,
+                  "Remarks": sap.ui.getCore().byId("RTremarksID").getValue()
+              }
+            ],
+            "DocumentLines": []};
+          var posItem = this.oModel.getData().goodsReturn;
+  
+          var x = posItem.length;
+          for(var i = 0; i < x; i++){
+          oBody.DocumentLines.push({
+            "ItemCode":posItem[i].ItemCode,
+            "Quantity":posItem[i].Quantity,
+            "UoMEntry":posItem[i].UoMEntry,
+            "UoMCode": posItem[i].UoMCode,
+            "WarehouseCode": localStorage.getItem("wheseID")
+            });
+          }
+          console.log(oBody);
+          oBody = JSON.stringify(oBody);
+          $.ajax({
+            url: sUrl,
+            type: "POST",
+            data: oBody,
+            headers: {
+              'Content-Type': 'application/json'},
+            crossDomain: true,
+            xhrFields: {withCredentials: true},
+            error: function (xhr, status, error) {
+              that.closeLoadingFragment();
+              // sap.m.MessageToast.show(xhr.responseJSON.error.message.value);
+              MessageBox.information("This transaction is for approval", {
+                actions: [MessageBox.Action.OK],
+                title: "Transfer Request",
+                icon: MessageBox.Icon.INFORMATION,
+                styleClass:"sapUiSizeCompact"
+              });
+              that.oModel.getData().goodsReturn = [];
+              that.oModel.refresh();
+              that.onCloseApproval();  
+
+              },
+            success: function (json) {
+                    this.oModel.refresh();
+                    that.closeLoadingFragment();
+                  },context: this
+                });
+      
+        
+      },  
+
+onConfirmPosting1: function(){
+        var itemJSON = this.oModel.getData().goodsReturn;
+        if(parseInt(itemJSON.length) == 0){
+          sap.m.MessageToast.show("Please Input item First");
+        }
+        else{
+        var that = this;
+        MessageBox.information("Are you sure you want to [POST] this transaction?", {
+          actions: [MessageBox.Action.YES, MessageBox.Action.NO],
+          title: "POST Goods Return",
+          icon: MessageBox.Icon.QUESTION,
+          styleClass:"sapUiSizeCompact",
+          onClose: function (sButton) {
+            if(sButton === "YES"){
+              that.onPostreturn1();
+            }}
+        });
+      }
+        },
+      
+onPostreturn1: function(){
+      
+          var that = this;
+          that.openLoadingFragment();
+          var sServerName = localStorage.getItem("ServerID");
+          var sUrl = sServerName + "/b1s/v1/PurchaseReturns";
+          var oBody = {
+            "CardCode": localStorage.getItem("VendorCode"),
+            "DocDate": that.getView().byId("DP8").getValue(),
+            "DocumentLines": []};
+          var posItem = this.oModel.getData().goodsReturn;
+  
+          var x = posItem.length;
+          for(var i = 0; i < x; i++){
+          oBody.DocumentLines.push({
+            "ItemCode":posItem[i].ItemCode,
+            "Quantity":posItem[i].Quantity,
+            "UoMEntry":posItem[i].UoMEntry,
+            "UoMCode": posItem[i].UoMCode,
+            "WarehouseCode": localStorage.getItem("wheseID")
+            });
+          }
+          console.log(oBody);
+          oBody = JSON.stringify(oBody);
+          $.ajax({
+            url: sUrl,
+            type: "POST",
+            data: oBody,
+            headers: {
+              'Content-Type': 'application/json'},
+            crossDomain: true,
+            xhrFields: {withCredentials: true},
+            error: function (xhr, status, error) {
+              that.closeLoadingFragment();
+              sap.m.MessageToast.show(xhr.responseJSON.error.message.value);
+              },
+            success: function (json) {
+             
+                    MessageBox.information("Items successfully returned,\nDoc Number Created:" + json.DocNum, {
+                      actions: [MessageBox.Action.OK],
+                      title: "Goods Return",
+                      icon: MessageBox.Icon.INFORMATION,
+                      styleClass:"sapUiSizeCompact"
+                    });
+                      this.oModel.setData({goodsReturn:[]});
+                      this.oModel.updateBindings(true);
+                      this.oModel = new JSONModel("model/item.json");
+                      this.getView().setModel(this.oModel, "oModel");
+      
+                    this.oModel.refresh();
+                    
+                    that.closeLoadingFragment();
+                  },context: this
+                });
+      
+        
+      },  
+
+onShowApproval: function(){
+        var itemJSON = this.oModel.getData().goodsReturn;
+        if(parseInt(itemJSON.length) == 0){
+          sap.m.MessageToast.show("Please Input item First");
+        }
+        else{
+        if (!this.RTapprv) {
+          this.RTapprv = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.Approvals.RTApproval", this);
+          this.getView().addDependent(this.RTapprv);
+          this.oModel.refresh();
+        }
+        sap.ui.getCore().byId("RTremarksID").setValue("");
+        this.RTapprv.open();
+        }
+      
+      },
+      
+onCloseApproval: function(){
+        if(this.RTapprv){
+            this.RTapprv.close();
+        }
+      },
+      
+onCheckPost: function(){
+        var that = this;
+      
+        var itemJSON = that.oModel.getData().goodsReturn;
+        if(parseInt(itemJSON.length) == 0){
+          sap.m.MessageToast.show("Please Input item First");
+        }
+        else{
+        var x = [];
+        var sServerName = localStorage.getItem("ServerID");
+        var sUrl = sServerName + "/b1s/v1/ApprovalTemplates?$filter=Name eq '" + "Return 01" + "' and IsActive eq 'tYES'";
+        $.ajax({
+          url: sUrl,
+              type: "GET",
+              dataType: 'json',
+              async: false,
+              crossDomain: true,
+              xhrFields: {
+              withCredentials: true
+              },
+              error: function (xhr, status, error) {
+                that.closeLoadingFragment();
+                console.log("Error Occured" + xhr.responseJSON.error.message.value);
+                //sap.m.MessageToast.show("Please check approval template setup for  [GI Approval]");
+                // return;
+              },
+              success: function (json) {
+                x  = json.value;
+                that.closeLoadingFragment();
+              },
+              context: that
+            })
+            if(x.length !=0){
+              that.onShowApproval();
+            }else{
+              that.onConfirmPosting1();
+            }
+          }
+      },
     
 onSelectItemName: function(){
         var itemCode = sap.ui.getCore().byId("retItemName").getSelectedKey();
@@ -385,6 +566,53 @@ onSelectUoM: function(){
         itmBar =  sap.ui.getCore().byId("retItemCode").getValue();
         uomntry = sap.ui.getCore().byId("retUOM").getSelectedKey();
         that.onGetBarcode(); 
+      },
+
+onvalidationCode: function(){
+
+        var StoredBar = this.oModel.getData().itemMaster;
+        const vOITM = StoredBar.filter(function(OITM){
+        return OITM.ItemCode == sap.ui.getCore().byId("retItemCode").getValue();
+      })
+     
+        if(vOITM.length == 0){
+          sap.m.MessageToast.show("Invalid Item Code");
+          return;
+        }else{
+          this.onSelectItemCode();
+        }
+      },
+  
+onvalidationDesk: function(){
+        var StoredBar = this.oModel.getData().itemMaster;
+        const vOITM = StoredBar.filter(function(OITM){
+        return OITM.ItemName == sap.ui.getCore().byId("retItemName").getValue();
+      })
+  
+        if(vOITM.length == 0){
+          sap.m.MessageToast.show("Invalid Item Name");
+          return;
+        }else{
+          this.onSelectItemName();
+        }
+  
+      },
+  
+  
+onvalidationUOM: function(){
+  
+        var StoredUOM = this.oModel.getData().UoMCode;
+        const vUOM = StoredUOM.filter(function(UOM){
+        return UOM.Code == sap.ui.getCore().byId("retUOM").getValue();
+      })
+  
+        if(vUOM.length == 0){
+          sap.m.MessageToast.show("Invalid UOM");
+          return;
+        }else{
+          this.onSelectUoM();
+        }
+  
       },
 
 

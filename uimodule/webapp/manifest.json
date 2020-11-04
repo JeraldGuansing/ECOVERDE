@@ -237,8 +237,14 @@
           "target": [
             "TransferRequest200"
           ]
+        },
+        {
+          "name": "appAlert",
+          "pattern": "appAlert",
+          "target": [
+            "appAlert"
+          ]
         }
-        
       ],
       "targets": {
         "login": {
@@ -467,7 +473,18 @@
           "controlAggregation": "pages",
           "viewLevel": 3,
           "transition": "fade"
+        },
+        "appAlert": {
+          "viewPath": "com.ecoverde.ECOVERDE.view",
+          "viewType": "XML",
+          "viewName": "appAlert",
+          "parent": "main",
+          "controlId": "pageContainer",
+          "controlAggregation": "pages",
+          "viewLevel": 3,
+          "transition": "fade"
         }
+        
       }
     }
   }

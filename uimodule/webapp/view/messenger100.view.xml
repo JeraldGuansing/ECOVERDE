@@ -1,0 +1,12 @@
+ <mvc:View controllerName="com.ecoverde.undefined.controller.messenger100"
+  displayBlock="true"
+  xmlns="sap.m"
+  xmlns:mvc="sap.ui.core.mvc">
+  <App id="messenger100" >
+    <pages>
+      <Page title="{i18n>title}">
+        <content></content>
+      </Page>
+    </pages>
+  </App>
+</mvc:View>

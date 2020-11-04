@@ -53,7 +53,7 @@
 				      	<Button text="Scan" press="onScan" icon="sap-icon://camera"/>
 			      	</contentMiddle>
               <contentRight>
-				      	<Button text="Post" press="onConfirmPosting" icon="sap-icon://manager-insight"/>
+				      	<Button text="Post" press="onCheckPost" icon="sap-icon://manager-insight"/>
 			      	</contentRight>
             </Bar>
         </footer>

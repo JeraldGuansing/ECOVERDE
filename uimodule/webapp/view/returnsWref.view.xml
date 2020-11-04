@@ -11,7 +11,7 @@
   <App id="returnsWref" >
       <Page title="Goods Return" showNavButton="true" navButtonPress="onPressNavBack">
         <List>
-        <InputListItem label="Vendor Code">
+        <InputListItem label="Doc Num">
           	  <Label id="docID" />
         </InputListItem>        
         <InputListItem label="Vendor Code">

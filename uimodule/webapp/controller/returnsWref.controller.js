@@ -202,7 +202,7 @@ onPressNavBack: function(){
           });
         }
       }
-      // console.log(oBody);
+      console.log(oBody);
       oBody = JSON.stringify(oBody);
       $.ajax({
         url: sUrl,
@@ -225,7 +225,7 @@ onPressNavBack: function(){
                   icon: MessageBox.Icon.INFORMATION,
                   styleClass:"sapUiSizeCompact",
                   onClose: function () {
-                    // that.onReturnOpenPO();
+                    that.onReturnOpenPO();
                     that.onPressNavBack();
                   }
                 });
@@ -235,6 +235,9 @@ onPressNavBack: function(){
 
   },
 
+  handleLoadItems: function(oControlEvent) {
+    oControlEvent.getSource().getBinding("items").resume();
+  },
 
 onReturnOpenPO: function(){
     var that = this;
@@ -246,7 +249,7 @@ onReturnOpenPO: function(){
       var POref = StoredItem[i].BaseEntry;
       if(StoredItem[i].Quantity != 0){
 
-      var sUrl = sServerName + "/b1s/v1/PurchaseOrders(" + POref + ")?";
+      var sUrl = sServerName + "/b1s/v1/PurchaseOrders(" + POref + ")/Reopen?";
     
       var rBody = {
         "DocumentStatus": "bost_Open",
@@ -262,7 +265,7 @@ onReturnOpenPO: function(){
 
         $.ajax({
           url: sUrl,
-          type: "PATCH",
+          type: "POST",
           data: rBody,
           headers: {
             'Content-Type': 'application/json'},

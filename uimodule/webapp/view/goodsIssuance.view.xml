@@ -11,16 +11,16 @@
   <App id="goodsIssuance" >
     <Page title="Goods Issuance" showNavButton="true" navButtonPress="onPressNavBack">
    <List>        
-        <!-- <InputListItem label="Vendor Code">
-          	  <Label id="Vcode" />
-        </InputListItem> -->
-        
-        <!-- <InputListItem label="Vendor Name">
-                <Label id="Vname" />
-        </InputListItem> -->
+          <InputListItem label="Type:">
+            <ComboBox id="TransactionID" selectionChange=""  placeholder="Select Transaction Type" items="{oModel>/GIType}">
+                <core:Item key="{oModel>FldValue}" text="{oModel>Descr}" />
+            </ComboBox>
+        </InputListItem>
         
         <InputListItem label="Project Name">
-            	<Label id="projDesc" />
+          <ComboBox id="projDesc" selectionChange=""  placeholder="Select Transaction Type" items="{oModel>/projectList}">
+                <core:Item key="{oModel>Code}" text="{oModel>Name}" />
+          </ComboBox>
         </InputListItem>
         
         <InputListItem label="Posting Date">
@@ -58,7 +58,7 @@
 				      	<Button text="Scan" press="onScan" icon="sap-icon://camera"/>
 			      	</contentMiddle>
               <contentRight>
-				      	<Button text="Post" press="onConfirmPosting" icon="sap-icon://manager-insight"/>
+				      	<Button text="Post" press="onCheckPost" icon="sap-icon://manager-insight"/>
 			      	</contentRight>
             </Bar>
         </footer>

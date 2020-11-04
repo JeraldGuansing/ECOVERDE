@@ -19,8 +19,21 @@ sap.ui.define([
         return;
       }
       
+      // this.modelServices();
     },
     
+
+modelServices: function() {
+      var self = this;
+      this.intervalHandle = setInterval(function() { 
+          // self.callYourFunction();
+
+          console.log("testing")
+       },  5000);
+},
+
+
+
     // onDisable: function(){
     //   this.getView().byId('whsID').setEnabled(false);
     // },
@@ -123,7 +136,11 @@ sap.ui.define([
 
     onGetUserdet: function(){
 			var that = this;
-			
+      
+      localStorage.setItem("UserKeyID", "");
+      localStorage.setItem("wheseID", "");
+      localStorage.setItem("wheseNm", "");
+      
 			var sUserName =localStorage.getItem("userName");
 			var sServerName = localStorage.getItem("ServerID");
       var sUrl = sServerName + "/b1s/v1/$crossjoin(Users,Warehouses)?$expand=Users($select=U_whsCode,InternalKey), Warehouses($select=WarehouseName)&$filter=Users/U_whsCode eq Warehouses/WarehouseCode and Users/UserCode eq '" + sUserName + "'";
@@ -142,7 +159,7 @@ sap.ui.define([
 				  sap.m.MessageToast.show(xhr.responseJSON.error.message.value);
 				},
 				success: function (json) {
-          localStorage.setItem("UserKeyID", json.value[0].Users.InternalKey)
+          localStorage.setItem("UserKeyID",json.value[0].Users.InternalKey)
           localStorage.setItem("wheseID", json.value[0].Users.U_whsCode);
           localStorage.setItem("wheseNm", json.value[0].Warehouses.WarehouseName);
 				},
