@@ -10,11 +10,12 @@ sap.ui.define([
 	"sap/ui/core/Core"
 ], function(Controller,MessageToast, JSONModel, Filter, FilterOperator, Token, MessageBox,Fragment,Core) {
   "use strict";
+  var i;
   return Controller.extend("com.ecoverde.ECOVERDE.controller.main", {
 
     onInit: function(){
 		var that = this;
-	    var oView = this.getView();
+	    var oView = that.getView();
         oView.addEventDelegate({
             onAfterHide: function(evt) {
                 //This event is fired every time when the NavContainer has made this child control invisible.
@@ -36,7 +37,7 @@ sap.ui.define([
 	},
 	
 	initialize: function(vFromId){
-		
+		localStorage.getItem("notification", "");
 		this.oMdlMenu = new JSONModel("model/menus.json");
 		this.getView().setModel(this.oMdlMenu);
 		
@@ -48,11 +49,17 @@ sap.ui.define([
 		this.getView().byId("whsID").setText("Warehouse Code:   " + localStorage.getItem("wheseID"));
 		this.getView().byId("whsName").setText(localStorage.getItem("wheseNm"));
 
+		// this.notifNumber();
 		this.modelServices();
+	},
+
+	notifNumber: function(){	
+	 this.byId("shellid").setNotificationsNumber(localStorage.getItem("notification"));
 	},
 
 	onGetAlert: function(){
 		var that = this;
+		
 		var UserCode = localStorage.getItem("UserKeyID");
 		var sServerName = localStorage.getItem("ServerID");
 		var xsjsServer = sServerName.replace("50000", "4300");
@@ -61,8 +68,6 @@ sap.ui.define([
 		$.ajax({
 		  url: sUrl,
 			  type: "GET",
-			  dataType: 'json',
-			  async: false,
 			  beforeSend: function (xhr) {
 				xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:P@ssw0rd810~"));
 			  },
@@ -75,8 +80,12 @@ sap.ui.define([
 				console.log("Error Occured");
 			  },
 			  success: function (response) {
-				var count = Object.keys(response.GETLISTALERT).length;
-				this.getView().byId("shellid").setNotificationsNumber(count);
+				i = parseInt(Object.keys(response.GETLISTALERT).length);
+				if(i != 0){
+					localStorage.setItem("notification",i);
+				}else{
+					localStorage.setItem("notification","");		
+				}
 			  }
 			})
 	   },
@@ -84,9 +93,9 @@ sap.ui.define([
 	modelServices: function() {
 		var self = this;
 		this.intervalHandle = setInterval(function() { 
-			// self.callYourFunction();
 			self.onGetAlert();
-		 }, 2000);
+			self.notifNumber();
+		 }, 3000);
   },
   
 

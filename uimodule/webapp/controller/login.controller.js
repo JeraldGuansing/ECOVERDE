@@ -23,14 +23,14 @@ sap.ui.define([
     },
     
 
-modelServices: function() {
-      var self = this;
-      this.intervalHandle = setInterval(function() { 
-          // self.callYourFunction();
+// modelServices: function() {
+//       var self = this;
+//       this.intervalHandle = setInterval(function() { 
+//           // self.callYourFunction();
 
-          console.log("testing")
-       },  5000);
-},
+//           console.log("testing")
+//        },  5000);
+// },
 
 
 

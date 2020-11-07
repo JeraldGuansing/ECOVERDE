@@ -260,12 +260,12 @@ sap.ui.define([
       var oBody = {
         "DocDate": that.getView().byId("DP8").getValue(),
         "U_App_GRTransType": that.getView().byId('TransactionID').getValue(),
-        // "Document_ApprovalRequests": [
-        //   {
-        //       "ApprovalTemplatesID": 15,
-        //       "Remarks": sap.ui.getCore().byId("GRremarksID").getValue()
-        //   }
-        // ],
+        "Document_ApprovalRequests": [
+          {
+              "ApprovalTemplatesID": 15,
+              "Remarks": sap.ui.getCore().byId("GRremarksID").getValue()
+          }
+        ],
         "DocumentLines": []
       };          
     

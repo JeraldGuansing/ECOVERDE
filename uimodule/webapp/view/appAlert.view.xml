@@ -13,11 +13,10 @@
         <List id="projectlistid" items="{oModel>/AlertSMS}">
                     <ObjectListItem title="{oModel>Description}"
                             type="Navigation"
-                            press = "onShowEdit"
+                            press = "onPressNotif"
                             intro="{oModel>DateCreated}">
                             <attributes>
-                              <ObjectAttribute title="{oModel>Subject}"/>
-                              <ObjectAttribute title="{oModel>DocNum}"/>
+                              <ObjectAttribute title="{oModel>Subject} - {oModel>KeyStr}"/>
                             </attributes>
                     </ObjectListItem>
         </List>

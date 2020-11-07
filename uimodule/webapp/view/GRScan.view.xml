@@ -45,7 +45,6 @@
                   <items>
                     <ObjectListItem id="list" title="{oModel>ItemCode}"
                             number="{oModel>Quantity}"
-                            numberUnit="{oModel>Price}"
                             type="Active"
                             press = "onShowEdit"
                             icon="sap-icon://add-product"

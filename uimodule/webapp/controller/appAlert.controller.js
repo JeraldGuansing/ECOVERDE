@@ -10,6 +10,8 @@ sap.ui.define([
   "sap/ui/core/Core"
 ], function(Controller,MessageToast, JSONModel, Filter, FilterOperator, Token, MessageBox,Fragment,Core) {
   "use strict";
+  var ii;
+  var listpath;
   return Controller.extend("com.ecoverde.ECOVERDE.controller.appAlert", {
 
     onInit: function(){
@@ -84,7 +86,6 @@ sap.ui.define([
             console.log("Error Occured");
           },
           success: function (response) {
-           
             var sms =  response.GETLISTALERT;
             var count = Object.keys(sms).length;
             
@@ -94,20 +95,20 @@ sap.ui.define([
                 "KeyStr": sms[x].KeyStr,
                 "AlertCode": sms[x].AlertCode,
                 "DateCreated": "",
-                "DocNum":"",
-                "Description": ""
+                "Description": "",
+                "DocObjectCode": ""
                 }
               );
             }
             that.oModel.refresh();
           
-            if(parseInt(that.oModel.getData().AlertSMS.length) == 0){
-              this.closeLoadingFragment();
+            if(parseInt(that.oModel.getData().AlertSMS.length) != 0){
+              that.onGetDetails();
             }
           }
         })
 
-         this.onGetDetails();
+        that.closeLoadingFragment();
 
    },
 
@@ -117,7 +118,7 @@ sap.ui.define([
    
     for(let g = 0;g< s.length; g++){
     var sServerName = localStorage.getItem("ServerID");
-    var sUrl = sServerName + "/b1s/v1/Drafts?$select=UpdateDate,JournalMemo,DocNum&$filter=DocEntry eq " + s[g].KeyStr + "";
+    var sUrl = sServerName + "/b1s/v1/Drafts?$select=UpdateDate,JournalMemo,DocObjectCode&$filter=DocEntry eq " + s[g].KeyStr + "";
     $.ajax({
       url: sUrl,
       type: "GET",
@@ -128,8 +129,8 @@ sap.ui.define([
         withCredentials: true},
       success: function(response){
         s[g].DateCreated = response.value[0].UpdateDate;
-        s[g].DocNum = response.value[0].DocNum;
         s[g].Description = response.value[0].JournalMemo;
+        s[g].DocObjectCode = response.value[0].DocObjectCode;
         that.oModel.refresh();
       
       }, error: function() { 
@@ -138,8 +139,37 @@ sap.ui.define([
       }
     })
     }
-    
    },
+
+  onPressNotif(oEvent){
+    var that = this;
+    var myInputControl = oEvent.getSource(); // e.g. the first item
+    var boundData = myInputControl.getBindingContext('oModel').getObject();
+    
+    console.log(boundData);
+    
+    var str = boundData.Subject;
+		if(str.indexOf("approved") !== -1){
+      var tcode = boundData.DocObjectCode;
+      switch (tcode) {
+        case "oInventoryGenEntry": //goods receipt
+          that.gotoGR()
+          break;
+
+        default:
+      }
+
+		}else{
+        }
+  },
+  
+  ///>>>>Routes
+
+	gotoGR: function(){
+    this.router = this.getOwnerComponent().getRouter();
+    this.router.navTo("BarcodeScanning");
+    },
+
 
   });
 });
