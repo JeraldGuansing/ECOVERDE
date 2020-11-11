@@ -244,6 +244,34 @@
           "target": [
             "appAlert"
           ]
+        },
+        {
+          "name": "GRScan200",
+          "pattern": "GRScan200",
+          "target": [
+            "GRScan200"
+          ]
+        },
+        {
+          "name": "GRPODraft",
+          "pattern": "GRPODraft",
+          "target": [
+            "GRPODraft"
+          ]
+        },
+        {
+          "name": "TransferRequestDraft",
+          "pattern": "TransferRequestDraft",
+          "target": [
+            "TransferRequestDraft"
+          ]
+        },
+        {
+          "name": "mainSettings",
+          "pattern": "mainSettings",
+          "target": [
+            "mainSettings"
+          ]
         }
       ],
       "targets": {
@@ -483,8 +511,47 @@
           "controlAggregation": "pages",
           "viewLevel": 3,
           "transition": "fade"
+        },
+        "GRScan200": {
+          "viewPath": "com.ecoverde.ECOVERDE.view",
+          "viewType": "XML",
+          "viewName": "GRScan200",
+          "parent": "main",
+          "controlId": "pageContainer",
+          "controlAggregation": "pages",
+          "viewLevel": 3,
+          "transition": "fade"
+        },
+        "GRPODraft": {
+          "viewPath": "com.ecoverde.ECOVERDE.view",
+          "viewType": "XML",
+          "viewName": "GRPODraft",
+          "parent": "main",
+          "controlId": "pageContainer",
+          "controlAggregation": "pages",
+          "viewLevel": 3,
+          "transition": "fade"
+        },
+        "TransferRequestDraft": {
+          "viewPath": "com.ecoverde.ECOVERDE.view",
+          "viewType": "XML",
+          "viewName": "TransferRequestDraft",
+          "parent": "main",
+          "controlId": "pageContainer",
+          "controlAggregation": "pages",
+          "viewLevel": 3,
+          "transition": "fade"
+        },
+        "mainSettings": {
+          "viewPath": "com.ecoverde.ECOVERDE.view",
+          "viewType": "XML",
+          "viewName": "mainSettings",
+          "parent": "main",
+          "controlId": "pageContainer",
+          "controlAggregation": "pages",
+          "viewLevel": 3,
+          "transition": "fade"
         }
-        
       }
     }
   }

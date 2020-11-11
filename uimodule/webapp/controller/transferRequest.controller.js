@@ -42,9 +42,9 @@ sap.ui.define([
       this.getView().setModel(this.oModel, "oModel");
    
       
-      this.getView().byId("fromWID").setValue(localStorage.getItem("wheseID"));
-      this.getView().byId("fromWID").setEnabled(false);
-      this.getView().byId("toWID").setEnabled(true);
+      this.getView().byId("toWID").setValue(localStorage.getItem("wheseNm"));
+      this.getView().byId("toWID").setEnabled(false);
+      this.getView().byId("fromWID").setEnabled(true);
       var today = new Date();
       var dd = String(today.getDate()).padStart(2, '0');
       var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
@@ -101,7 +101,7 @@ sap.ui.define([
             
       },
 
-      onPressAddI: function(){
+  onPressAddI: function(){
         if(this.getView().byId("toWID").getValue() == ""){
           sap.m.MessageToast.show("Please select warehouse first");
         }else{
@@ -127,7 +127,7 @@ sap.ui.define([
     this.openLoadingFragment();
         var sServerName = localStorage.getItem("ServerID");
         var xsjsServer = sServerName.replace("50000", "4300");
-        var sUrl = xsjsServer + "/app_xsjs/ExecQuery.xsjs?procName=spAppGetItems&dbName=" + localStorage.getItem("dbName");
+        var sUrl = xsjsServer + "/app_xsjs/ExecQuery.xsjs?procName=spAppGetAllItems&dbName=" + localStorage.getItem("dbName");
       
         $.ajax({
           url: sUrl,
@@ -137,7 +137,7 @@ sap.ui.define([
               withCredentials: true
               },
               beforeSend: function (xhr) {
-                xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:P@ssw0rd810~"));
+                xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:"+localStorage.getItem("XSPass")));
               },
               error: function (xhr, status, error) {
                 this.closeLoadingFragment();
@@ -457,7 +457,7 @@ onPostingGR: function(){
                   });
                   that.oModel.getData().TransferRequest = [];
                   that.oModel.refresh();
-                  this.getView().byId("toWID").setEnabled(true);
+                  this.getView().byId("fromWID").setEnabled(true);
                   that.onCloseApproval();  
                   },
                 success: function (json) {
@@ -484,7 +484,7 @@ onConfirmPosting1: function(){
             styleClass:"sapUiSizeCompact",
             onClose: function (sButton) {
               if(sButton === "YES"){
-                that.onPostingGR();
+                that.onPostingGR1();
               }}
           });
           }
@@ -535,19 +535,14 @@ onPostingGR1: function(){
                           icon: MessageBox.Icon.INFORMATION,
                           styleClass:"sapUiSizeCompact"
                         });
-                          this.oModel.setData({UoMCode:[]});
-                          this.oModel.updateBindings(true);
-                          this.oModel = new JSONModel("model/item.json");
-                          this.getView().setModel(this.oModel, "oModel");
-    
+                        this.oModel.getData().TransferRequest = [];
                         this.oModel.refresh();
-                        this.getView().byId("toWID").setEnabled(true);
+                        this.getView().byId("fromWID").setEnabled(true);
                         that.closeLoadingFragment();
                       },context: this
                     });
                   
          },
-
 
 onShowApproval: function(){
           var itemJSON = this.oModel.getData().TransferRequest;
@@ -581,7 +576,7 @@ onCheckPost: function(){
           else{
           var x = [];
           var sServerName = localStorage.getItem("ServerID");
-          var sUrl = sServerName + "/b1s/v1/ApprovalTemplates?$filter=Name eq '" + "ITR-101" + "' and IsActive eq 'tYES'";
+          var sUrl = sServerName + "/b1s/v1/ApprovalTemplates?$filter=Name eq '" + localStorage.getItem("TRName") + "' and IsActive eq 'tYES'";
           $.ajax({
             url: sUrl,
                 type: "GET",

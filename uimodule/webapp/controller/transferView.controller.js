@@ -44,12 +44,12 @@ sap.ui.define([
 
     onGotoRequest: function(){
       this.router = this.getOwnerComponent().getRouter();
-      this.router.navTo("transferRequest",null, true);
+      this.router.navTo("transferRequest");
       },
 
       onGotoInventory: function(){
         this.router = this.getOwnerComponent().getRouter();
-        this.router.navTo("InventoryTransfer",null, true);
+        this.router.navTo("InventoryTransfer");
         },
 
 

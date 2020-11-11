@@ -1,0 +1,70 @@
+ <mvc:View controllerName="com.ecoverde.ECOVERDE.controller.mainSettings"
+  displayBlock="true"
+  xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+  xmlns:f="sap.ui.layout.form" 
+	xmlns:html="http://www.w3.org/1999/xhtml">
+  <App id="mainSettings" >
+      <Page title="Configuration">
+         	<Panel id="expandablePanel" headerText="Panel" expandAnimation="true" expanded="false" expandable="true" expand="onExpand" width="auto" class="sapUiResponsiveMargin">
+            	<headerToolbar>
+                <OverflowToolbar style="Clear">
+                  	<Title text="Approval Template"/>
+                </OverflowToolbar>
+              </headerToolbar>
+            <content>
+               <f:SimpleForm editable="true" layout="ResponsiveGridLayout" width="100%">
+						      <f:content>
+
+                  <Label text="Goods Receipt" width="100%">
+										<layoutData>
+											<l:GridData span="L2 M4 S12"/>
+										</layoutData>
+									</Label>
+                  <ComboBox id="gr01" items="{oModel>/ApprovalTempGR}">
+                      <core:Item key="{oModel>WtmCode}" text="{oModel>Name}" />
+                      <layoutData>
+                        <l:GridData span="L10 M8 S12"/>
+                      </layoutData>
+                  </ComboBox>
+
+                  <Label text="Goods Receipt PO" width="100%">
+										<layoutData>
+											<l:GridData span="L2 M4 S12"/>
+										</layoutData>
+									</Label>
+                  <ComboBox id="grpo01" items="{oModel>/ApprovalTempGRPO}">
+                      <core:Item key="{oModel>WtmCode}" text="{oModel>Name}" />
+                      <layoutData>
+                        <l:GridData span="L10 M8 S12"/>
+                      </layoutData>
+                  </ComboBox>
+
+                  <Label text="Transfer Order" width="100%">
+										<layoutData>
+											<l:GridData span="L2 M4 S12"/>
+										</layoutData>
+									</Label>
+                  <ComboBox id="tr01" items="{oModel>/ApprovalTempTR}">
+                      <core:Item key="{oModel>WtmCode}" text="{oModel>Name}" />
+                      <layoutData>
+                        <l:GridData span="L10 M8 S12"/>
+                      </layoutData>
+                  </ComboBox>
+                  <OverflowToolbar>
+                  	<ToolbarSpacer/>
+                    <Button icon="sap-icon://save" press="onSave" />
+                  </OverflowToolbar>
+                   </f:content>
+               </f:SimpleForm> 
+              </content>
+       </Panel>
+
+
+
+      </Page>
+  
+  </App>
+</mvc:View>

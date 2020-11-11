@@ -29,8 +29,8 @@
                                 <f:formElements>
                                 
                                     <f:FormElement label="Item Code">
-                                        <ComboBox id="itmID" change="onvalidationCode" placeholder="Select Item Code" items="{oModel>/itemMaster}">
-                                            <core:Item key="{oModel>ItemName}" text="{oModel>ItemCode}"/>
+                                        <ComboBox id="itmID" showSecondaryValues= "true" change="onvalidationCode" placeholder="Select Item Code" items="{oModel>/itemMaster}">
+                                            <core:ListItem key="{oModel>ItemName}" text="{oModel>ItemCode}" additionalText ="{oModel>OnHand}"/>
                                         </ComboBox>
                                     </f:FormElement>
 

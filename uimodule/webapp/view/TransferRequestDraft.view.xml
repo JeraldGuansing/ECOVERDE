@@ -1,4 +1,4 @@
- <mvc:View controllerName="com.ecoverde.ECOVERDE.controller.TransferRequest200"
+ <mvc:View controllerName="com.ecoverde.ECOVERDE.controller.TransferRequestDraft"
   displayBlock="true"
   xmlns="sap.m"
 	xmlns:f="sap.ui.layout.form" 
@@ -7,15 +7,17 @@
 	xmlns:mvc="sap.ui.core.mvc"
   xmlns:t="sap.ui.table"
 	xmlns:html="http://www.w3.org/1999/xhtml">
-  <App id="TransferRequest200" >
-    <Page showHeader="true" title="Transfer Request" showNavButton="true" navButtonPress="onPressNavback">
+  <App id="TransferRequestDraft" >
+        <Page showHeader="true" title="Transfer Request - Draft" showNavButton="true" navButtonPress="onAlert">
         <List>
             <InputListItem label="To Warehouse">
                   <Input id="toWID"/>
             </InputListItem>
-           
-            <InputListItem label="From Warehouse">
-                <Input id="fromWID"/>
+            
+            <InputListItem label="From Whse">
+              <ComboBox id="fromWID" items="{oModel>/warehouses}" placeholder="Select Warehouse">
+                  <core:Item key="{oModel>WarehouseCode}" text="{oModel>WarehouseName}" />
+              </ComboBox>
             </InputListItem>
     
             <InputListItem label="Posting Date">
@@ -28,17 +30,15 @@
             </InputListItem>
         </List>
       <html:br></html:br>
-
-
              <content>
-                <List items="{oModel>/TransferRequest}">
+                <List items="{oModel>/GRDraftsB}">
                   <items>
                     <ObjectListItem id="list" title="{oModel>ItemCode}"
                             number="{oModel>Quantity}"
                             type="Active"
                             press = "onShowEdit"
                             icon="sap-icon://add-product"
-                            intro="{oModel>ItemName}">
+                            intro="{oModel>ItemDescription}">
                       
                                 <firstStatus>
                                   <ObjectStatus text="{oModel>UoMCode}"/>
@@ -52,15 +52,9 @@
             </content>
       <footer>
         <Bar>
-          <contentLeft>
-            <Button text="Add" press="onPressAddI" icon="sap-icon://add"/>
-          </contentLeft>
           <contentMiddle>
-            <Button text="Scan" press="onTest" icon="sap-icon://camera"/>
+           <Button text="Post" press="onConfirmPosting" icon="sap-icon://manager-insight"/>
           </contentMiddle>
-          <contentRight>
-            <Button text="Post" press="onConfirmPosting" icon="sap-icon://manager-insight"/>
-          </contentRight>
         </Bar>
       </footer>
      </Page>

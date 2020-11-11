@@ -21,7 +21,8 @@ sap.ui.define([
       oView.addEventDelegate({
             onAfterHide: function(evt) {
                 //This event is fired every time when the NavContainer has made this child control invisible.
-            },
+                oView.getController().onGetAlert();
+              },
             onAfterShow: function(evt) {
                 //This event is fired every time when the NavContainer has made this child control visible.
                 oView.getController().onGetAlert();
@@ -63,11 +64,12 @@ sap.ui.define([
 
    onGetAlert: function(){
     var that = this;
+    that.openLoadingFragment();
     that.oModel.getData().AlertSMS.length = [];
     var UserCode = localStorage.getItem("UserKeyID");
     var sServerName = localStorage.getItem("ServerID");
     var xsjsServer = sServerName.replace("50000", "4300");
-    var sUrl = xsjsServer + "/app_xsjs/getMsg_proc.xsjs?bpType=" + UserCode;
+    var sUrl = xsjsServer + "/app_xsjs/getAlert.xsjs?uid=" + UserCode + "&wsr=N&objT=112";
     
     $.ajax({
       url: sUrl,
@@ -75,7 +77,7 @@ sap.ui.define([
           dataType: 'json',
           async: false,
           beforeSend: function (xhr) {
-            xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:P@ssw0rd810~"));
+            xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:" + localStorage.getItem("XSPass")));    
           },
           crossDomain: true,
           xhrFields: {
@@ -86,7 +88,7 @@ sap.ui.define([
             console.log("Error Occured");
           },
           success: function (response) {
-            var sms =  response.GETLISTALERT;
+            var sms =  response;
             var count = Object.keys(sms).length;
             
             for(let x = 0; x < parseInt(count);x++){
@@ -101,15 +103,16 @@ sap.ui.define([
               );
             }
             that.oModel.refresh();
-          
+        
             if(parseInt(that.oModel.getData().AlertSMS.length) != 0){
               that.onGetDetails();
+            }else{
+              that.closeLoadingFragment();
             }
           }
         })
 
-        that.closeLoadingFragment();
-
+       
    },
 
    onGetDetails: function(){
@@ -117,59 +120,109 @@ sap.ui.define([
     var s = that.oModel.getData().AlertSMS;
    
     for(let g = 0;g< s.length; g++){
-    var sServerName = localStorage.getItem("ServerID");
-    var sUrl = sServerName + "/b1s/v1/Drafts?$select=UpdateDate,JournalMemo,DocObjectCode&$filter=DocEntry eq " + s[g].KeyStr + "";
-    $.ajax({
-      url: sUrl,
-      type: "GET",
-      dataType: 'json',
-      async: false,
-      crossDomain: true,
-      xhrFields: {
-        withCredentials: true},
-      success: function(response){
-        s[g].DateCreated = response.value[0].UpdateDate;
-        s[g].Description = response.value[0].JournalMemo;
-        s[g].DocObjectCode = response.value[0].DocObjectCode;
-        that.oModel.refresh();
-      
-      }, error: function() { 
-        that.closeLoadingFragment()
-        console.log("Error Occur");
-      }
-    })
+        var sServerName = localStorage.getItem("ServerID");
+        var sUrl = sServerName + "/b1s/v1/Drafts?$select=UpdateDate,JournalMemo,DocObjectCode&$filter=DocEntry eq " + s[g].KeyStr + "";
+        $.ajax({
+          url: sUrl,
+          type: "GET",
+          dataType: 'json',
+          async: false,
+          crossDomain: true,
+          xhrFields: {
+            withCredentials: true},
+          success: function(response){
+            s[g].DateCreated = response.value[0].UpdateDate;
+            s[g].Description = response.value[0].JournalMemo;
+            s[g].DocObjectCode = response.value[0].DocObjectCode;
+            that.oModel.refresh();
+          
+          }, error: function() { 
+            that.closeLoadingFragment()
+            console.log("Error Occur");
+          }
+        })
     }
+    that.closeLoadingFragment();
    },
 
   onPressNotif(oEvent){
     var that = this;
     var myInputControl = oEvent.getSource(); // e.g. the first item
     var boundData = myInputControl.getBindingContext('oModel').getObject();
-    
-    console.log(boundData);
+    localStorage.setItem("AlertCode", boundData.AlertCode);
+    // console.log(boundData);
     
     var str = boundData.Subject;
 		if(str.indexOf("approved") !== -1){
       var tcode = boundData.DocObjectCode;
+  
       switch (tcode) {
         case "oInventoryGenEntry": //goods receipt
-          that.gotoGR()
+          localStorage.setItem("DocEntry", boundData.KeyStr);
+          that.gotoGR();
           break;
-
+        case "oInventoryTransferRequest": //Transfer Request
+          localStorage.setItem("DocEntry", boundData.KeyStr);
+          that.gotoTR(); 
+          break;
+        case "oPurchaseDeliveryNotes": //GoodsReceipt PO
+          localStorage.setItem("DocEntry", boundData.KeyStr);
+          that.gotoGRPO();
+          break;
         default:
       }
 
 		}else{
+      that.onReadAlert();
+      that.onGetAlert();
+       
         }
+  },
+
+  onReadAlert: function(){
+    var sServerName = localStorage.getItem("ServerID");
+    var xsjsServer = sServerName.replace("50000", "4300");
+    var sUrl = xsjsServer + "/app_xsjs/readAlert.xsjs?id=" + localStorage.getItem("AlertCode") +"&isRead=Y";
+    
+    $.ajax({
+      url: sUrl,
+          type: "POST",
+          beforeSend: function (xhr) {
+          xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:P@ssw0rd810~"));
+          // xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:P@ssw0rd123"));
+          },
+          crossDomain: true,
+          xhrFields: {
+          withCredentials: true
+          },
+          error: function (xhr, status, error) {
+            this.closeLoadingFragment();
+            console.log("Error Occured");
+          },
+          success: function (response) {
+            this.oModel.refresh();
+            this.closeLoadingFragment();
+          },
+          context: this
+        })
   },
   
   ///>>>>Routes
 
 	gotoGR: function(){
     this.router = this.getOwnerComponent().getRouter();
-    this.router.navTo("BarcodeScanning");
+    this.router.navTo("GRScan200");
     },
 
+  gotoGRPO: function(){
+    this.router = this.getOwnerComponent().getRouter();
+    this.router.navTo("GRPODraft");
+    },
+
+    gotoTR: function(){
+      this.router = this.getOwnerComponent().getRouter();
+      this.router.navTo("TransferRequestDraft");
+      },
 
   });
 });

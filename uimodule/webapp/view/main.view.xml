@@ -28,7 +28,8 @@
 			<tnt:NavigationList>
 				<tnt:NavigationListItem id="userID" text="" enabled= "false" icon="sap-icon://customer"/>
 				<tnt:NavigationListItem id="whsID" text="" enabled= "false" icon="sap-icon://home"/>
-					<tnt:NavigationListItem id="whsName" text="" enabled= "false"/>
+				<tnt:NavigationListItem id="whsName" text="" enabled= "false"/>
+				<tnt:NavigationListItem text="Settings" icon="sap-icon://settings" select="onConfig"/>
 				<tnt:NavigationListItem text="Logout" icon="sap-icon://log" select="onLogout"/>
 			</tnt:NavigationList>
 			</tnt:fixedItem>

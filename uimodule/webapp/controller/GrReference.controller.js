@@ -53,11 +53,15 @@ sap.ui.define([
 initialize: function(vFromId){
       var oView = this.getView();
       this.oModel = new JSONModel("model/item.json");
+      this.oModel.setSizeLimit(1500);
       this.getView().setModel(this.oModel, "oModel");
-
+      
       oView.byId("docID").setText(localStorage.getItem("DocNo"));
       oView.byId("venID").setText(localStorage.getItem("VendorCode"));
       oView.byId("venName").setText(localStorage.getItem("VendorName"));
+      oView.byId("cardnum").setValue(localStorage.getItem("NumAtCard"));
+      oView.byId("comments").setValue(localStorage.getItem("Comments"));
+
       oView.byId("inptID").setVisible(false);
         // this.oModel.setData({receiving:[]});
         // this.oModel.updateBindings(true);
@@ -70,6 +74,9 @@ initialize: function(vFromId){
       
       today =  yyyy+ mm + dd;
       this.byId("DP8").setValue(today);
+
+      this.onGetTransactionType();
+      this.onGetListProject();
 
     },
 
@@ -197,7 +204,7 @@ onConfirmPosting: function(){
         styleClass:"sapUiSizeCompact",
         onClose: function (sButton) {
           if(sButton === "YES"){
-            that.onPostingGR1();
+            that.onPostingGR();
           }}
       });
       }
@@ -206,7 +213,7 @@ onConfirmPosting: function(){
     
 onPostingGR: function(){
       var that = this;
-    
+      var transSuc;
       var oView = that.getView();
       that.openLoadingFragment();
       var sServerName = localStorage.getItem("ServerID");
@@ -221,7 +228,10 @@ onPostingGR: function(){
   
       var oBody = {
         "CardCode": localStorage.getItem("VendorCode"),
-        "DocType": "dDocument_Items",
+        "U_App_GRTransType": that.getView().byId('TransactionID').getValue(),
+        // "DocType": "dDocument_Items",
+        "Comments": that.getView().byId('comments').getValue(),
+        "NumAtCard": that.getView().byId('cardnum').getValue(),
         "DocDate": oView.byId("DP8").getValue(),
         "DocumentLines": []};          
       
@@ -231,16 +241,19 @@ onPostingGR: function(){
           oBody.DocumentLines.push({
             "ItemCode": oGRPO[i].ItemCode,
             "Quantity": oGRPO[i].Quantity,
-            "TaxCode": oGRPO[i].TaxCode,
-            "UnitPrice": oGRPO[i].UnitPrice,  
+            // "TaxCode": oGRPO[i].TaxCode,
+            // "UnitPrice": oGRPO[i].UnitPrice,  
             "BaseEntry" : localStorage.getItem("DocEntry"),
             "BaseType": "22",
-            "BaseLine": oGRPO[i].lineNum,
+            "BaseLine": i,
+            "ProjectCode": that.getView().byId('proj').getSelectedKey(),
             "WarehouseCode": localStorage.getItem("wheseID")
           });
         }
       }
       // console.log(oBody);
+
+      if(oGRPO.length != 0){
           oBody = JSON.stringify(oBody);
           $.ajax({
             url: sUrl,
@@ -252,20 +265,23 @@ onPostingGR: function(){
             xhrFields: {withCredentials: true},
             error: function (xhr, status, error) {
               that.closeLoadingFragment();
-              // sap.m.MessageToast.show("Unable to post the Item:\n" + xhr.responseJSON.error.message.value);
+              sap.m.MessageToast.show("Unable to post the Item:\n" + xhr.responseJSON.error.message.value);
               },
             success: function (json) {
               that.closeLoadingFragment();    
                 }
               });
-
+      }
           const GRPO = StoredItem.filter(function(GR){
             return GR.Quantity > GR.ReceivingQty;
             });
             
               var oBody2 = {
                 "CardCode": localStorage.getItem("VendorCode"),
+                "U_App_GRTransType": that.getView().byId('TransactionID').getValue(),
                 "DocType": "dDocument_Items",
+                "Comments": that.getView().byId('comments').getValue(),
+                "NumAtCard": that.getView().byId('cardnum').getValue(),
                 "DocDate": oView.byId("DP8").getValue(),
                 "Document_ApprovalRequests": [
                   {
@@ -284,15 +300,17 @@ onPostingGR: function(){
                     "TaxCode": GRPO[i].TaxCode,
                     "UnitPrice": GRPO[i].UnitPrice,  
                     "BaseEntry" : localStorage.getItem("DocEntry"),
+                    "ProjectCode": that.getView().byId('proj').getSelectedKey(),
                     "BaseType": "22",
-                    "BaseLine": GRPO[i].lineNum,
+                    "BaseLine": GRPO[i].BaseLine,
                     "WarehouseCode": localStorage.getItem("wheseID")
                   });
                 }
               }
               
         // console.log(oBody2);
-          oBody2 = JSON.stringify(oBody2);
+        if(GRPO.length != 0){  
+        oBody2 = JSON.stringify(oBody2);
           
           $.ajax({
             url: sUrl,
@@ -305,6 +323,8 @@ onPostingGR: function(){
             error: function (xhr, status, error) {
               that.closeLoadingFragment();
               // that.onWithRef();    
+              sap.m.MessageToast.show("Unable to post the Item:\n" + xhr.responseJSON.error.message.value);
+            
               },
             success: function (json) {
               that.closeLoadingFragment();
@@ -312,7 +332,7 @@ onPostingGR: function(){
               }
           });
 
-
+        }
           MessageBox.information("Item received successfully: " + oGRPO.length + "\n" + "Item received for Approval: " + GRPO.length, {
             actions: [MessageBox.Action.OK],
             title: "Goods Receipt PO",
@@ -340,6 +360,9 @@ onPostingGR1: function(){
       var oBody = {
         "CardCode": localStorage.getItem("VendorCode"),
         "DocType": "dDocument_Items",
+        "U_App_GRTransType": that.getView().byId('TransactionID').getValue(),
+        "Comments": that.getView().byId('comments').getValue(),
+        "NumAtCard": that.getView().byId('cardnum').getValue(),
         "DocDate": oView.byId("DP8").getValue(),
         "DocumentLines": []};          
 
@@ -347,12 +370,13 @@ onPostingGR1: function(){
         if(StoredItem[i].Quantity !=0){      
           oBody.DocumentLines.push({
             "ItemCode": StoredItem[i].ItemCode,
+            "ProjectCode": this.getView().byId('proj').getSelectedKey(),
             "Quantity": StoredItem[i].Quantity,
             "TaxCode": StoredItem[i].TaxCode,
             "UnitPrice": StoredItem[i].UnitPrice,  
             "BaseEntry" : localStorage.getItem("DocEntry"),
             "BaseType": "22",
-            "BaseLine": StoredItem[i].lineNum,
+            "BaseLine": i,
             "WarehouseCode": localStorage.getItem("wheseID")
           });
         }
@@ -376,7 +400,11 @@ onPostingGR1: function(){
                       actions: [MessageBox.Action.OK],
                       title: "Goods Receipt PO",
                       icon: MessageBox.Icon.INFORMATION,
-                      styleClass:"sapUiSizeCompact"
+                      styleClass:"sapUiSizeCompact",
+                      onClose: function (){
+                        that.oModel.getData().forPosting = [];
+                        that.onWithRef();
+                      }
                     })
                 }
               });
@@ -466,7 +494,7 @@ onCheckPost: function(){
       else{
       var x = [];
       var sServerName = localStorage.getItem("ServerID");
-      var sUrl = sServerName + "/b1s/v1/ApprovalTemplates?$filter=Name eq '" + "GRPO-01" + "' and IsActive eq 'tYES'";
+      var sUrl = sServerName + "/b1s/v1/ApprovalTemplates?$filter=Name eq '" + localStorage.getItem("GRPOName") + "' and IsActive eq 'tYES'";
       $.ajax({
         url: sUrl,
             type: "GET",
@@ -489,13 +517,12 @@ onCheckPost: function(){
             context: that
           })
           if(x.length !=0){
-            that.onPostingGR();
+            that.onConfirmPosting();
           }else{
-            that.onPostingGR1();
+            that.onConfirmPosting1();
           }
         }
     },
-
 
 onGetAddItem: function(){
       var that = this;
@@ -694,32 +721,49 @@ closeLoadingFragment : function(){
 
 
 onGetItem: function(){
-    this.openLoadingFragment();
-    var sServerName = localStorage.getItem("ServerID");
-    var xsjsServer = sServerName.replace("50000", "4300");
-    var sUrl = xsjsServer + "/app_xsjs/ExecQuery.xsjs?procName=spAppGetAllItems&dbName=" + localStorage.getItem("dbName");  
-    $.ajax({
-      url: sUrl,
-          type: "GET",
-          crossDomain: true,
-          xhrFields: {
-          withCredentials: true
+  this.openLoadingFragment();
+  var that = this;
+  var sServerName = localStorage.getItem("ServerID");
+  var xsjsServer = sServerName.replace("50000", "4300");
+  var sUrl = xsjsServer + "/app_xsjs/InventoryItem.xsjs?whse=" + localStorage.getItem("wheseID");
+  $.ajax({
+    url: sUrl,
+        type: "GET",
+        beforeSend: function (xhr) {
+          xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:"+localStorage.getItem("XSPass")));
           },
-          beforeSend: function (xhr) {
-            xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:P@ssw0rd810~"));
-          },
-          error: function (xhr, status, error) {
-            this.closeLoadingFragment();
-            console.log("Error Occured: " + error);
-          },
-          success: function (response) {
-            this.oModel.getData().itemMaster  = response;
-            this.oModel.refresh();
-            this.closeLoadingFragment();
-          },
-          context: this
-        })
-
+        crossDomain: true,
+        xhrFields: {
+        withCredentials: true
+        },
+        error: function (xhr, status, error) {
+          this.closeLoadingFragment();
+          console.log("Error Occured");
+        },
+        success: function (response) {
+          var OITM = [];
+          var ITM =  response;
+          var count = Object.keys(ITM).length;
+        
+          for(let o = 0; o < count;o++){
+            OITM.push({
+              ItemCode: ITM[o].ItemCode,
+              ItemName: ITM[o].ItemName,
+              BarCode: ITM[o].BarCode,
+              Series: ITM[o].Series,
+              WhsCode: ITM[o].WhsCode,
+              WhsName: ITM[o].WhsName,
+              OnHand: ITM[o].OnHand,
+              IsCommited: ITM[o].OnHand,
+              OnOrder: ITM[o].OnOrder
+            });
+          }
+            that.oModel.getData().itemMaster = OITM;
+            that.oModel.refresh();
+            that.closeLoadingFragment();
+        },
+        context: this
+      })
   },
 
 onSelectItemCode: function(){
@@ -881,7 +925,7 @@ onAdditionalItem: function(){
   var that = this;
   var StoredBar = that.oModel.getData().itemMaster;
   const vOITM = StoredBar.filter(function(OITM){
-  return OITM.ItemCode == sap.ui.getCore().byId("itmID").getValue();
+  return OITM.ItemCode == sap.ui.getCore().byId("itmID").itmID3();
 })
 
   if(vOITM.length == 0){
@@ -978,6 +1022,61 @@ onAdditionalItem: function(){
 onWithRef: function(){
     this.router = this.getOwnerComponent().getRouter();
     this.router.navTo("purchaseOrderList");
+},
+
+
+onGetListProject: function(){
+  var that = this;
+  this.openLoadingFragment();   
+    var sServerName = localStorage.getItem("ServerID");
+    var sUrl = sServerName + "/b1s/v1/Projects?$select=Code,Name&$filter=Active eq 'tYES' &$orderby=Code";
+    $.ajax({
+      url: sUrl,
+      type: "GET",
+      dataType: 'json',
+      crossDomain: true,
+      xhrFields: {
+        withCredentials: true},
+      success: function(response){
+        that.oModel.getData().projectList = response.value;
+        that.oModel.refresh();
+        that.closeLoadingFragment()
+      }, error: function(xhr, status, error) { 
+        that.closeLoadingFragment()
+        sap.m.MessageToast.show(xhr.responseJSON.error.message.value);
+      }
+  })
+},
+
+onGetTransactionType: function(){
+  // this.openLoadingFragment();
+  var sServerName = localStorage.getItem("ServerID");
+  // var sUrl = sServerName + "/b1s/v1/Items?$select=ItemCode,ItemName&$filter=BarCode ne 'null'";
+  var xsjsServer = sServerName.replace("50000", "4300");
+  var sUrl = xsjsServer + "/app_xsjs/ExecQuery.xsjs?procName=spAppGetGRType&dbName=" + localStorage.getItem("dbName");
+  
+  $.ajax({
+    url: sUrl,
+        type: "GET",
+        beforeSend: function (xhr) {
+          xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:"+localStorage.getItem("XSPass")));
+
+        },
+        crossDomain: true,
+        xhrFields: {
+        withCredentials: true
+        },
+        error: function (xhr, status, error) {
+          this.closeLoadingFragment();
+          console.log("Error Occured");
+        },
+        success: function (response) {
+          this.oModel.getData().GRType  = response;
+          this.oModel.refresh();
+          this.closeLoadingFragment();
+        },
+        context: this
+      })
 },
 
   });

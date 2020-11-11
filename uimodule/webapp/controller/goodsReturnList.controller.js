@@ -76,32 +76,46 @@ sap.ui.define([
     },
 
     onGetReturnList: function(){
-      this.openLoadingFragment();
-      var that = this;
-     
-     
+      var that = this;  
       var sServerName = localStorage.getItem("ServerID");
-      var sUrl = sServerName + "/b1s/v1/PurchaseDeliveryNotes?$select=DocNum,DocEntry,NumAtCard,DocDueDate,DocDate,TaxDate&$filter=DocumentStatus eq 'bost_Open' and CardCode eq '" +  localStorage.getItem("VendorCode") +"'";
-  
+      var xsjsServer = sServerName.replace("50000", "4300");
+      var sUrl = xsjsServer + "/app_xsjs/GoodsReturn.xsjs?whse=" + localStorage.getItem("wheseID") + "&acard=" +  localStorage.getItem("VendorCode");
+   
       $.ajax({
-        url: sUrl,
-        type: "GET",
-        crossDomain: true,
-        xhrFields: {
-          withCredentials: true
-        },
-        error: function (xhr, status, error) {
-          this.closeLoadingFragment();
-          console.log(xhr.responseJSON.error.message.value);
-        },
-        success: function (json) {
-       
-        this.oModel.getData().goodsRetlist = json.value;
-        this.oModel.refresh();
-        this.closeLoadingFragment();
-        },
-        context: this
-      });
+          url: sUrl,
+          type: "GET",
+          dataType: 'json',
+          crossDomain: true,
+          beforeSend: function (xhr) {
+            xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:"+localStorage.getItem("XSPass")));
+          },
+          xhrFields: {
+            withCredentials: true},
+          success: function(response){
+            var OPDN = [];
+            var PDN1 =  response;
+            var count = Object.keys(PDN1).length;
+           
+            for(let o = 0; o < count;o++){
+              OPDN.push({
+                "DocEntry": PDN1[o].DocEntry,
+                "BaseEntry": PDN1[o].BaseEntry,
+                "DocNum": PDN1[o].DocNum,
+                "DocDate": PDN1[o].DocDate,
+                "DocDueDate": PDN1[o].DocDueDate,
+                "CardCode": PDN1[o].CardCode,
+                "CardName": PDN1[o].CardName
+              });
+            }
+            that.oModel.getData().goodsRetlist = OPDN;
+          
+            that.oModel.refresh();
+          
+          }, error: function() { 
+            that.closeLoadingFragment()
+            console.log("Error Occur");
+          }
+      })
     },
 
 onSelectVendor: function(){
@@ -143,6 +157,8 @@ getContextByIndex: function(evt) {
      
       localStorage.setItem("DocNo", oList[i].DocNum);
       localStorage.setItem("DocEntry", oList[i].DocEntry);
+      localStorage.setItem("BaseEntry", oList[i].BaseEntry);
+      
       this.clearSelection();
       this.onPressCopyReturn();
     },

@@ -63,13 +63,13 @@ sap.ui.define([
 		var UserCode = localStorage.getItem("UserKeyID");
 		var sServerName = localStorage.getItem("ServerID");
 		var xsjsServer = sServerName.replace("50000", "4300");
-		var sUrl = xsjsServer + "/app_xsjs/getMsg_proc.xsjs?bpType=" + UserCode;
+		var sUrl = xsjsServer + "/app_xsjs/getAlert.xsjs?uid=" + UserCode + "&wsr=N&objT=112";
 		
 		$.ajax({
 		  url: sUrl,
 			  type: "GET",
 			  beforeSend: function (xhr) {
-				xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:P@ssw0rd810~"));
+				xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:"+localStorage.getItem("XSPass")));
 			  },
 			  crossDomain: true,
 			  xhrFields: {
@@ -80,7 +80,7 @@ sap.ui.define([
 				console.log("Error Occured");
 			  },
 			  success: function (response) {
-				i = parseInt(Object.keys(response.GETLISTALERT).length);
+				i = parseInt(Object.keys(response).length);
 				if(i != 0){
 					localStorage.setItem("notification",i);
 				}else{
@@ -95,7 +95,7 @@ sap.ui.define([
 		this.intervalHandle = setInterval(function() { 
 			self.onGetAlert();
 			self.notifNumber();
-		 }, 3000);
+		 }, 2000);
   },
   
 
@@ -289,6 +289,11 @@ sap.ui.define([
 	onWithoutRef: function(){
 			this.router = this.getOwnerComponent().getRouter();
 			this.router.navTo("BarcodeScanning");
+		  },
+	onConfig: function(){
+			this.router = this.getOwnerComponent().getRouter();
+			this.router.navTo("mainSettings");
+			this.onMenuButtonPress();
 		  },
 
 	onAlert: function(){

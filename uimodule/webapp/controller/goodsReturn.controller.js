@@ -47,6 +47,7 @@ sap.ui.define([
 
 initialize: function(vFromId){
         this.oModel = new JSONModel("model/item.json");
+        this.oModel.setSizeLimit(1500);
         this.getView().setModel(this.oModel, "oModel");
         var oView = this.getView();
         oView.byId("Vcode").setText(localStorage.getItem("VendorCode"));

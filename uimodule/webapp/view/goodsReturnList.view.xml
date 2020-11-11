@@ -21,9 +21,9 @@
           
         </List>
         <html:br></html:br>
-            <t:Table id="tblID" rows="{oModel>/goodsRetlist}" cellClick="" selectionMode="Single" ariaLabelledBy="title">
+            <t:Table id="tblID" rows="{oModel>/goodsRetlist}" cellClick="" selectionMode="" ariaLabelledBy="title">
                 <t:columns>
-                    <t:Column width="5em">
+                    <t:Column width="9em">
                       <Label text="Doc Num" />
                       <t:template>
                         <Text text="{oModel>DocNum}" wrapping="false" />

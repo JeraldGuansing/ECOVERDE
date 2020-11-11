@@ -12,7 +12,7 @@ sap.ui.define([
 		//host address
  		oView.byId("inputServer").setValue(localStorage.getItem("ServerID"));
  		oView.byId("inputDBName").setValue(localStorage.getItem("dbName"));
-		
+    oView.byId("inputPass").setValue(localStorage.getItem("XSPass"));
     },
     
 
@@ -20,7 +20,7 @@ sap.ui.define([
       var oView = this.getView();
       var sServer = this.getView().byId("inputServer").getValue();
       var sDbName = this.getView().byId("inputDBName").getValue();
-      
+
       if(sServer ===""){
         sap.m.MessageToast.show("Please Input Server");
         return;
@@ -31,6 +31,7 @@ sap.ui.define([
 
         localStorage.setItem("ServerID", oView.byId("inputServer").getValue());
         localStorage.setItem("dbName", oView.byId("inputDBName").getValue());
+        localStorage.setItem("XSPass", oView.byId("inputPass").getValue());
   
         sap.m.MessageToast.show("Server and Database successfully save.");
    
@@ -40,7 +41,7 @@ sap.ui.define([
 
     onPressNavBackButton: function(){
       this.router = this.getOwnerComponent().getRouter();
-      this.router.navTo("login",null, true);
+      this.router.navTo("login");
     },
   });
 });

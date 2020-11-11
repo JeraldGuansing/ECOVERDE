@@ -49,22 +49,44 @@ sap.ui.define([
       var oView = that.getView();
      
       var sServerName = localStorage.getItem("ServerID");
-      var sUrl = sServerName + "/b1s/v1/PurchaseOrders?$select=DocNum,DocEntry,CardCode,CardName,NumAtCard,DocDueDate,DocDate,TaxDate&$filter=DocumentStatus eq 'bost_Open'&$orderby=DocNum";
-  
+      var xsjsServer = sServerName.replace("50000", "4300");
+      var sUrl = xsjsServer + "/app_xsjs/PurchaseOrder.xsjs?whse=" + localStorage.getItem("wheseID");
       $.ajax({
         url: sUrl,
         type: "GET",
         crossDomain: true,
+        beforeSend: function (xhr) {
+          xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:"+localStorage.getItem("XSPass")));
+        },
         xhrFields: {
           withCredentials: true
         },
         error: function (xhr, status, error) {
           this.closeLoadingFragment();
-          console.log("Error Occured:" + error);
+          // console.log("Error Occured:" + error);
+          sap.m.MessageToast.show("Error: " + xhr.responseJSON.error.message.value);
         },
-        success: function (json) {
+        success: function (response) {
        
-        this.oModel.getData().value = json.value;
+        var OPOR = [];
+        var opor1 =  response;
+        var count = Object.keys(opor1).length;
+        //
+        for(let o =0; o < count;o++){
+          OPOR.push({
+            "DocNum": opor1[o].DocNum,
+            "DocEntry": opor1[o].DocEntry,
+            "CardCode": opor1[o].CardCode,
+            "CardName":  opor1[o].CardName,
+            "NumAtCard": opor1[o].NumAtCard,
+            "DocDate":  opor1[o].DocDate,
+            "Comments":  opor1[o].Comments,
+            "DocDueDate": opor1[o].DocDueDate,
+            "TaxDate":  opor1[o].TaxDate
+          });
+        }
+    
+        this.oModel.getData().value = OPOR;
         this.oModel.refresh();
         this.closeLoadingFragment();
         },
@@ -135,10 +157,15 @@ sap.ui.define([
         
         var i = this.byId("tblID").getSelectedIndices();
         var oList =  this.oModel.getData().value;
-       
+        console.log(oList[i]);
+        var str = oList[i].CardName;
+        var res = str.substring(0, 18);
+        
         localStorage.setItem("DocNo", oList[i].DocNum);
         localStorage.setItem("VendorCode", oList[i].CardCode);
-        localStorage.setItem("VendorName", oList[i].CardName);
+        localStorage.setItem("NumAtCard", oList[i].NumAtCard);
+        localStorage.setItem("Comments", oList[i].Comments);
+        localStorage.setItem("VendorName", res);
         localStorage.setItem("DocEntry", oList[i].DocEntry);
              
         this.clearSelection();

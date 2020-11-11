@@ -18,6 +18,7 @@ sap.ui.define([
   return Controller.extend("com.ecoverde.ECOVERDE.controller.GRScan", {
   onInit: function(){            
       this.oModel = new JSONModel("model/item.json");
+      this.oModel.setSizeLimit(1500);
       this.getView().setModel(this.oModel, "oModel");
       var that = this;
 	    var oView = this.getView();
@@ -44,7 +45,6 @@ sap.ui.define([
 
       },
 
-      
   initialize: function(vFromId){
 
         this.oModel.setData({UoMCode:[]});
@@ -63,6 +63,7 @@ sap.ui.define([
         this.byId("DP8").setValue(today);
     
         this.onGetTransactionType();
+        this.onGetListProject();
     },
 
     onScan: function() {
@@ -254,15 +255,13 @@ sap.ui.define([
       const OITM = StoredItem.filter(function(ITM){
         return ITM.ItemGroup == 100 || ITM.ItemGroup == 101 || ITM.ItemGroup == 102 || ITM.ItemGroup == 103 || ITM.ItemGroup == 104;
       })
-
-      console.log(OITM)
-
+      // console.log(OITM)
       var oBody = {
         "DocDate": that.getView().byId("DP8").getValue(),
         "U_App_GRTransType": that.getView().byId('TransactionID').getValue(),
         "Document_ApprovalRequests": [
           {
-              "ApprovalTemplatesID": 15,
+              "ApprovalTemplatesID": 19,
               "Remarks": sap.ui.getCore().byId("GRremarksID").getValue()
           }
         ],
@@ -275,8 +274,8 @@ sap.ui.define([
           "ItemCode": OITM[i].ItemCode,
           "Quantity": OITM[i].Quantity,
           "UoMEntry": OITM[i].AbsEntry,
+          "ProjectCode": this.getView().byId('proj').getSelectedKey(),
           "UoMCode": OITM[i].UoMCode,
-          "Price": "",
           "WarehouseCode": localStorage.getItem("wheseID")
           });
         }
@@ -302,20 +301,21 @@ sap.ui.define([
           const NITM = StoredItem.filter(function(NTM){
             return NTM.ItemGroup == 105 || NTM.ItemGroup == 106 || NTM.ItemGroup == 107;
           })
-          console.log(NITM)
+          // console.log(NITM)
           var oBody2 = {
             "DocDate": that.getView().byId("DP8").getValue(),
             "U_App_GRTransType": that.getView().byId('TransactionID').getValue(),
             "DocumentLines": []
           };          
         
+        if(NITM.length !=0){
           for(var i = 0;i < NITM.length;i++){
             oBody2.DocumentLines.push({
               "ItemCode": NITM[i].ItemCode,
               "Quantity": NITM[i].Quantity,
               "UoMEntry": NITM[i].AbsEntry,
               "UoMCode": NITM[i].UoMCode,
-              // "Price": NITM[i].Price.replace('PHP ',''),
+              "ProjectCode": this.getView().byId('proj').getSelectedKey(),
               "WarehouseCode": localStorage.getItem("wheseID")
               });
             }
@@ -336,7 +336,7 @@ sap.ui.define([
                   that.closeLoadingFragment();
                 },context: this
             });
-     
+        }
             MessageBox.information("Item received successfully: " + NITM.length + "\n" + "Item received for Approval: " + OITM.length, {
               actions: [MessageBox.Action.OK],
               title: "Goods Receipt",
@@ -391,7 +391,7 @@ sap.ui.define([
           "Quantity": StoredItem[i].Quantity,
           "UoMEntry": StoredItem[i].AbsEntry,
           "UoMCode": StoredItem[i].UoMCode,
-          // "Price": StoredItem[i].Price.replace('PHP ',''),
+          "ProjectCode": this.getView().byId('proj').getSelectedKey(),
           "WarehouseCode": localStorage.getItem("wheseID")
           });
         }
@@ -463,10 +463,13 @@ sap.ui.define([
       else{
       var x = [];
       var sServerName = localStorage.getItem("ServerID");
-      var sUrl = sServerName + "/b1s/v1/ApprovalTemplates?$filter=Name eq '" + "GR-01" + "' and IsActive eq 'tYES'";
+      var sUrl = sServerName + "/b1s/v1/ApprovalTemplates?$filter=Name eq '" + localStorage.getItem("GRName") + "' and IsActive eq 'tYES'";
+    
       $.ajax({
         url: sUrl,
             type: "GET",
+            dataType: 'json',
+            async: false,
             crossDomain: true,
             xhrFields: {
             withCredentials: true
@@ -474,16 +477,14 @@ sap.ui.define([
             error: function (xhr, status, error) {
               that.closeLoadingFragment();
               console.log("Error Occured" + xhr.responseJSON.error.message.value);
-              //sap.m.MessageToast.show("Please check approval template setup for  [GI Approval]");
-              // return;
             },
             success: function (json) {
               x  = json.value;
               that.closeLoadingFragment();
-            },
-            context: that
+            }
           })
-          if(x.length !=0){
+         
+          if(x.length !=0 || x != null ){
             that.onGetItemGroup();
             that.onShowApproval();
           }else{
@@ -538,13 +539,16 @@ sap.ui.define([
 
     onGetItem: function(){
       this.openLoadingFragment();
+      var that = this;
       var sServerName = localStorage.getItem("ServerID");
-      // var sUrl = sServerName + "/b1s/v1/Items?$select=ItemCode,ItemName&$filter=BarCode ne 'null'";
       var xsjsServer = sServerName.replace("50000", "4300");
-      var sUrl = xsjsServer + "/app_xsjs/ExecQuery.xsjs?procName=spAppGetAllItems&dbName=" + localStorage.getItem("dbName");
+      var sUrl = xsjsServer + "/app_xsjs/InventoryItem.xsjs?whse=" + localStorage.getItem("wheseID");
       $.ajax({
         url: sUrl,
             type: "GET",
+            beforeSend: function (xhr) {
+              xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:"+localStorage.getItem("XSPass")));
+              },
             crossDomain: true,
             xhrFields: {
             withCredentials: true
@@ -554,9 +558,26 @@ sap.ui.define([
               console.log("Error Occured");
             },
             success: function (response) {
-              this.oModel.getData().itemMaster  = response;
-              this.oModel.refresh();
-              this.closeLoadingFragment();
+              var OITM = [];
+              var ITM =  response;
+              var count = Object.keys(ITM).length;
+            
+              for(let o = 0; o < count;o++){
+                OITM.push({
+                  ItemCode: ITM[o].ItemCode,
+                  ItemName: ITM[o].ItemName,
+                  BarCode: ITM[o].BarCode,
+                  Series: ITM[o].Series,
+                  WhsCode: ITM[o].WhsCode,
+                  WhsName: ITM[o].WhsName,
+                  OnHand: ITM[o].OnHand,
+                  IsCommited: ITM[o].OnHand,
+                  OnOrder: ITM[o].OnOrder
+                });
+              }
+                that.oModel.getData().itemMaster = OITM;
+                that.oModel.refresh();
+                that.closeLoadingFragment();
             },
             context: this
           })
@@ -1057,7 +1078,7 @@ sap.ui.define([
       url: sUrl,
           type: "GET",
           beforeSend: function (xhr) {
-            xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:P@ssw0rd810~"));
+            xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:"+localStorage.getItem("XSPass")));
           },
           crossDomain: true,
           xhrFields: {
@@ -1105,6 +1126,28 @@ sap.ui.define([
     // console.log(s)
   },
 
+  onGetListProject: function(){
+    var that = this;
+    this.openLoadingFragment();   
+      var sServerName = localStorage.getItem("ServerID");
+      var sUrl = sServerName + "/b1s/v1/Projects?$select=Code,Name&$filter=Active eq 'tYES'&$orderby=Code";
+      $.ajax({
+        url: sUrl,
+        type: "GET",
+        dataType: 'json',
+        crossDomain: true,
+        xhrFields: {
+          withCredentials: true},
+        success: function(response){
+          that.oModel.getData().projectList = response.value;
+          that.oModel.refresh();
+          that.closeLoadingFragment()
+        }, error: function(xhr, status, error) { 
+          that.closeLoadingFragment()
+          sap.m.MessageToast.show(xhr.responseJSON.error.message.value);
+        }
+    })
+  },
 
   });
 });

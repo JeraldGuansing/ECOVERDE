@@ -38,7 +38,9 @@ onInit: function(){
   
 initialize: function(vFromId){
     this.oModel = new JSONModel("model/item.json");
+    this.oModel.setSizeLimit(1000);
     this.getView().setModel(this.oModel, "oModel");
+    
   },
 
 onPressIssuance: function(){
@@ -95,17 +97,33 @@ onSaveDial:function(){
 
   onGetListVendor: function(){
     var that = this;  
-      var sServerName = localStorage.getItem("ServerID");
-      var sUrl = sServerName + "/b1s/v1/BusinessPartners?$select=CardCode,CardName&$filter=CardType eq 'cSupplier' and Frozen eq 'tNO'&$orderby=CardName";
-      $.ajax({
+    var sServerName = localStorage.getItem("ServerID");
+    var xsjsServer = sServerName.replace("50000", "4300");
+    var sUrl = xsjsServer + "/app_xsjs/VendorList.xsjs";
+      
+    $.ajax({
         url: sUrl,
         type: "GET",
         dataType: 'json',
         crossDomain: true,
+        beforeSend: function (xhr) {
+          xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:"+localStorage.getItem("XSPass")));
+        },
         xhrFields: {
           withCredentials: true},
         success: function(response){
-          that.oModel.getData().VendorList = response.value;
+          var OCARD = [];
+          var OCRD =  response;
+          var count = Object.keys(OCRD).length;
+         
+          for(let o = 0; o < count;o++){
+            OCARD.push({
+              CardCode: OCRD[o].CardCode,
+              CardName: OCRD[o].CardName
+            });
+          }
+          that.oModel.getData().VendorList = OCARD;
+        
           that.oModel.refresh();
         
         }, error: function() { 
@@ -178,17 +196,17 @@ onSaveDial:function(){
   
 onWithoutRef: function(){
     this.router = this.getOwnerComponent().getRouter();
-    this.router.navTo("goodsReturn",null, true);
+    this.router.navTo("goodsReturn");
   },
 
 onWithRef: function (){
     this.router = this.getOwnerComponent().getRouter();
-    this.router.navTo("goodsReturnList",null, true);
+    this.router.navTo("goodsReturnList");
   },
 
 onProj: function (){
     this.router = this.getOwnerComponent().getRouter();
-    this.router.navTo("issuanceProject",null, true);
+    this.router.navTo("issuanceProject");
   },
 
 
@@ -201,12 +219,16 @@ oncheckinGRPO: function(){
     var oView = that.getView();
    
     var sServerName = localStorage.getItem("ServerID");
-    var sUrl = sServerName + "/b1s/v1/PurchaseDeliveryNotes?$select=DocNum&$filter=DocumentStatus eq 'bost_Open' and CardCode eq '" + localStorage.getItem("VendorCode") +"'";
-
+    var xsjsServer = sServerName.replace("50000", "4300");
+    var sUrl = xsjsServer + "/app_xsjs/GoodsReturn.xsjs?whse=" + localStorage.getItem("wheseID") + "&acard=" +  localStorage.getItem("VendorCode");
+    
     $.ajax({
       url: sUrl,
       type: "GET",
       crossDomain: true,
+      beforeSend: function (xhr) {
+        xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:" + localStorage.getItem("XSPass")));    
+      },
       xhrFields: {
         withCredentials: true
       },
@@ -214,8 +236,10 @@ oncheckinGRPO: function(){
         this.closeLoadingFragment();
         console.log("Error Occured:" + xhr.responseJSON.error.message.value);
       },
-      success: function (json) {
-          if(json.value != 0){
+      success: function (response) {
+        var OPDN =  response;
+        var count = Object.keys(OPDN).length;
+          if(parseInt(count) != 0){
             that.onChooseProc();
           }else{
             that.onWithoutRef();

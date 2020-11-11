@@ -272,6 +272,7 @@ onPostIssue: function(){
       "DocumentLines": []};
     var posItem = this.oModel.getData().goodsIssue;
     var x = posItem.length;
+
     for(var i = 0; i < x; i++){
     oBody.DocumentLines.push({
       "ProjectCode":posItem[i].ProjectCode,
@@ -431,7 +432,7 @@ onCheckPost: function(){
   else{
   var x = [];
   var sServerName = localStorage.getItem("ServerID");
-  var sUrl = sServerName + "/b1s/v1/ApprovalTemplates?$filter=Name eq '" + "GI Approval" + "' and IsActive eq 'tYES'";
+  var sUrl = sServerName + "/b1s/v1/ApprovalTemplates?$filter=Name eq '" + localStorage.getItem("GI_App") + "' and IsActive eq 'tYES'";
   $.ajax({
     url: sUrl,
         type: "GET",
@@ -836,7 +837,8 @@ onSaveEdit: function(){
             console.log("Error Occured");
           },
           beforeSend: function (xhr) {
-            xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:P@ssw0rd810~"));
+            xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:"+localStorage.getItem("XSPass")));
+
           },
           success: function (response) {
             this.oModel.getData().GIType  = response;

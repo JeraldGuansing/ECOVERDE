@@ -42,9 +42,13 @@ initialize: function(vFromId){
     this.oModel = new JSONModel("model/item.json");
     this.getView().setModel(this.oModel, "oModel");
     var oView = this.getView();
+
+    var str = localStorage.getItem("VendorName");
+    var res = str.substring(0, 18);
+
     oView.byId("docID").setText(localStorage.getItem("DocNo"));
     oView.byId("Vcode").setText(localStorage.getItem("VendorCode"));
-    oView.byId("Vname").setText(localStorage.getItem("VendorName"));
+    oView.byId("Vname").setText(res);
 
 
     var today = new Date();
@@ -56,6 +60,7 @@ initialize: function(vFromId){
     this.byId("DP8").setValue(today);
 
     this.onReturnList();
+    this.getPODetails();
    
   },
 
@@ -96,18 +101,13 @@ onPressNavBack: function(){
       success: function(response){
       
       try {
-
         const returnITM = response.value[0].DocumentLines.filter(function(RTI){
-          return RTI.LineStatus == "bost_Open";
-          })
-
+        return RTI.LineStatus == "bost_Open"})
         that.oModel.getData().goodsReturn  = returnITM;
-        // console.log(that.oModel.getData().goodsReturn); 
-      }
-      catch(err) {
+        
+      }catch(err) {
         that.initialize();
         console.log(err);
-         
       }
        that.oModel.refresh();
        that.closeLoadingFragment();
@@ -130,7 +130,7 @@ onPressNavBack: function(){
 
     sap.ui.getCore().byId("retgItemCode").setValue(boundData.ItemCode);
     sap.ui.getCore().byId("retgItemName").setValue(boundData.ItemDescription);
-    sap.ui.getCore().byId("retgQtyID").setValue(boundData.Quantity);
+    sap.ui.getCore().byId("retgQtyID").setValue(boundData.RemainingOpenQuantity);
     sap.ui.getCore().byId("retgUoM").setValue(boundData.UoMCode);
 
     sap.ui.getCore().byId('retgUoM').setEnabled(false);
@@ -149,7 +149,7 @@ onPressNavBack: function(){
 
   onSavereturn: function(){
     var rITM = this.oModel.getData().goodsReturn;
-    rITM[indS].Quantity = sap.ui.getCore().byId("retgQtyID").getValue();
+    rITM[indS].RemainingOpenQuantity = sap.ui.getCore().byId("retgQtyID").getValue();
     this.oModel.refresh();
     this.onCloseAdd();
   },
@@ -192,7 +192,7 @@ onPressNavBack: function(){
         if(StoredItem[i].Quantity !=0){      
           oBody.DocumentLines.push({
             "ItemCode": StoredItem[i].ItemCode,
-            "Quantity": StoredItem[i].Quantity,
+            "Quantity": StoredItem[i].RemainingOpenQuantity,
             "TaxCode": StoredItem[i].TaxCode,
             "UnitPrice": StoredItem[i].UnitPrice,  
             "BaseEntry" : localStorage.getItem("DocEntry"),
@@ -202,7 +202,7 @@ onPressNavBack: function(){
           });
         }
       }
-      console.log(oBody);
+      // console.log(oBody);
       oBody = JSON.stringify(oBody);
       $.ajax({
         url: sUrl,
@@ -226,65 +226,115 @@ onPressNavBack: function(){
                   styleClass:"sapUiSizeCompact",
                   onClose: function () {
                     that.onReturnOpenPO();
+                    that.OnReOPOR();
                     that.onPressNavBack();
+                    
                   }
                 });
               
               },context: this
             });
-
+     
   },
 
-  handleLoadItems: function(oControlEvent) {
+handleLoadItems: function(oControlEvent) {
     oControlEvent.getSource().getBinding("items").resume();
   },
 
+getPODetails: function(){
+  var that = this;
+  that.openLoadingFragment();
+  var sServerName = localStorage.getItem("ServerID");
+  var sUrl = sServerName + "/b1s/v1/PurchaseOrders?$select=DocumentLines&$filter=DocEntry eq " + localStorage.getItem("BaseEntry");
+
+  $.ajax({
+    url: sUrl,
+    type: "GET",
+    dataType: 'json',
+    crossDomain: true,
+    xhrFields: {
+      withCredentials: true},
+    success: function(response){
+      var returnITM = response.value[0].DocumentLines;
+      that.oModel.getData().PurchaseOrder  = returnITM;
+      that.oModel.refresh();
+      that.closeLoadingFragment();
+    }, error: function(response) { 
+      console.log(response);
+      that.closeLoadingFragment();
+    }
+  })
+
+},
+
 onReturnOpenPO: function(){
-    var that = this;
-    var sServerName = localStorage.getItem("ServerID");
-    var StoredItem = this.oModel.getData().goodsReturn;
+      var that = this;
+      var storeRet = that.oModel.getData().PurchaseOrder;
+      for(let r = 0; r < storeRet.length; r++){
+        var greturn = that.oModel.getData().goodsReturn;
+        const returnOTM = greturn.filter(function(ITM){
+            return ITM.ItemCode == storeRet[r].ItemCode
+            })
+          // console.log(returnOTM)
+        if(parseInt(returnOTM.length) != 0){
 
-    
-      for(var i =0;i < StoredItem.length; i++){
-      var POref = StoredItem[i].BaseEntry;
-      if(StoredItem[i].Quantity != 0){
-
-      var sUrl = sServerName + "/b1s/v1/PurchaseOrders(" + POref + ")/Reopen?";
-    
-      var rBody = {
-        "DocumentStatus": "bost_Open",
-        "DocumentLines": 
-          {
-          "LineNum": StoredItem[i].LineNum,
-          "RemainingOpenInventoryQuantity":StoredItem[i].Quantity,
-          "LineStatus": "bost_Open"
-          }
-        };
-
-        rBody = JSON.stringify(rBody);
-
-        $.ajax({
-          url: sUrl,
-          type: "POST",
-          data: rBody,
-          headers: {
-            'Content-Type': 'application/json'},
-          crossDomain: true,
-          xhrFields: {withCredentials: true},
-          error: function (xhr, status, error) {
-            that.closeLoadingFragment();
-            sap.m.MessageToast.show("Unable to post the Item:\n" + xhr.responseJSON.error.message.value);
-            },
-          success: function (json) {
-            console.log(POref + " Reopen")
-            that.closeLoadingFragment();
-                },context: this
+        var retQty = parseInt(returnOTM[0].RemainingOpenQuantity);
+        if(retQty != 0){
+              var OpenQtyC = parseInt(storeRet[r].RemainingOpenQuantity) + retQty;
+              var ItmCode = storeRet[r].ItemCode;
+            
+              var sServerName = localStorage.getItem("ServerID");
+              var xsjsServer = sServerName.replace("50000", "4300");
+              var sUrl = xsjsServer + "/app_xsjs/ReOpenItem.xsjs?OpnQty=" + OpenQtyC + "&InvQty=" +  OpenQtyC  + "&OpnCreQty=" +  OpenQtyC  + "&docNum= " + localStorage.getItem("BaseEntry") + "&itmCode=" + ItmCode;
+            
+                $.ajax({
+                url: sUrl,
+                type: "POST",
+                crossDomain: true,
+                beforeSend: function (xhr) {
+                  xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:" + localStorage.getItem("XSPass")));    
+                },
+                xhrFields: {
+                  withCredentials: true
+                },
+                error: function (xhr, status, error) {
+                  this.closeLoadingFragment();
+                  console.log("Error Occured:" + xhr.responseJSON.error.message.value);
+                },
+                success: function (response) {
+                console.log(response)
+                that.closeLoadingFragment();
+                }
               });
-
-
+        }
        }
       }
-  },
+    },
+
+    OnReOPOR: function(){
+        var that = this;  
+        var sServerName = localStorage.getItem("ServerID");
+        var xsjsServer = sServerName.replace("50000", "4300");
+        var sUrl = xsjsServer + "/app_xsjs/ReOpenPO.xsjs?docNum=" + localStorage.getItem("BaseEntry");
+          
+        $.ajax({
+            url: sUrl,
+            type: "POST",
+            dataType: 'json',
+            crossDomain: true,
+            beforeSend: function (xhr) {
+              xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:"+localStorage.getItem("XSPass")));
+            },
+            xhrFields: {
+              withCredentials: true},
+            success: function(response){
+              sap.m.MessageToast.show("Purchase Order has been opened");
+            }, error: function() { 
+              that.closeLoadingFragment()
+              console.log("Error Occur");
+            }
+        })
+    },
 
   });
 });

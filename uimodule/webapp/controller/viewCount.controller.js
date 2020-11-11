@@ -43,7 +43,7 @@ sap.ui.define([
 
     onPressNavBack: function(){
       this.router = this.getOwnerComponent().getRouter();
-      this.router.navTo("inventoryCountMenu",null, true);
+      this.router.navTo("inventoryCountMenu");
     },
 
     onGetCountSheet: function(){
@@ -140,7 +140,7 @@ onUpdateEdit: function(oEvent){
 
 onPressList: function(){
             this.router = this.getOwnerComponent().getRouter();
-            this.router.navTo("updateCount",null, true);
+            this.router.navTo("updateCount");
           },
   
   });

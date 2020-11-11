@@ -25,18 +25,15 @@
                 <InputListItem label="Server">
                   <Input id="inputServer" placeholder="Server IP Address" value="" />
                 </InputListItem>
-                <!-- <InputListItem label="Port">
-                  <Input id="" placeholder="Port Number" type="Number" maxLength="3" value="" />
-                </InputListItem> -->
+               
                 <InputListItem label="Database">
                 	<Input id="inputDBName" placeholder="Input Database" value="" />
-                    <!-- <Select items="{oModel>/SelectDatabases}" >
-                        <core:ListItem key="{oModel>Code}" text="{oModel>Desc}" />
-                        <layoutData>
-                          <l:GridData span="L10 M8 S12"/>
-                        </layoutData>
-                    </Select> -->
                 </InputListItem>
+
+               <InputListItem label="XS Password">
+                  <Input id="inputPass" placeholder="XS Password" type="Password" value="" />
+                </InputListItem>
+
               </List>
             </VBox>
             </f:content>

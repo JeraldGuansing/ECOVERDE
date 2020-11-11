@@ -119,7 +119,8 @@ onGetItemReq: function(){
               withCredentials: true
               },
               beforeSend: function (xhr) {
-                xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:P@ssw0rd810~"));
+                xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:"+localStorage.getItem("XSPass")));
+
               },
               error: function (xhr, status, error) {
                 this.closeLoadingFragment();

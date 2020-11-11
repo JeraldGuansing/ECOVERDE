@@ -80,8 +80,11 @@ sap.ui.define([
                 //API
                 this.openLoadingFragment();
                 // localStorage.setItem("wheseID", oView.byId("whsID").getValue());
-                localStorage.setItem("userName", oView.byId("Username").getValue());
-                localStorage.setItem("password", oView.byId("Password").getValue());
+                var usName =  this.getView().byId("Username").getValue();
+                var usPass =  this.getView().byId("Password").getValue();
+                
+                localStorage.setItem("userName", usName);
+                localStorage.setItem("password", usPass);
                 
                 var sServerName = localStorage.getItem("ServerID");
                 var sDatabaseName = localStorage.getItem("dbName");
@@ -110,13 +113,13 @@ sap.ui.define([
                   },
                   error: function (xhr, status, error) {
                     that.closeLoadingFragment();
-                    sap.m.MessageToast.show("Access Deined");
+                    sap.m.MessageToast.show("Access Denied");
                     console.log(status)
                   },
                   success: function (json) {
                     that.onGetUserdet();
                     that.router = that.getOwnerComponent().getRouter();
-                    that.router.navTo("main",null, true);
+                    that.router.navTo("main");
                     sap.m.MessageToast.show("Welcome");
                     this.closeLoadingFragment();
                   },
@@ -144,8 +147,7 @@ sap.ui.define([
 			var sUserName =localStorage.getItem("userName");
 			var sServerName = localStorage.getItem("ServerID");
       var sUrl = sServerName + "/b1s/v1/$crossjoin(Users,Warehouses)?$expand=Users($select=U_whsCode,InternalKey), Warehouses($select=WarehouseName)&$filter=Users/U_whsCode eq Warehouses/WarehouseCode and Users/UserCode eq '" + sUserName + "'";
-      //var sUrl = sServerName + "/b1s/v1/Users?$select=U_whsCode&$filter=UserCode eq '" + sUserName + "'"
-     
+   
 			$.ajax({
 				url: sUrl,
 				type: "GET",
@@ -159,9 +161,15 @@ sap.ui.define([
 				  sap.m.MessageToast.show(xhr.responseJSON.error.message.value);
 				},
 				success: function (json) {
-          localStorage.setItem("UserKeyID",json.value[0].Users.InternalKey)
-          localStorage.setItem("wheseID", json.value[0].Users.U_whsCode);
-          localStorage.setItem("wheseNm", json.value[0].Warehouses.WarehouseName);
+          
+          var idkey = json.value[0].Users.InternalKey;
+          var whsi = json.value[0].Users.U_whsCode;
+          var whsn = json.value[0].Warehouses.WarehouseName;
+          console.log(whsi);
+          console.log(whsn);
+          localStorage.setItem("UserKeyID",idkey);
+          localStorage.setItem("wheseID", whsi);
+          localStorage.setItem("wheseNm", whsn);
 				},
 				context: that
         });
@@ -175,7 +183,7 @@ sap.ui.define([
 
     onSetting: function(){
       this.router = this.getOwnerComponent().getRouter();
-      this.router.navTo("settings",null, false);
+      this.router.navTo("settings");
     },
 
   });

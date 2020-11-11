@@ -26,10 +26,12 @@
             </ComboBox>
         </InputListItem>
         
-        <!-- <InputListItem label="Vendor Name">
-                <Label id="Vname" />
-        </InputListItem> 
-   -->
+       <InputListItem label="Project:">
+            <ComboBox id="proj" selectionChange=""  placeholder="Select Project" items="{oModel>/projectList}">
+                <core:Item key="{oModel>Code}" text="{oModel>Name}" />
+            </ComboBox>
+        </InputListItem>
+
         <InputListItem label="Posting Date">
              	<DatePicker
               id="DP8"

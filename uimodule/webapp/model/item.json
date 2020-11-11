@@ -67,5 +67,11 @@
     "GRType": [],
     "GIType": [],
     "itemPrice": [],
-    "AlertSMS": []    
+    "AlertSMS": [],
+    "GRDraftsB": [],
+    "ApprovalTempGR": [],
+    "ApprovalTempGRPO": [],
+    "ApprovalTempTR": [],
+    "ApprovalTempGI": [],
+    "PurchaseOrder": []
 }

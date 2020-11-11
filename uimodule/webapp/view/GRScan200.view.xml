@@ -1,12 +1,65 @@
- <mvc:View controllerName="com.ecoverde.undefined.controller.GRScan200"
+ <mvc:View controllerName="com.ecoverde.ECOVERDE.controller.GRScan200"
   displayBlock="true"
   xmlns="sap.m"
-  xmlns:mvc="sap.ui.core.mvc">
-  <App id="GRScan200" >
-    <pages>
-      <Page title="{i18n>title}">
-        <content></content>
-      </Page>
-    </pages>
-  </App>
+	xmlns:f="sap.ui.layout.form" 
+	xmlns:core="sap.ui.core" 
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+  xmlns:t="sap.ui.table"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+   <App id="GRScan200">
+      <Page showHeader="true" title="Goods Receipt" showNavButton="true" navButtonPress="onAlert">
+      <List>        
+        <InputListItem label="Type:">
+            <ComboBox id="TransactionID" selectionChange="" value="{oModel>/GRType>U_App_GRTransType}" items="{oModel>/GRType}">
+                <core:Item key="{oModel>FldValue}" text="{oModel>Descr}" />
+            </ComboBox>
+        </InputListItem>
+
+        <InputListItem label="Prject">
+            <ComboBox id="ProjID" selectionChange="" value="" items="{oModel>/GRType}">
+                <core:Item key="{oModel>FldValue}" text="{oModel>Descr}" />
+            </ComboBox>
+        </InputListItem>
+     
+        <InputListItem label="Posting Date">
+             	<DatePicker
+              id="DP8"
+              displayFormat="MM/dd/YYYY"
+              change=""
+              class="sapUiSmallMarginBottom"/>
+        </InputListItem>
+      
+     </List>
+      <html:br></html:br>
+             <content>
+                <List items="{oModel>/GRDraftsB}">
+                  <items>
+                    <ObjectListItem id="list" title="{oModel>ItemCode}"
+                            number="{oModel>Quantity}"
+                            type="Active"
+                            press = "onShowEdit"
+                            icon="sap-icon://add-product"
+                            intro="{oModel>ItemDescription}">
+                      
+                                <firstStatus>
+                                  <ObjectStatus text="{oModel>UoMCode}"/>
+                                </firstStatus>
+                                <attributes>
+                                  <ObjectAttribute title="{oModel>BarCode}"/>
+                                </attributes>
+                          </ObjectListItem>
+                  </items>
+                </List>
+            </content>
+    <footer>
+			<Bar>
+        <contentMiddle>
+					<Button text="Post" press="onConfirmPosting" icon="sap-icon://manager-insight"/>
+				</contentMiddle>
+			</Bar>
+		</footer>
+
+  </Page>
+</App>
 </mvc:View>
