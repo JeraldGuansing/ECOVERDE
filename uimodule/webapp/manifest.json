@@ -272,6 +272,13 @@
           "target": [
             "mainSettings"
           ]
+        },
+        {
+          "name": "GoodsIssueDraft",
+          "pattern": "GoodsIssueDraft",
+          "target": [
+            "GoodsIssueDraft"
+          ]
         }
       ],
       "targets": {
@@ -546,6 +553,16 @@
           "viewPath": "com.ecoverde.ECOVERDE.view",
           "viewType": "XML",
           "viewName": "mainSettings",
+          "parent": "main",
+          "controlId": "pageContainer",
+          "controlAggregation": "pages",
+          "viewLevel": 3,
+          "transition": "fade"
+        },
+        "GoodsIssueDraft": {
+          "viewPath": "com.ecoverde.ECOVERDE.view",
+          "viewType": "XML",
+          "viewName": "GoodsIssueDraft",
           "parent": "main",
           "controlId": "pageContainer",
           "controlAggregation": "pages",

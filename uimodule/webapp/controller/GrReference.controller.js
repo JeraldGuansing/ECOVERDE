@@ -516,7 +516,7 @@ onCheckPost: function(){
             },
             context: that
           })
-          if(x.length !=0){
+          if(x.length !=0 || x.length != null){
             that.onConfirmPosting();
           }else{
             that.onConfirmPosting1();

@@ -42,6 +42,18 @@
                       </layoutData>
                   </ComboBox>
 
+                  <Label text="Goods Issuance" width="100%">
+										<layoutData>
+											<l:GridData span="L2 M4 S12"/>
+										</layoutData>
+									</Label>
+                  <ComboBox id="gi01" items="{oModel>/ApprovalTempGI}">
+                      <core:Item key="{oModel>WtmCode}" text="{oModel>Name}" />
+                      <layoutData>
+                        <l:GridData span="L10 M8 S12"/>
+                      </layoutData>
+                  </ComboBox>
+
                   <Label text="Transfer Order" width="100%">
 										<layoutData>
 											<l:GridData span="L2 M4 S12"/>

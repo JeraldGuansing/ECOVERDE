@@ -107,33 +107,51 @@ sap.ui.define([
       },
 
 onGetItemReq: function(){
-        
-        var sServerName = localStorage.getItem("ServerID");
-        var xsjsServer = sServerName.replace("50000", "4300");
-        var sUrl = xsjsServer + "/app_xsjs/ExecQuery.xsjs?procName=spAppGetAllItems&dbName=" + localStorage.getItem("dbName");  
-        $.ajax({
-          url: sUrl,
-              type: "GET",
-              crossDomain: true,
-              xhrFields: {
-              withCredentials: true
-              },
-              beforeSend: function (xhr) {
-                xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:"+localStorage.getItem("XSPass")));
-
-              },
-              error: function (xhr, status, error) {
-                this.closeLoadingFragment();
-                console.log("Error Occured" +  xhr.responseJSON.error.message.value);
-              },
-              success: function (json) {
-                this.oModel.getData().itemMaster  = json;
-                this.oModel.refresh();
-              },
-              context: this
-            })
-      
-        },
+        this.openLoadingFragment();
+          var that = this;
+          var sServerName = localStorage.getItem("ServerID");
+          var xsjsServer = sServerName.replace("50000", "4300");
+          var sUrl = xsjsServer + "/app_xsjs/InventoryItem.xsjs?whse=" + localStorage.getItem("wheseID");
+          $.ajax({
+            url: sUrl,
+                type: "GET",
+                beforeSend: function (xhr) {
+                  xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:"+localStorage.getItem("XSPass")));
+                  },
+                crossDomain: true,
+                xhrFields: {
+                withCredentials: true
+                },
+                error: function (xhr, status, error) {
+                  this.closeLoadingFragment();
+                  console.log("Error Occured");
+                },
+                success: function (response) {
+                  var OITM = [];
+                  var ITM =  response;
+                  var count = Object.keys(ITM).length;
+                
+                  for(let o = 0; o < count;o++){
+                    OITM.push({
+                      ItemCode: ITM[o].ItemCode,
+                      ItemName: ITM[o].ItemName,
+                      BarCode: ITM[o].BarCode,
+                      Series: ITM[o].Series,
+                      WhsCode: ITM[o].WhsCode,
+                      WhsName: ITM[o].WhsName,
+                      OnHand: ITM[o].OnHand,
+                      IsCommited: ITM[o].OnHand,
+                      OnOrder: ITM[o].OnOrder
+                    });
+                  }
+                    that.oModel.getData().itemMaster = OITM;
+                    that.oModel.refresh();
+                    that.closeLoadingFragment();
+                },
+                context: this
+              })
+          
+            },
 
 onCloseAddI: function(){
           if(this.transferReq){

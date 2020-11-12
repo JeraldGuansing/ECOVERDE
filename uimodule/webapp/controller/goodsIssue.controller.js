@@ -11,30 +11,30 @@ sap.ui.define([
 ], function(Controller,MessageToast, JSONModel, Filter, FilterOperator, Token, MessageBox,Fragment,Core) {
   "use strict";
  
-  return Controller.extend("com.ecoverde.ECOVERDE.controller.goodsIssue", {
-onInit: function(){
-      var that = this;
-	    var oView = this.getView();
+return Controller.extend("com.ecoverde.ECOVERDE.controller.goodsIssue", {
+  onInit: function(){
+        var that = this;
+        var oView = this.getView();
 
-        oView.addEventDelegate({
-            onAfterHide: function(evt) {
-                //This event is fired every time when the NavContainer has made this child control invisible.
-            },
-            onAfterShow: function(evt) {
-                //This event is fired every time when the NavContainer has made this child control visible.
-            },
-            onBeforeFirstShow: function(evt) {
-                //This event is fired before the NavContainer shows this child control for the first time.
-            },
-            onBeforeHide: function(evt) {
-              
-            },
-            onBeforeShow: function(evt) {
-                //This event is fired every time before the NavContainer shows this child control.
-                that.initialize(evt.data);
-            }
-        });
-  },
+          oView.addEventDelegate({
+              onAfterHide: function(evt) {
+                  //This event is fired every time when the NavContainer has made this child control invisible.
+              },
+              onAfterShow: function(evt) {
+                  //This event is fired every time when the NavContainer has made this child control visible.
+              },
+              onBeforeFirstShow: function(evt) {
+                  //This event is fired before the NavContainer shows this child control for the first time.
+              },
+              onBeforeHide: function(evt) {
+                
+              },
+              onBeforeShow: function(evt) {
+                  //This event is fired every time before the NavContainer shows this child control.
+                  that.initialize(evt.data);
+              }
+          });
+    },
   
 initialize: function(vFromId){
     this.oModel = new JSONModel("model/item.json");
@@ -95,7 +95,7 @@ onSaveDial:function(){
   
   },
 
-  onGetListVendor: function(){
+onGetListVendor: function(){
     var that = this;  
     var sServerName = localStorage.getItem("ServerID");
     var xsjsServer = sServerName.replace("50000", "4300");
@@ -251,7 +251,6 @@ oncheckinGRPO: function(){
       context: this
     });
   },
-
 
 onSelectVendorShow: function(){
   this.openLoadingFragment();

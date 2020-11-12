@@ -10,59 +10,59 @@
   xmlns:tnt="sap.tnt">
   <App id="goodsIssuance" >
     <Page title="Goods Issuance" showNavButton="true" navButtonPress="onPressNavBack">
-   <List>        
-          <InputListItem label="Type:">
-            <ComboBox id="TransactionID" selectionChange=""  placeholder="Select Transaction Type" items="{oModel>/GIType}">
-                <core:Item key="{oModel>FldValue}" text="{oModel>Descr}" />
-            </ComboBox>
-        </InputListItem>
-        
-        <InputListItem label="Project Name">
-          <ComboBox id="projDesc" selectionChange=""  placeholder="Select Transaction Type" items="{oModel>/projectList}">
-                <core:Item key="{oModel>Code}" text="{oModel>Name}" />
-          </ComboBox>
-        </InputListItem>
-        
-        <InputListItem label="Posting Date">
-             	<DatePicker
-              id="DP8"
-              displayFormat="MM/dd/YYYY"
-              change=""
-              class="sapUiSmallMarginBottom"/>
-        </InputListItem>
-      
-     </List>
-      <html:br></html:br>
-        <content>
-                <List id="projectlistid" items="{oModel>/goodsIssue}">
-                    <ObjectListItem title="{oModel>ItemCode}"
-                            number="{oModel>Quantity}"
-                            numberUnit="{oModel>UoMCode}"
-                            type="Active"
-                            press = "onShowEdit"
-                            icon="sap-icon://product"
-                            intro="{oModel>ItemName}">
-                            <attributes>
-                              <ObjectAttribute title="{oModel>Barcode}"/>
-                            </attributes>
-                    </ObjectListItem>
-                </List>
-        </content>
-        
-        <footer>
-            <Bar>
-             <contentLeft>
-				      	<Button text="Add" press="onPressAdd" icon="sap-icon://add"/>
-			      	</contentLeft>
-              <contentMiddle>
-				      	<Button text="Scan" press="onScan" icon="sap-icon://camera"/>
-			      	</contentMiddle>
-              <contentRight>
-				      	<Button text="Post" press="onCheckPost" icon="sap-icon://manager-insight"/>
-			      	</contentRight>
-            </Bar>
-        </footer>
-        
-      </Page>
+        <List>        
+                <InputListItem label="Type:">
+                  <ComboBox id="TransactionID" selectionChange=""  placeholder="Select Transaction Type" items="{oModel>/GIType}">
+                      <core:Item key="{oModel>FldValue}" text="{oModel>Descr}" />
+                  </ComboBox>
+              </InputListItem>
+              
+              <InputListItem label="Project Name">
+                <ComboBox id="projDesc" selectionChange=""  placeholder="Select Transaction Type" items="{oModel>/projectList}">
+                      <core:Item key="{oModel>Code}" text="{oModel>Name}" />
+                </ComboBox>
+              </InputListItem>
+              
+              <InputListItem label="Posting Date">
+                    <DatePicker
+                    id="DP8"
+                    displayFormat="MM/dd/YYYY"
+                    change=""
+                    class="sapUiSmallMarginBottom"/>
+              </InputListItem>
+            
+          </List>
+            <html:br></html:br>
+              <content>
+                      <List id="projectlistid" items="{oModel>/goodsIssue}">
+                          <ObjectListItem title="{oModel>ItemCode}"
+                                  number="{oModel>Quantity}"
+                                  numberUnit="{oModel>UoMCode}"
+                                  type="Active"
+                                  press = "onShowEdit"
+                                  icon="sap-icon://product"
+                                  intro="{oModel>ItemName}">
+                                  <attributes>
+                                    <ObjectAttribute title="{oModel>Barcode}"/>
+                                  </attributes>
+                          </ObjectListItem>
+                      </List>
+              </content>
+              
+              <footer>
+                  <Bar>
+                  <contentLeft>
+                      <Button text="Add" press="onPressAdd" icon="sap-icon://add"/>
+                    </contentLeft>
+                    <contentMiddle>
+                      <Button text="Scan" press="onScan" icon="sap-icon://camera"/>
+                    </contentMiddle>
+                    <contentRight>
+                      <Button text="Post" press="onCheckPost" icon="sap-icon://manager-insight"/>
+                    </contentRight>
+                  </Bar>
+              </footer>
+              
+    </Page>
   </App>
 </mvc:View>

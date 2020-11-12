@@ -52,6 +52,8 @@ sap.ui.define([
         var locGRPOCode = localStorage.getItem("Appv_GRPO");
         var locTRname = localStorage.getItem("TRName");
         var locTRcode = localStorage.getItem("Appv_TR")
+        var locGIName =localStorage.getItem("GI_App");
+        var locGICode = localStorage.getItem("GI_code");
 
         this.getView().byId("gr01").setValue(locGRname);
         this.getView().byId("gr01").setSelectedKey(locGRcode);
@@ -59,6 +61,9 @@ sap.ui.define([
         this.getView().byId("grpo01").setSelectedKey(locGRPOCode);
         this.getView().byId("tr01").setValue(locTRname);
         this.getView().byId("tr01").setSelectedKey(locTRcode);
+        this.getView().byId("gi01").setValue(locGIName);
+        this.getView().byId("gi01").setSelectedKey(locGICode);
+
       },
 
       onGetApprovalTemp: function(){
@@ -95,21 +100,26 @@ sap.ui.define([
               });
             }
             
-            const gr = resultTemp.filter(function(ogr){
+          const gr = resultTemp.filter(function(ogr){
             return ogr.TransType == 59;
             });
 
-            const grpo = resultTemp.filter(function(ogrpo){
-              return ogrpo.TransType == 20;
-              })
+          const grpo = resultTemp.filter(function(ogrpo){
+            return ogrpo.TransType == 20;
+            })
 
-              const tr = resultTemp.filter(function(otr){
-                return otr.TransType == 1250000001;
-                })
+          const tr = resultTemp.filter(function(otr){
+              return otr.TransType == 1250000001;
+            })
+
+          const gi = resultTemp.filter(function(ogi){
+              return ogi.TransType == 60;
+            })
 
           this.oModel.getData().ApprovalTempGR = gr;
           this.oModel.getData().ApprovalTempGRPO = grpo;
           this.oModel.getData().ApprovalTempTR = tr;
+          this.oModel.getData().ApprovalTempGI = gi;
           this.oModel.refresh();
           this.closeLoadingFragment();
           },
@@ -132,9 +142,17 @@ sap.ui.define([
         localStorage.setItem("GRPOName", GRPOName);
         localStorage.setItem("Appv_GRPO",GRPOCode);
 
+
+        var GIname = this.getView().byId("gi01").getValue();
+        var GICode = this.getView().byId("gi01").getSelectedKey();
+        
+        localStorage.setItem("GI_App", GIname);
+        localStorage.setItem("GI_code", GICode);
+
         var TRName = this.getView().byId("tr01").getValue();
         var TRCode = this.getView().byId("tr01").getSelectedKey();
-        
+
+      
         localStorage.setItem("TRName", TRName);
         localStorage.setItem("Appv_TR", TRCode);
   
@@ -143,7 +161,6 @@ sap.ui.define([
         // this.router = this.getOwnerComponent().getRouter();
         // this.router.navTo("main");
       },
-
 
       openLoadingFragment: function(){
         if (! this.oDialog) {

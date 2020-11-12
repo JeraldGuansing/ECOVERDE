@@ -1,12 +1,63 @@
- <mvc:View controllerName="com.ecoverde.undefined.controller.GoodsIssueDraft"
+ <mvc:View controllerName="com.ecoverde.ECOVERDE.controller.GoodsIssueDraft"
   displayBlock="true"
   xmlns="sap.m"
-  xmlns:mvc="sap.ui.core.mvc">
+	xmlns:f="sap.ui.layout.form" 
+	xmlns:core="sap.ui.core" 
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+  xmlns:t="sap.ui.table"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns:tnt="sap.tnt">
   <App id="GoodsIssueDraft" >
-    <pages>
-      <Page title="{i18n>title}">
-        <content></content>
-      </Page>
-    </pages>
+    <Page title="Goods Issuance" showNavButton="true" navButtonPress="onPressNavBack">
+        <List>        
+              <InputListItem label="Type:">
+                  <ComboBox id="TransactionID" selectionChange=""  placeholder="Select Transaction Type" items="{oModel>/GIType}">
+                      <core:Item key="{oModel>FldValue}" text="{oModel>Descr}" />
+                  </ComboBox>
+              </InputListItem>
+              
+              <InputListItem label="Project Name">
+                <ComboBox id="proj" selectionChange=""  placeholder="Select Transaction Type" items="{oModel>/projectList}">
+                      <core:Item key="{oModel>Code}" text="{oModel>Name}" />
+                </ComboBox>
+              </InputListItem>
+              
+              <InputListItem label="Posting Date">
+                    <DatePicker
+                    id="DP8"
+                    displayFormat="MM/dd/YYYY"
+                    change=""
+                    class="sapUiSmallMarginBottom"/>
+              </InputListItem>
+            
+        </List>
+
+      <html:br></html:br>
+              <content>
+                      <List id="projectlistid" items="{oModel>/GRDraftsB}">
+                          <ObjectListItem title="{oModel>ItemCode}"
+                                  number="{oModel>Quantity}"
+                                  numberUnit="{oModel>UoMCode}"
+                                  type="Active"
+                                  press = "onShowEdit"
+                                  icon="sap-icon://product"
+                                  intro="{oModel>ItemDescription}">
+                                  <attributes>
+                                    <ObjectAttribute title="{oModel>Barcode}"/>
+                                  </attributes>
+                          </ObjectListItem>
+                      </List>
+              </content>
+              
+              <footer>
+                  <Bar>
+                    <contentMiddle>
+                      <Button text="Post" press="onCheckPost" icon="sap-icon://manager-insight"/>
+                    </contentMiddle>
+                  </Bar>
+              </footer>
+              
+    </Page>
   </App>
 </mvc:View>

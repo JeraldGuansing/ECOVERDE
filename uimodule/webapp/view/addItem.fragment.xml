@@ -35,7 +35,7 @@
                                     </f:FormElement>
 
                                     <f:FormElement label="Item Name">
-                                        <ComboBox showSecondaryValues= "true" id="itmName" change="onvalidationDesk" placeholder="Select Description" items="{oModel>/itemMaster}">
+                                        <ComboBox id="itmName" change="onvalidationDesk" placeholder="Select Description" items="{oModel>/itemMaster}">
                                             <core:Item key="{oModel>ItemCode}" text="{oModel>ItemName}"/>
                                         </ComboBox>
                                     </f:FormElement>

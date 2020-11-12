@@ -64,13 +64,15 @@ sap.ui.define([
 
    onGetAlert: function(){
     var that = this;
+    try{
     that.openLoadingFragment();
     that.oModel.getData().AlertSMS.length = [];
     var UserCode = localStorage.getItem("UserKeyID");
     var sServerName = localStorage.getItem("ServerID");
     var xsjsServer = sServerName.replace("50000", "4300");
     var sUrl = xsjsServer + "/app_xsjs/getAlert.xsjs?uid=" + UserCode + "&wsr=N&objT=112";
-    
+   
+
     $.ajax({
       url: sUrl,
           type: "GET",
@@ -111,7 +113,10 @@ sap.ui.define([
             }
           }
         })
-
+      
+    }catch(err) {
+        // console.log(err)
+    }
        
    },
 
@@ -122,6 +127,7 @@ sap.ui.define([
     for(let g = 0;g< s.length; g++){
         var sServerName = localStorage.getItem("ServerID");
         var sUrl = sServerName + "/b1s/v1/Drafts?$select=UpdateDate,JournalMemo,DocObjectCode&$filter=DocEntry eq " + s[g].KeyStr + "";
+        try{
         $.ajax({
           url: sUrl,
           type: "GET",
@@ -141,6 +147,9 @@ sap.ui.define([
             console.log("Error Occur");
           }
         })
+        }catch(err) {
+          console.log(err)
+        }
     }
     that.closeLoadingFragment();
    },
@@ -153,7 +162,7 @@ sap.ui.define([
     // console.log(boundData);
     
     var str = boundData.Subject;
-		if(str.indexOf("approved") !== -1){
+		if(str.indexOf("approved") !== -1 || str.indexOf("End of Document") !== -1){
       var tcode = boundData.DocObjectCode;
   
       switch (tcode) {
@@ -168,6 +177,10 @@ sap.ui.define([
         case "oPurchaseDeliveryNotes": //GoodsReceipt PO
           localStorage.setItem("DocEntry", boundData.KeyStr);
           that.gotoGRPO();
+          break;
+        case "oInventoryGenExit": //GoodsReceipt GI
+          localStorage.setItem("DocEntry", boundData.KeyStr);
+          that.gotoGI();
           break;
         default:
       }
@@ -219,9 +232,14 @@ sap.ui.define([
     this.router.navTo("GRPODraft");
     },
 
-    gotoTR: function(){
+  gotoTR: function(){
       this.router = this.getOwnerComponent().getRouter();
       this.router.navTo("TransferRequestDraft");
+      },
+
+  gotoGI: function(){
+    this.router = this.getOwnerComponent().getRouter();
+    this.router.navTo("GoodsIssueDraft");
       },
 
   });
