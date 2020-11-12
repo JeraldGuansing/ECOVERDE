@@ -544,7 +544,7 @@ sap.ui.define([
 
   onMain: function(){
         this.router = this.getOwnerComponent().getRouter();
-        this.router.navTo("main");
+        this.router.navTo("homeScreen");
         },
      
     openLoadingFragment: function(){

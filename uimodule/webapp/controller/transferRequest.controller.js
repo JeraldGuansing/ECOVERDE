@@ -86,7 +86,7 @@ sap.ui.define([
                   icon: MessageBox.Icon.INFORMATION,
                   styleClass:"sapUiSizeCompact",
                   onClose: function () {
-                    that.onWithRef();
+                    that.onPressNavback();
                   }
                   });
                 }
