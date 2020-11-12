@@ -41,7 +41,6 @@ sap.ui.define([
       this.oModel = new JSONModel("model/item.json");
       this.getView().setModel(this.oModel, "oModel");
    
-      
       this.getView().byId("toWID").setValue(localStorage.getItem("wheseNm"));
       this.getView().byId("toWID").setEnabled(false);
       this.getView().byId("fromWID").setEnabled(true);
@@ -54,7 +53,49 @@ sap.ui.define([
       this.byId("DP8").setValue(today);
 
       this.ongetWHSEList();
+      this.onOriginator();
     },
+
+    onOriginator: function(){
+      var that = this
+      var sServerName = localStorage.getItem("ServerID");
+      var sUrl = sServerName + "/b1s/v1/ApprovalTemplates?$select=IsActive,ApprovalTemplateUsers&$filter=Code eq " + localStorage.getItem("Appv_TR");
+     
+      $.ajax({
+          url: sUrl,
+          type: "GET",
+          crossDomain: true,
+          xhrFields: {
+          withCredentials: true},
+          error: function (xhr, status, error) {
+            that.closeLoadingFragment();
+            console.log(error)
+          },success: function (json) {
+            var resultH = json.value[0].IsActive;
+            if(resultH == "tYES"){
+              var resultB = json.value[0].ApprovalTemplateUsers;
+              const oApv = resultB.filter(function(apv){
+              return apv.UserID == localStorage.getItem("UserKeyID")
+              })
+
+              that.closeLoadingFragment();
+              if(parseInt(oApv.length) == 0 ){
+                MessageBox.information("Your User is not authorized to use this transaction,\nPlease contact your administrator to include your\nUser in Originator of this approval template", {
+                  actions: [MessageBox.Action.OK],
+                  title: localStorage.getItem("TRName"),
+                  icon: MessageBox.Icon.INFORMATION,
+                  styleClass:"sapUiSizeCompact",
+                  onClose: function () {
+                    that.onWithRef();
+                  }
+                  });
+                }
+              }
+              that.closeLoadingFragment();
+            }
+          })
+    },
+
 
     openLoadingFragment: function(){
       if (! this.oDialog) {

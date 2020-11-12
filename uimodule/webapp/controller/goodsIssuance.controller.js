@@ -69,8 +69,50 @@ initialize: function(vFromId){
 
       this.onGetTransactionType();
       this.onGetListProject();
+      this.onOriginator();
       },
 
+onOriginator: function(){
+        var that = this
+        var sServerName = localStorage.getItem("ServerID");
+        var sUrl = sServerName + "/b1s/v1/ApprovalTemplates?$select=IsActive,ApprovalTemplateUsers&$filter=Code eq " + localStorage.getItem("GI_code");
+       
+        $.ajax({
+            url: sUrl,
+            type: "GET",
+            crossDomain: true,
+            xhrFields: {
+            withCredentials: true},
+            error: function (xhr, status, error) {
+              that.closeLoadingFragment();
+              console.log(error)
+            },success: function (json) {
+              var resultH = json.value[0].IsActive;
+              if(resultH == "tYES"){
+                var resultB = json.value[0].ApprovalTemplateUsers;
+                const oApv = resultB.filter(function(apv){
+                return apv.UserID == localStorage.getItem("UserKeyID")
+                })
+  
+                that.closeLoadingFragment();
+                if(parseInt(oApv.length) == 0 ){
+                  MessageBox.information("Your User is not authorized to use this transaction,\nPlease contact your administrator to include your\nUser in Originator of this approval template", {
+                    actions: [MessageBox.Action.OK],
+                    title: localStorage.getItem("GI_App"),
+                    icon: MessageBox.Icon.INFORMATION,
+                    styleClass:"sapUiSizeCompact",
+                    onClose: function () {
+                      that.onPressNavBack();
+                    }
+                  });
+                }
+              }
+                that.closeLoadingFragment();
+                    }
+                  })
+      },
+      
+      
 onPressIssuance: function(){
         this.router = this.getOwnerComponent().getRouter();
         this.router.navTo("goodsIssuance",null, true);

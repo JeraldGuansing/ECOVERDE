@@ -45,46 +45,6 @@ sap.ui.define([
 
       },
 
-  cOriginator: function(){
-    var that = this;
-    var itemJSON = that.oModel.getData().value;
-    if(parseInt(itemJSON.length) == 0){
-      sap.m.MessageToast.show("Please Input item First");
-    }
-    else{
-    var x = [];
-    var sServerName = localStorage.getItem("ServerID");
-    var sUrl = sServerName + "/b1s/v1/ApprovalTemplates?$filter=Name eq '" + localStorage.getItem("GRName") + "' and IsActive eq 'tYES'";
-  
-    $.ajax({
-      url: sUrl,
-          type: "GET",
-          dataType: 'json',
-          async: false,
-          crossDomain: true,
-          xhrFields: {
-          withCredentials: true
-          },
-          error: function (xhr, status, error) {
-            that.closeLoadingFragment();
-            console.log("Error Occured" + xhr.responseJSON.error.message.value);
-          },
-          success: function (json) {
-            x  = json.value;
-            that.closeLoadingFragment();
-          }
-        })
-       
-        if(x.length !=0 || x != null ){
-          that.onGetItemGroup();
-          that.onShowApproval();
-        }else{
-          that.onGetItemGroup();
-          that.onPostingGR1();
-        }
-      }
-
-  },
 
   initialize: function(vFromId){
 
@@ -105,6 +65,7 @@ sap.ui.define([
     
         this.onGetTransactionType();
         this.onGetListProject();
+        this.onOriginator();
     },
 
     onScan: function() {
@@ -242,7 +203,7 @@ sap.ui.define([
               "ItemCode":barItemCode, 
               "ItemName": ItemName,
               "BarCode": vBarcode,
-              "Price": that.oModel.getData().itemPrice,
+              "Price":  "",
               "Quantity": 1,
               "UoMCode": gUoMCode,
               "AbsEntry":AbsEntry
@@ -534,11 +495,57 @@ sap.ui.define([
           }
         }
     },
+
+    onOriginator: function(){
+      var that = this
+      var sServerName = localStorage.getItem("ServerID");
+      var sUrl = sServerName + "/b1s/v1/ApprovalTemplates?$select=IsActive,ApprovalTemplateUsers&$filter=Code eq " + localStorage.getItem("Appv_GR");
+     
+      $.ajax({
+          url: sUrl,
+          type: "GET",
+          crossDomain: true,
+          xhrFields: {
+          withCredentials: true},
+          error: function (xhr, status, error) {
+            that.closeLoadingFragment();
+            console.log(error)
+            sap.m.MessageToast.show(error);
+          },success: function (json) {
+            var resultH = json.value[0].IsActive;
+            if(resultH == "tYES"){
+              var resultB = json.value[0].ApprovalTemplateUsers;
+              const oApv = resultB.filter(function(apv){
+              return apv.UserID == localStorage.getItem("UserKeyID")
+              })
+
+              that.closeLoadingFragment();
+              if(parseInt(oApv.length) == 0 ){
+                MessageBox.information("Your User is not authorized to use this transaction,\nPlease contact your administrator to include your\nUser in Originator of this approval template", {
+                actions: [MessageBox.Action.OK],
+                  title: localStorage.getItem("GRName"),
+                  icon: MessageBox.Icon.INFORMATION,
+                  styleClass:"sapUiSizeCompact",
+                  onClose: function () {
+                    that.onMain();
+                  }
+                });
+              }
+            }
+            that.closeLoadingFragment();
+                  }
+                })
+    },
      
   onWithoutRef: function(){
 			this.router = this.getOwnerComponent().getRouter();
-			this.router.navTo("goodsReceipt",null, true);
+			this.router.navTo("goodsReceipt");
       },
+
+  onMain: function(){
+        this.router = this.getOwnerComponent().getRouter();
+        this.router.navTo("main");
+        },
      
     openLoadingFragment: function(){
       if (! this.oDialog) {
@@ -739,7 +746,7 @@ sap.ui.define([
           "BarCode": getStrBarc,
           "Quantity": sQtyID,
           "ItemPrice": getPR,
-          "Price": formatter.format(getTotalPR),
+          "Price": "",
           "UoMCode": sUoMID,
           "ItemGroup": "",
           "AbsEntry":AbsEntryID
