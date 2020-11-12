@@ -22,7 +22,7 @@
 
         <html:br></html:br>
 
-            <t:Table id="tblID" rows="{oModel>/InventoryTransfer}" cellClick="" selectionMode="Single" ariaLabelledBy="title">
+            <t:Table id="tblID" rows="{oModel>/InventoryTransfer}" cellClick="" selectionMode="" ariaLabelledBy="title">
                 <t:columns>
                     <t:Column width="5em">
                       <Label text="DocNum" />
