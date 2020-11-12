@@ -10,7 +10,8 @@ sap.ui.define([
   "sap/ui/core/Core"
 ], function(Controller,MessageToast, JSONModel, Filter, FilterOperator, Token, MessageBox,Fragment,Core) {
   "use strict";
-
+  var ids;
+  var isActive;
   return Controller.extend("com.ecoverde.ECOVERDE.controller.GoodsIssueDraft", {
     onInit: function(){            
       var that = this;
@@ -140,10 +141,12 @@ sap.ui.define([
         styleClass:"sapUiSizeCompact",
         onClose: function (sButton) {
           if(sButton === "YES"){
+            that.openLoadingFragment();
             ids = localStorage.getItem("GI_code");
             isActive = "N";
             that.onactivateAlert();
             that.onPostIssue();
+            that.onAlert();
           }}
       });
       }
@@ -151,7 +154,6 @@ sap.ui.define([
 
     onPostIssue: function(){
       var that = this;
-      that.openLoadingFragment();
       var sServerName = localStorage.getItem("ServerID");
       var sUrl = sServerName + "/b1s/v1/InventoryGenExits";
       var oBody = {
@@ -171,8 +173,8 @@ sap.ui.define([
         "WarehouseCode":localStorage.getItem("wheseID")
         });
       }
-      this.onCloseApproval();
-      // console.log(oBody)
+      // this.onCloseApproval();
+      console.log(oBody)
       oBody = JSON.stringify(oBody);
       $.ajax({
         url: sUrl,
@@ -187,6 +189,7 @@ sap.ui.define([
           sap.m.MessageToast.show("Unable to post the Item: " + xhr.responseJSON.error.message.value);       
         },
         success: function (json) {
+          that.closeLoadingFragment();
                 MessageBox.information("Items successfully Issued,\nDoc Number Created:" + json.DocNum, {
                   actions: [MessageBox.Action.OK],
                   title: "Goods Issue",
@@ -198,8 +201,7 @@ sap.ui.define([
                     that.onactivateAlert();
                     that.onReadAlert();
                     that.oModel.getData().GRDraftsB = [];
-                    that.onAlert();
-                    that.closeLoadingFragment();
+                    that.onAlert(); 
                   }
                 });
                
@@ -229,7 +231,6 @@ sap.ui.define([
               console.log("Error Occured");
             },
             success: function (response) {
-              this.oModel.refresh();
               this.closeLoadingFragment();
             },
             context: this
@@ -241,7 +242,6 @@ sap.ui.define([
       var sServerName = localStorage.getItem("ServerID");
       var xsjsServer = sServerName.replace("50000", "4300");
       var sUrl = xsjsServer + "/app_xsjs/UpdateAlert.xsjs?id=" + ids +"&isAct=" + isActive;
-  
       $.ajax({
         url: sUrl,
             type: "POST",
@@ -257,7 +257,6 @@ sap.ui.define([
               console.log("Error Occured");
             },
             success: function (response) {
-              this.oModel.refresh();
             },
             context: this
           })

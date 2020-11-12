@@ -5,13 +5,13 @@
     xmlns:f="sap.ui.layout.form">
     <Dialog>
             <customHeader>
-			<Toolbar>
-				<!-- <Button type="Back" press="onPress" />-->
-			<ToolbarSpacer/>
-				<!-- <Title text="Title" level="H2"/> -->
-				<ToolbarSpacer/>
-				<Button icon="sap-icon://decline" type="Reject" press="onCloseApproval" ariaLabelledBy="editButtonLabel"/>
-			</Toolbar>
+                <Toolbar>
+                    <!-- <Button type="Back" press="onPress" />-->
+                <ToolbarSpacer/>
+                    <!-- <Title text="Title" level="H2"/> -->
+                    <ToolbarSpacer/>
+                    <Button icon="sap-icon://decline" type="Reject" press="onCloseApproval" ariaLabelledBy="editButtonLabel"/>
+                </Toolbar>
             </customHeader>
         <content>
             <l:Grid defaultSpan = "L12 M12 S12" width = "auto">

@@ -45,6 +45,47 @@ sap.ui.define([
 
       },
 
+  cOriginator: function(){
+    var that = this;
+    var itemJSON = that.oModel.getData().value;
+    if(parseInt(itemJSON.length) == 0){
+      sap.m.MessageToast.show("Please Input item First");
+    }
+    else{
+    var x = [];
+    var sServerName = localStorage.getItem("ServerID");
+    var sUrl = sServerName + "/b1s/v1/ApprovalTemplates?$filter=Name eq '" + localStorage.getItem("GRName") + "' and IsActive eq 'tYES'";
+  
+    $.ajax({
+      url: sUrl,
+          type: "GET",
+          dataType: 'json',
+          async: false,
+          crossDomain: true,
+          xhrFields: {
+          withCredentials: true
+          },
+          error: function (xhr, status, error) {
+            that.closeLoadingFragment();
+            console.log("Error Occured" + xhr.responseJSON.error.message.value);
+          },
+          success: function (json) {
+            x  = json.value;
+            that.closeLoadingFragment();
+          }
+        })
+       
+        if(x.length !=0 || x != null ){
+          that.onGetItemGroup();
+          that.onShowApproval();
+        }else{
+          that.onGetItemGroup();
+          that.onPostingGR1();
+        }
+      }
+
+  },
+
   initialize: function(vFromId){
 
         this.oModel.setData({UoMCode:[]});
