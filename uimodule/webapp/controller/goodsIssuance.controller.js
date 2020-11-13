@@ -532,19 +532,19 @@ onGetItemIssue: function(){
                 
                   for(let o = 0; o < count;o++){
                     if(parseInt(ITM[o].OnHand) != 0){
-                    OITM.push({
-                      ItemCode: ITM[o].ItemCode,
-                      ItemName: ITM[o].ItemName,
-                      BarCode: ITM[o].BarCode,
-                      Series: ITM[o].Series,
-                      WhsCode: ITM[o].WhsCode,
-                      WhsName: ITM[o].WhsName,
-                      OnHand: ITM[o].OnHand,
-                      IsCommited: ITM[o].OnHand,
-                      OnOrder: ITM[o].OnOrder
-                    });
+                      OITM.push({
+                        ItemCode: ITM[o].ItemCode,
+                        ItemName: ITM[o].ItemName,
+                        BarCode: ITM[o].BarCode,
+                        Series: ITM[o].Series,
+                        WhsCode: ITM[o].WhsCode,
+                        WhsName: ITM[o].WhsName,
+                        OnHand: ITM[o].OnHand,
+                        IsCommited: ITM[o].OnHand,
+                        OnOrder: ITM[o].OnOrder
+                      });
+                    }
                   }
-                }
                     that.oModel.getData().itemMaster = OITM;
                     that.oModel.refresh();
                     that.closeLoadingFragment();
