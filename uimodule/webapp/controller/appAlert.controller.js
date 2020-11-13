@@ -116,6 +116,7 @@ sap.ui.define([
       
     }catch(err) {
         // console.log(err)
+        that.closeLoadingFragment();
     }
        
    },
