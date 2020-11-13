@@ -531,6 +531,7 @@ onGetItemIssue: function(){
                   var count = Object.keys(ITM).length;
                 
                   for(let o = 0; o < count;o++){
+                    if(parseInt(ITM[o].OnHand) != 0){
                     OITM.push({
                       ItemCode: ITM[o].ItemCode,
                       ItemName: ITM[o].ItemName,
@@ -543,6 +544,7 @@ onGetItemIssue: function(){
                       OnOrder: ITM[o].OnOrder
                     });
                   }
+                }
                     that.oModel.getData().itemMaster = OITM;
                     that.oModel.refresh();
                     that.closeLoadingFragment();
