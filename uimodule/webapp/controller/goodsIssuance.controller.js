@@ -308,7 +308,7 @@ onPostIssue: function(){
       "U_App_GITransType": this.getView().byId('TransactionID').getValue(),
       "Document_ApprovalRequests": [
         {
-            "ApprovalTemplatesID": 16,
+            "ApprovalTemplatesID": localStorage.getItem("GI_App"),
             "Remarks": sap.ui.getCore().byId("remarksID").getValue()
         }
       ],
