@@ -157,7 +157,7 @@ sap.ui.define([
         
         var i = this.byId("tblID").getSelectedIndices();
         var oList =  this.oModel.getData().value;
-        console.log(oList[i]);
+        // console.log(oList[i]);
         var str = oList[i].CardName;
         var res = str.substring(0, 18);
         

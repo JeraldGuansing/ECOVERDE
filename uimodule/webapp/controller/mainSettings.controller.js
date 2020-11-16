@@ -22,6 +22,7 @@ sap.ui.define([
             onAfterShow: function(evt) {
                 //This event is fired every time when the NavContainer has made this child control visible.
                 oView.getController().getDataAppr();
+                oView.getController().ongetUdetails();
             },
             onBeforeFirstShow: function(evt) {
                 //This event is fired before the NavContainer shows this child control for the first time.
@@ -41,8 +42,15 @@ sap.ui.define([
         this.oModel = new JSONModel("model/item.json");
         this.getView().setModel(this.oModel, "oModel");
         this.getView();
-          this.getDataAppr()
+          this.getDataAppr();
+          this.ongetUdetails();
           this.onGetApprovalTemp();
+      },
+
+      ongetUdetails: function(){
+        this.getView().byId("userID").setText("User:   " + localStorage.getItem("userName"));
+        this.getView().byId("whsID").setText("Warehouse Code:   " + localStorage.getItem("wheseID"));
+        this.getView().byId("whsName").setText(localStorage.getItem("wheseNm"));
       },
 
       getDataAppr: function(){

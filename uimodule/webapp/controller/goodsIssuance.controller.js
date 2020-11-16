@@ -121,14 +121,16 @@ onPressIssuance: function(){
 onPressAdd: function(){
   if(this.getView().byId("TransactionID").getValue() == ""){
     sap.m.MessageToast.show("Please Select Transaction Type First");
+    return;
   }else if(this.getView().byId("projDesc").getValue() == ""){
     sap.m.MessageToast.show("Please Select Project First");
-  }else{
+    return;
+  }
 
-      if (!this.addIssuance) {
-        this.addIssuance = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.fragment.addIssuance", this);
-        this.getView().addDependent(this.addIssuance);
-      }
+  if (!this.addIssuance) {
+    this.addIssuance = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.fragment.addIssuance", this);
+    this.getView().addDependent(this.addIssuance);
+  }
 
       sap.ui.getCore().byId("isItemCode").setValue("");
       sap.ui.getCore().byId("isItemCode").setSelectedKey("");
@@ -140,9 +142,7 @@ onPressAdd: function(){
 
       this.onGetItemIssue();
       this.addIssuance.open();
-  }
 },
-  
   
 onCloseIssuance: function(){
       if(this.addIssuance){

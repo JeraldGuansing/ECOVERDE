@@ -49,7 +49,7 @@ sap.ui.define([
 
       onGotoInventory: function(){
         this.router = this.getOwnerComponent().getRouter();
-        this.router.navTo("InventoryTransfer");
+        this.router.navTo("inventoryTransfer");
         },
 
 

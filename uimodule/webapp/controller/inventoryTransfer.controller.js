@@ -53,7 +53,7 @@ sap.ui.define([
      
       var sServerName = localStorage.getItem("ServerID");
  //     var sUrl = sServerName + "/b1s/v1/InventoryTransferRequests?$select=DocNum,DocEntry,FromWarehouse,DocDate&$filter=DocumentStatus eq 'bost_Open' and ToWarehouse eq '" +  localStorage.getItem("wheseID") +"'";
-      var sUrl = sServerName + "/b1s/v1/$crossjoin(InventoryTransferRequests,Warehouses)?$expand=InventoryTransferRequests($select=DocNum,DocEntry,FromWarehouse,DocDate,Reference1),Warehouses($select=WarehouseName)&$filter=InventoryTransferRequests/FromWarehouse eq Warehouses/WarehouseCode and InventoryTransferRequests/DocumentStatus eq 'bost_Open' and InventoryTransferRequests/ToWarehouse eq '" +  localStorage.getItem("wheseID") +"'";
+      var sUrl = sServerName + "/b1s/v1/$crossjoin(InventoryTransferRequests,Warehouses)?$expand=InventoryTransferRequests($select=DocNum,DocEntry,FromWarehouse,DocDate,Reference1),Warehouses($select=WarehouseName)&$filter=InventoryTransferRequests/ToWarehouse eq Warehouses/WarehouseCode and InventoryTransferRequests/DocumentStatus eq 'bost_Open' and InventoryTransferRequests/FromWarehouse eq '" +  localStorage.getItem("wheseID") +"'";
   
       $.ajax({
         url: sUrl,

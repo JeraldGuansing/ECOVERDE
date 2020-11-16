@@ -943,7 +943,6 @@ sap.ui.define([
 
   onShowEdit: function(oEvent){
 
-
   var that = this;
   that.openLoadingFragment();
 
