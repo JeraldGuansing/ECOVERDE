@@ -39,6 +39,7 @@ sap.ui.define([
 
     initialize: function(){
       this.oModel = new JSONModel("model/item.json");
+      this.oModel.setSizeLimit(1500);
       this.getView().setModel(this.oModel, "oModel");
    
       this.getView().byId("toWID").setValue(localStorage.getItem("wheseNm"));
@@ -143,7 +144,7 @@ sap.ui.define([
       },
 
   onPressAddI: function(){
-        if(this.getView().byId("toWID").getValue() == ""){
+        if(this.getView().byId("fromWID").getValue() == ""){
           sap.m.MessageToast.show("Please select warehouse first");
         }else{
         if (!this.transferReq) {
@@ -167,9 +168,11 @@ sap.ui.define([
   onGetItemReq: function(){
     this.openLoadingFragment();
       var that = this;
+    
       var sServerName = localStorage.getItem("ServerID");
       var xsjsServer = sServerName.replace("50000", "4300");
-      var sUrl = xsjsServer + "/app_xsjs/InventoryItem.xsjs?whse=" + localStorage.getItem("wheseID");
+      var sUrl = xsjsServer + "/app_xsjs/InventoryTransfer.xsjs?whsefrom=" + that.getView().byId("fromWID").getSelectedKey() + "&whseto=" + localStorage.getItem("wheseID");
+    
       $.ajax({
         url: sUrl,
             type: "GET",
@@ -191,15 +194,9 @@ sap.ui.define([
             
               for(let o = 0; o < count;o++){
                 OITM.push({
-                  ItemCode: ITM[o].ItemCode,
-                  ItemName: ITM[o].ItemName,
-                  BarCode: ITM[o].BarCode,
-                  Series: ITM[o].Series,
-                  WhsCode: ITM[o].WhsCode,
-                  WhsName: ITM[o].WhsName,
-                  OnHand: ITM[o].OnHand,
-                  IsCommited: ITM[o].OnHand,
-                  OnOrder: ITM[o].OnOrder
+                  "ItemCode": ITM[o].ItemCode,
+                  "ItemName": ITM[o].ItemName,
+                  "WhseInv": "(" + ITM[o].FROMWHSE + ") / (" + ITM[o].TOWHSE + ")"
                 });
               }
                 that.oModel.getData().itemMaster = OITM;
@@ -453,7 +450,7 @@ sap.ui.define([
     
           MessageBox.information("Are you sure you want to [POST] this transaction?", {
             actions: [MessageBox.Action.YES, MessageBox.Action.NO],
-            title: "Transfer Request",
+            title: "Transfer Request Confirmation",
             icon: MessageBox.Icon.QUESTION,
             styleClass:"sapUiSizeCompact",
             onClose: function (sButton) {
@@ -471,12 +468,12 @@ onPostingGR: function(){
           var sServerName = localStorage.getItem("ServerID");
           var sUrl = sServerName + "/b1s/v1/InventoryTransferRequests";
           var oBody = {
-            "FromWarehouse": that.getView().byId("toWID").getSelectedKey(),
+            "FromWarehouse": that.getView().byId("fromWID").getSelectedKey(),
             "ToWarehouse": localStorage.getItem("wheseID"),  
             "DocDate": that.getView().byId("DP8").getValue(),
             "StockTransfer_ApprovalRequests": [
               {
-                  "ApprovalTemplatesID": 14,
+                  "ApprovalTemplatesID": localStorage.getItem("Appv_TR"),
                   "Remarks": sap.ui.getCore().byId("TRremarksID").getValue()
               }
             ],
@@ -491,7 +488,7 @@ onPostingGR: function(){
               "UoMEntry": StoredItem[i].AbsEntry,
               "UoMCode": StoredItem[i].UoMCode,
               "WarehouseCode": localStorage.getItem("wheseID"),
-              "FromWarehouseCode": that.getView().byId("toWID").getSelectedKey()
+              "FromWarehouseCode": that.getView().byId("fromWID").getSelectedKey()
               });
             }
             // console.log(oBody);
@@ -554,7 +551,7 @@ onPostingGR1: function(){
           var sServerName = localStorage.getItem("ServerID");
           var sUrl = sServerName + "/b1s/v1/InventoryTransferRequests";
           var oBody = {
-            "FromWarehouse": that.getView().byId("toWID").getSelectedKey(),
+            "FromWarehouse": that.getView().byId("fromWID").getSelectedKey(),
             "ToWarehouse": localStorage.getItem("wheseID"),  
             "DocDate": that.getView().byId("DP8").getValue(),
             "StockTransferLines": []
@@ -568,7 +565,7 @@ onPostingGR1: function(){
               "UoMEntry": StoredItem[i].AbsEntry,
               "UoMCode": StoredItem[i].UoMCode,
               "WarehouseCode": localStorage.getItem("wheseID"),
-              "FromWarehouseCode": that.getView().byId("toWID").getSelectedKey()
+              "FromWarehouseCode": that.getView().byId("fromWID").getSelectedKey()
               });
             }
             // console.log(oBody);
@@ -656,7 +653,7 @@ onCheckPost: function(){
                 },
                 context: that
               })
-              if(x.length !=0 || x.length != null){
+              if(x.length !=0){
                 that.onShowApproval();
               }else{
                 that.onConfirmPosting1();

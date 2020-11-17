@@ -37,6 +37,7 @@ sap.ui.define([
 
     initialize: function(){
       this.oModel = new JSONModel("model/item.json");
+      this.oModel.setSizeLimit(1500);
       this.getView().setModel(this.oModel, "oModel");
       // this.oModel.refresh();
     },

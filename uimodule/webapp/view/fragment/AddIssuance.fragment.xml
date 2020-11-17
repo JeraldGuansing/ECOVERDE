@@ -37,6 +37,16 @@
                             <f:FormContainer>
                                 <f:formElements>
 
+                                   <f:FormElement label="Dist. Rule">
+                                        <ComboBox id="goodsIsdist" items="{                                      
+                                        	path: 'oModel>/DimentionType',sorter: {
+                                            path: 'DimDesc',
+                                            descending: false,
+                                            group: true}}" showSecondaryValues= "true" placeholder="Select Item Code">
+                                            <core:ListItem key="{oModel>OcrCode}" text="{oModel>OcrCode}" additionalText ="{oModel>OcrName}"/>
+                                        </ComboBox>
+                                    </f:FormElement>
+
                                     <f:FormElement label="Item Code">
                                     <ComboBox id="isItemCode" showSecondaryValues= "true" placeholder="Select Item Code" change="onvalidationCode" items="{oModel>/itemMaster}">
                                             <core:ListItem key="{oModel>ItemName}" text="{oModel>ItemCode}" additionalText ="{oModel>OnHand}"/>

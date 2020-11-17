@@ -116,7 +116,7 @@ sap.ui.define([
 
   onPressNavback: function(){
       this.router = this.getOwnerComponent().getRouter();
-      this.router.navTo("InventoryTransfer");
+      this.router.navTo("inventoryTransfer");
       },
 
   onShowEdit: function(oEvent){

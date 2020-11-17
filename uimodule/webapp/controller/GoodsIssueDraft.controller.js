@@ -167,6 +167,7 @@ sap.ui.define([
         "ProjectCode":posItem[i].ProjectCode,
         "ItemCode":posItem[i].ItemCode,
         "UnitPrice":posItem[i].UnitPrice,
+        "CostingCode":posItem[i].CostingCode,
         "Quantity":posItem[i].Quantity,
         "UoMEntry":posItem[i].UoMEntry,
         "UoMCode":posItem[i].UoMCode,

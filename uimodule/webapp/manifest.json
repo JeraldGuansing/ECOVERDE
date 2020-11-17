@@ -183,10 +183,10 @@
           ]
         },
         {
-          "name": "InventoryTransfer",
-          "pattern": "InventoryTransfer",
+          "name": "inventoryTransfer",
+          "pattern": "inventoryTransfer",
           "target": [
-            "InventoryTransfer"
+            "inventoryTransfer"
           ]
         },
         {
@@ -428,10 +428,10 @@
           "viewLevel": 3,
           "transition": "fade"
         },
-        "InventoryTransfer": {
+        "inventoryTransfer": {
           "viewPath": "com.ecoverde.ECOVERDE.view",
           "viewType": "XML",
-          "viewName": "InventoryTransfer",
+          "viewName": "inventoryTransfer",
           "parent": "main",
           "controlId": "pageContainer",
           "controlAggregation": "pages",

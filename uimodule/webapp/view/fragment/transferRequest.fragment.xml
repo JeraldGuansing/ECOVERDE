@@ -39,13 +39,13 @@
 
                                     <f:FormElement label="Item Code">
                                     <ComboBox id="reqtemCode" showSecondaryValues= "true" placeholder="Select Item Code" change="onvalidationCode" items="{oModel>/itemMaster}">
-                                            <core:ListItem key="{oModel>ItemName}" text="{oModel>ItemCode}" additionalText ="{oModel>OnHand}"/>
+                                            <core:ListItem key="{oModel>ItemName}" text="{oModel>ItemCode}" additionalText ="{oModel>WhseInv}"/>
                                         </ComboBox>
                                     </f:FormElement>
 
                                     <f:FormElement label="Item Name">
-                                       <ComboBox id="reqItemName" placeholder="Select Item Name"  change="onvalidationDesk" items="{oModel>/itemMaster}">
-                                            <core:Item key="{oModel>ItemCode}" text="{oModel>ItemName}" />
+                                       <ComboBox id="reqItemName" showSecondaryValues= "true" placeholder="Select Item Name"  change="onvalidationDesk" items="{oModel>/itemMaster}">
+                                            <core:ListItem key="{oModel>ItemCode}" text="{oModel>ItemName}" additionalText ="{oModel>WhseInv}"/>
                                         </ComboBox>
                                     </f:FormElement>
 

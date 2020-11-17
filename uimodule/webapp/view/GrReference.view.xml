@@ -80,6 +80,10 @@
                             <firstStatus>
 				                      <ObjectStatus text=" {oModel>UoMCode}"/>
                             </firstStatus>
+                              <attributes>
+                                  <ObjectAttribute title="{oModel>BarCode}"/>
+                                  <ObjectAttribute title="{oModel>CostingCode}"/>
+                                </attributes>
                     </ObjectListItem>
                 </List>
         </content>

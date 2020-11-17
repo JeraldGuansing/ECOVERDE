@@ -54,6 +54,7 @@ onInit: function(){
 
 initialize: function(vFromId){
         this.oModel = new JSONModel("model/item.json");
+        this.oModel.setSizeLimit(1500);
         this.getView().setModel(this.oModel, "oModel");
 
         this.getView().byId("TransactionID").setValue("");
@@ -128,7 +129,7 @@ onPressAdd: function(){
   }
 
   if (!this.addIssuance) {
-    this.addIssuance = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.fragment.addIssuance", this);
+    this.addIssuance = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.fragment.AddIssuance", this);
     this.getView().addDependent(this.addIssuance);
   }
 
@@ -139,7 +140,10 @@ onPressAdd: function(){
       sap.ui.getCore().byId("isUOM").setValue("");
       sap.ui.getCore().byId("isUOM").setSelectedKey("");
       sap.ui.getCore().byId("isQtyID").setValue("");
+      sap.ui.getCore().byId("goodsIsdist").setSelectedKey("");
+      sap.ui.getCore().byId("goodsIsdist").setValue("");
 
+      this.onGetDimension();
       this.onGetItemIssue();
       this.addIssuance.open();
 },
@@ -223,7 +227,9 @@ onSaveItem: function(){
   var sUoM = sap.ui.getCore().byId("isUOM").getValue();
   var sUoMEntry = sap.ui.getCore().byId("isUOM").getSelectedKey();
   var sqty = sap.ui.getCore().byId("isQtyID").getValue();
+  var distR = sap.ui.getCore().byId("goodsIsdist").getValue();
   
+
   if(sItmID == ""){
     sap.m.MessageToast.show("Please select Item Code");
     that.closeLoadingFragment();
@@ -244,7 +250,7 @@ onSaveItem: function(){
 
     var StoredItem = that.oModel.getData().goodsIssue;        
         const oITM = StoredItem.filter(function(OIT){
-        return OIT.ItemCode == sItmID && OIT.UoMCode == sUoM;
+        return OIT.ItemCode == sItmID && OIT.UoMCode == sUoM && OIT.CostingCode == distR;
          }) 
     var cResult = parseInt(oITM.length);
     if(cResult == 0){
@@ -255,6 +261,7 @@ onSaveItem: function(){
         "ProjName": this.getView().byId("projDesc").getValue(),
         "ItemCode": sItmID,
         "UnitPrice": "1",
+        "CostingCode": distR, 
         "ItemName": sItmName,
         "Quantity": sqty,
         "UoMCode": sUoM,
@@ -308,7 +315,7 @@ onPostIssue: function(){
       "U_App_GITransType": this.getView().byId('TransactionID').getValue(),
       "Document_ApprovalRequests": [
         {
-            "ApprovalTemplatesID": localStorage.getItem("GI_App"),
+            "ApprovalTemplatesID": localStorage.getItem("GI_code"),
             "Remarks": sap.ui.getCore().byId("remarksID").getValue()
         }
       ],
@@ -321,6 +328,7 @@ onPostIssue: function(){
       "ProjectCode":posItem[i].ProjectCode,
       "ItemCode":posItem[i].ItemCode,
       "Quantity":posItem[i].Quantity,
+      "CostingCode": posItem[i].CostingCode,
       "UoMEntry":posItem[i].UoMEntry,
       "UoMCode":posItem[i].UoMCode,
       "WarehouseCode":localStorage.getItem("wheseID")
@@ -405,6 +413,7 @@ onPostIssue1: function(){
     "ProjectCode":posItem[i].ProjectCode,
     "ItemCode":posItem[i].ItemCode,
     "UnitPrice":posItem[i].UnitPrice,
+    "CostingCode": posItem[i].CostingCode,
     "Quantity":posItem[i].Quantity,
     "UoMEntry":posItem[i].UoMEntry,
     "UoMCode":posItem[i].UoMCode,
@@ -497,7 +506,7 @@ onCheckPost: function(){
         },
         context: that
       })
-      if(x.length !=0 || x.length != null){
+      if(x.length !=0){
         that.onShowApproval();
       }else{
         that.onConfirmPosting1();
@@ -980,6 +989,46 @@ onSaveEdit: function(){
       this.onSelectUoM();
     }
 
+  },
+
+  onGetDimension: function(){
+    var that = this;
+    var sServerName = localStorage.getItem("ServerID");
+    var xsjsServer = sServerName.replace("50000", "4300");
+    var sUrl = xsjsServer + "/app_xsjs/Dimenstion.xsjs";
+  
+    $.ajax({
+      url: sUrl,
+          type: "GET",
+          beforeSend: function (xhr) {
+            xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:"+localStorage.getItem("XSPass")));
+            },
+          crossDomain: true,
+          xhrFields: {
+          withCredentials: true
+          },
+          error: function (xhr, status, error) {
+            this.closeLoadingFragment();
+            console.log("Error Occured");
+          },
+          success: function (response) {
+            var OOCR = [];
+            var ODIM =  response;
+            var count = Object.keys(ODIM).length;
+          
+            for(let o = 0; o < count;o++){
+              OOCR.push({
+                "DimDesc": ODIM[o].DimDesc,
+                "OcrCode": ODIM[o].OcrCode,
+                "OcrName": ODIM[o].OcrName
+              });
+            }
+              that.oModel.getData().DimentionType = OOCR;
+              that.oModel.refresh();
+              // that.closeLoadingFragment();
+          },
+          context: this
+        })
   },
 
   });

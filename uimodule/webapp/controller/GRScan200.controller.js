@@ -197,6 +197,7 @@ sap.ui.define([
         "ItemCode": OITM[i].ItemCode,
         "Quantity": OITM[i].Quantity,
         "UoMEntry": OITM[i].AbsEntry,
+        "CostingCode":posItem[i].CostingCode,
         "ProjectCode": this.getView().byId('ProjID').getSelectedKey(),
         "UoMCode": OITM[i].UoMCode,
         "WarehouseCode": localStorage.getItem("wheseID")

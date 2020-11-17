@@ -54,7 +54,7 @@ sap.ui.define([
         
         today =  yyyy+ mm + dd;
         this.byId("DP8").setValue(today);
-    
+        // this.ongetFromWhse()
         this.ongetWHSEList();
     },
 
@@ -271,6 +271,45 @@ sap.ui.define([
             context: this
           })
     },
+
+
+    ongetFromWhse: function(){
+      var that = this;
+      var sServerName = localStorage.getItem("ServerID");
+      var xsjsServer = sServerName.replace("50000", "4300");
+      var sUrl = xsjsServer + "app_xsjs/TransferWhse.xsjs?idw=" + localStorage.getItem("DocEntry");
+    
+      $.ajax({
+        url: sUrl,
+            type: "GET",
+            beforeSend: function (xhr) {
+              xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:"+localStorage.getItem("XSPass")));
+            },
+            crossDomain: true,
+            xhrFields: {
+            withCredentials: true
+            },
+            error: function (xhr, status, error) {
+              this.closeLoadingFragment();
+              console.log("Error Occured");
+            },
+            success: function (response) {
+              var OTR = [];
+              var ITR =  response;
+              var count = Object.keys(ITR).length;
+              for(let o = 0; o < count;o++){
+                this.getView().byId("fromWID").setValue(ITR[0].FromWhsCod); 
+              }
+                that.oModel.getData().DimentionType = OOCR;
+                that.oModel.refresh();
+                // that.closeLoadingFragment();
+            },
+            context: this
+          })
+    },
+
+
+
 
   });
 });

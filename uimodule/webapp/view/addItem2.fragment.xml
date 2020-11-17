@@ -27,6 +27,17 @@
                         <f:formContainers>
                             <f:FormContainer>
                                 <f:formElements>
+                                    
+                                     <f:FormElement label="Dist. Rule">
+                                        <ComboBox id="GRPOdist" items="{                                      
+                                        	path: 'oModel>/DimentionType',sorter: {
+                                            path: 'DimDesc',
+                                            descending: false,
+                                            group: true}}" showSecondaryValues= "true" placeholder="Select Item Code">
+                                            <core:ListItem key="{oModel>OcrCode}" text="{oModel>OcrCode}" additionalText ="{oModel>OcrName}"/>
+                                        </ComboBox>
+                                    </f:FormElement>
+
                                     <f:FormElement label="Item Details">
                                         <Input id="codeID"/>
                                         <Input id="nameID"/>

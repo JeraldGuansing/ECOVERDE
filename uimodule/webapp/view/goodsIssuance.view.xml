@@ -44,6 +44,7 @@
                                   intro="{oModel>ItemName}">
                                   <attributes>
                                     <ObjectAttribute title="{oModel>Barcode}"/>
+                                    <ObjectAttribute title="{oModel>CostingCode}"/>
                                   </attributes>
                           </ObjectListItem>
                       </List>

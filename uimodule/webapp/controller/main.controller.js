@@ -19,15 +19,17 @@ sap.ui.define([
         oView.addEventDelegate({
             onAfterHide: function(evt) {
                 //This event is fired every time when the NavContainer has made this child control invisible.
-            },
+				oView.getController().ongetUdetails();
+			},
             onAfterShow: function(evt) {
                 //This event is fired every time when the NavContainer has made this child control visible.
-            },
+				oView.getController().ongetUdetails();
+			},
             onBeforeFirstShow: function(evt) {
                 //This event is fired before the NavContainer shows this child control for the first time.
             },
             onBeforeHide: function(evt) {
-              
+				oView.getController().ongetUdetails();
             },
             onBeforeShow: function(evt) {
                 //This event is fired every time before the NavContainer shows this child control.
@@ -41,17 +43,21 @@ sap.ui.define([
 		this.oMdlMenu = new JSONModel("model/menus.json");
 		this.getView().setModel(this.oMdlMenu);
 		
-		
-		this.router = this.getOwnerComponent().getRouter();
-		this.router.navTo("homeScreen");
-		
 		this.getView().byId("userID").setText("User:   " + localStorage.getItem("userName"));
 		this.getView().byId("whsID").setText("Warehouse Code:   " + localStorage.getItem("wheseID"));
 		this.getView().byId("whsName").setText(localStorage.getItem("wheseNm"));
 
+		this.router = this.getOwnerComponent().getRouter();
+		this.router.navTo("homeScreen");
 		// this.notifNumber();
 		this.modelServices();
 	},
+
+	ongetUdetails: function(){
+        this.getView().byId("userID").setText("User:   " + localStorage.getItem("userName"));
+        this.getView().byId("whsID").setText("Warehouse Code:   " + localStorage.getItem("wheseID"));
+        this.getView().byId("whsName").setText(localStorage.getItem("wheseNm"));
+      },
 
 	notifNumber: function(){	
 	 this.byId("shellid").setNotificationsNumber(localStorage.getItem("notification"));

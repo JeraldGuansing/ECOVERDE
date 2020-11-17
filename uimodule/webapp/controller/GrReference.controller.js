@@ -504,6 +504,7 @@ onPressItem: function(oEvent){
                 }
               });
             }else{
+              this.onGetDimension();
               this.onAddItem()
               //set value
               sap.ui.getCore().byId("codeID").setValue(oitem);
@@ -557,7 +558,7 @@ onCheckPost: function(){
             },
             context: that
           })
-          if(x.length !=0 || x.length != null){
+          if(x.length !=0){
             that.onConfirmPosting();
           }else{
             that.onConfirmPosting1();
@@ -573,7 +574,7 @@ onGetAddItem: function(){
       var sunitPr = sap.ui.getCore().byId("untPr").getValue();
       var staxCode = sap.ui.getCore().byId("taxCode").getValue();
       var rQtyID = sap.ui.getCore().byId("rQty").getValue();
-
+      var sDist = sap.ui.getCore().byId("GRPOdist").getValue();
       if(sQtyID == "" || sQtyID <= 0){
         sap.m.MessageToast.show("Please input quantity");
         return;
@@ -597,7 +598,7 @@ onGetAddItem: function(){
 
             var RecItem = that.oModel.getData().forPosting;
             const rITM = RecItem.filter(function(RIT){
-            return RIT.ItemCode == itCode;})
+            return RIT.ItemCode == itCode && RIT.CostingCode == sDist;})
 
 
             var rResult = parseInt(rITM.length);
@@ -607,6 +608,7 @@ onGetAddItem: function(){
                 "lineNum": lineNum,
                 "ItemCode": itCode,
                 "Quantity": sQtyID,
+                "CostingCode": sDist, 
                 "ReceivingQty": rQtyID,
                 "remainingQ": remQty,
                 "TaxCode": staxCode,
@@ -614,6 +616,7 @@ onGetAddItem: function(){
               });
 
             }else{
+              rITM[0].CostingCode = sDist;
               rITM[0].Quantity = parseInt(rITM[0].Quantity) + parseInt(sQtyID);
             }
     
@@ -650,6 +653,7 @@ onGRList: function(){
             "ItemCode":rResult[i].ItemCode,
             "ItemDescription": rResult[i].ItemDescription,
             "BarCode":  rResult[i].BarCode,
+            "CostingCode": rResult[i].CostingCode,
             "UnitPrice": rResult[i].UnitPrice,
             "TaxCode": rResult[i].TaxCode,
             "Quantity":  rResult[i].Quantity,
@@ -743,17 +747,19 @@ onAddItemThree: function(){
           this.addItemDialog3 = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.addItem3", this);
           this.getView().addDependent(this.addItemDialog3);
       }
+      this.onGetDimension();
       this.onGetItem();
        // this.onGetUOM();
           sap.ui.getCore().byId("itmID3").setSelectedKey("");
           sap.ui.getCore().byId("itmName3").setSelectedKey("");
           sap.ui.getCore().byId("uomID3").setSelectedKey("");
           sap.ui.getCore().byId("qtyID3").setValue("");
+          sap.ui.getCore().byId("aGRPOdist").setValue("");
+          sap.ui.getCore().byId("aGRPOdist").setSelectedKey("");
         
       this.addItemDialog3.open();
     },
 
-  
 closeLoadingFragment : function(){
     if(this.oDialog){
       this.oDialog.close();
@@ -1001,6 +1007,7 @@ onAdditionalItem: function(){
   var sUoMID = sap.ui.getCore().byId("uomID3").getValue();
   var AbsEntryID = sap.ui.getCore().byId("uomID3").getSelectedKey();
   var docID = localStorage.getItem("DocNo");
+  var aGRPOdist = sap.ui.getCore().byId("aGRPOdist").getValue();
   if(sItmID == ""){
     sap.m.MessageToast.show("Please select Item Code");
     return;
@@ -1026,7 +1033,7 @@ onAdditionalItem: function(){
 
     var StoredItem = that.oModel.getData().value;        
     const oITM = StoredItem.filter(function(OIT){
-    return OIT.ItemCode == sItmID && OIT.BarCode == getStrBarc;
+    return OIT.ItemCode == sItmID && OIT.BarCode == getStrBarc && OIT.CostingCode == aGRPOdist;
      })
   var cResult = parseInt(oITM.length);
   if(cResult == 0){
@@ -1038,6 +1045,7 @@ onAdditionalItem: function(){
       "Quantity": sQtyID,
       "UoMCode": sUoMID,
       "AbsEntry":AbsEntryID,
+      "CostingCode": aGRPOdist,
       "GrossTotal": "",
       "Currency": "",
       "GrossTotal": 0,
@@ -1115,6 +1123,47 @@ onGetTransactionType: function(){
           this.oModel.getData().GRType  = response;
           this.oModel.refresh();
           this.closeLoadingFragment();
+        },
+        context: this
+      })
+},
+
+
+onGetDimension: function(){
+  var that = this;
+  var sServerName = localStorage.getItem("ServerID");
+  var xsjsServer = sServerName.replace("50000", "4300");
+  var sUrl = xsjsServer + "/app_xsjs/Dimenstion.xsjs";
+
+  $.ajax({
+    url: sUrl,
+        type: "GET",
+        beforeSend: function (xhr) {
+          xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:"+localStorage.getItem("XSPass")));
+          },
+        crossDomain: true,
+        xhrFields: {
+        withCredentials: true
+        },
+        error: function (xhr, status, error) {
+          this.closeLoadingFragment();
+          console.log("Error Occured");
+        },
+        success: function (response) {
+          var OOCR = [];
+          var ODIM =  response;
+          var count = Object.keys(ODIM).length;
+        
+          for(let o = 0; o < count;o++){
+            OOCR.push({
+              "DimDesc": ODIM[o].DimDesc,
+              "OcrCode": ODIM[o].OcrCode,
+              "OcrName": ODIM[o].OcrName
+            });
+          }
+            that.oModel.getData().DimentionType = OOCR;
+            that.oModel.refresh();
+            // that.closeLoadingFragment();
         },
         context: this
       })

@@ -49,6 +49,7 @@ sap.ui.define([
   initialize: function(vFromId){
 
         this.oModel.setData({UoMCode:[]});
+        this.oModel.setSizeLimit(1500);
         this.oModel.updateBindings(true);
         this.oModel = new JSONModel("model/item.json");
         this.getView().setModel(this.oModel, "oModel");
@@ -263,7 +264,7 @@ sap.ui.define([
         "U_App_GRTransType": that.getView().byId('TransactionID').getValue(),
         "Document_ApprovalRequests": [
           {
-              "ApprovalTemplatesID": 19,
+              "ApprovalTemplatesID": localStorage.getItem("Appv_GR"),
               "Remarks": sap.ui.getCore().byId("GRremarksID").getValue()
           }
         ],
@@ -277,6 +278,7 @@ sap.ui.define([
           "Quantity": OITM[i].Quantity,
           "UoMEntry": OITM[i].AbsEntry,
           "ProjectCode": this.getView().byId('proj').getSelectedKey(),
+          "CostingCode": OITM[i].CostingCode,
           "UoMCode": OITM[i].UoMCode,
           "WarehouseCode": localStorage.getItem("wheseID")
           });
@@ -392,6 +394,7 @@ sap.ui.define([
           "ItemCode": StoredItem[i].ItemCode,
           "Quantity": StoredItem[i].Quantity,
           "UoMEntry": StoredItem[i].AbsEntry,
+          "CostingCode": OITM[i].CostingCode,
           "UoMCode": StoredItem[i].UoMCode,
           "ProjectCode": this.getView().byId('proj').getSelectedKey(),
           "WarehouseCode": localStorage.getItem("wheseID")
@@ -486,7 +489,7 @@ sap.ui.define([
             }
           })
          
-          if(x.length !=0 || x != null ){
+          if(x.length !=0){
             that.onGetItemGroup();
             that.onShowApproval();
           }else{
@@ -574,9 +577,12 @@ sap.ui.define([
           this.addItemDialog = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.addItem", this);
           this.getView().addDependent(this.addItemDialog);
       }
+        this.onGetDimension();
         this.onGetItem();
        // this.onGetUOM();
           sap.ui.getCore().byId("itmID").setValue("");
+          sap.ui.getCore().byId("GRdist").setValue("");
+          sap.ui.getCore().byId("GRdist").setSelectedKey("");
           sap.ui.getCore().byId("itmID").setSelectedKey("");
           sap.ui.getCore().byId("itmName").setSelectedKey("");
           sap.ui.getCore().byId("uomID").setSelectedKey("");
@@ -689,7 +695,9 @@ sap.ui.define([
           }else{
 
       that.openLoadingFragment();
+
       var sItmID = sap.ui.getCore().byId("itmID").getValue();
+      var sDistR = sap.ui.getCore().byId("GRdist").getValue();
       var sItmName = sap.ui.getCore().byId("itmName").getValue();
       var sQtyID = sap.ui.getCore().byId("qtyID").getValue();
       var sUoMID = sap.ui.getCore().byId("uomID").getValue();
@@ -710,6 +718,10 @@ sap.ui.define([
         return;
       }else if(sQtyID == "" || sQtyID <= 0 ){
         sap.m.MessageToast.show("Please input quantity");
+        that.closeLoadingFragment();
+        return;
+      }else if(sDistR == ""){
+        sap.m.MessageToast.show("Please input Dist. Rule");
         that.closeLoadingFragment();
         return;
       }else{
@@ -736,7 +748,7 @@ sap.ui.define([
         
         var StoredItem = that.oModel.getData().value;        
         const oITM = StoredItem.filter(function(OIT){
-        return OIT.ItemCode == sItmID && OIT.BarCode == getStrBarc;})
+        return OIT.ItemCode == sItmID && OIT.BarCode == getStrBarc && OIT.CostingCode == sDistR;})
 
       var cResult = parseInt(oITM.length);
       if(cResult == 0){
@@ -746,6 +758,7 @@ sap.ui.define([
           "BarCode": getStrBarc,
           "Quantity": sQtyID,
           "ItemPrice": getPR,
+          "CostingCode": sDistR, 
           "Price": "",
           "UoMCode": sUoMID,
           "ItemGroup": "",
@@ -1194,6 +1207,47 @@ sap.ui.define([
           sap.m.MessageToast.show(xhr.responseJSON.error.message.value);
         }
     })
+  },
+
+
+  onGetDimension: function(){
+    var that = this;
+    var sServerName = localStorage.getItem("ServerID");
+    var xsjsServer = sServerName.replace("50000", "4300");
+    var sUrl = xsjsServer + "/app_xsjs/Dimenstion.xsjs";
+  
+    $.ajax({
+      url: sUrl,
+          type: "GET",
+          beforeSend: function (xhr) {
+            xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:"+localStorage.getItem("XSPass")));
+            },
+          crossDomain: true,
+          xhrFields: {
+          withCredentials: true
+          },
+          error: function (xhr, status, error) {
+            this.closeLoadingFragment();
+            console.log("Error Occured");
+          },
+          success: function (response) {
+            var OOCR = [];
+            var ODIM =  response;
+            var count = Object.keys(ODIM).length;
+          
+            for(let o = 0; o < count;o++){
+              OOCR.push({
+                "DimDesc": ODIM[o].DimDesc,
+                "OcrCode": ODIM[o].OcrCode,
+                "OcrName": ODIM[o].OcrName
+              });
+            }
+              that.oModel.getData().DimentionType = OOCR;
+              that.oModel.refresh();
+              // that.closeLoadingFragment();
+          },
+          context: this
+        })
   },
 
   });
