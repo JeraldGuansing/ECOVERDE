@@ -94,7 +94,7 @@ sap.ui.define([
 				}
 			  }
 			})
-	   },
+	},
 
 	modelServices: function() {
 		var self = this;
@@ -102,7 +102,7 @@ sap.ui.define([
 			self.onGetAlert();
 			self.notifNumber();
 		 }, 2000);
-  },
+  	},
   
 
     onItemSelect: function (oEvent) {
@@ -212,10 +212,9 @@ sap.ui.define([
 				styleClass:"sapUiSizeCompact",
 				onClose: function (sButton) {
 					if(sButton === "YES"){
-						that.onWithRef();
+						that.onSelectVendorShow();
 						that.onMenuButtonPress();
 					}else if (sButton === "NO"){
-						// that.onSelectVendorShow();
 						that.onWithoutRef();
 						that.onMenuButtonPress();
 					}
@@ -223,69 +222,91 @@ sap.ui.define([
 				
 			});
 		},
-		
-	onGetListVendor: function(){
-		
-			var that = this;
-			that.oModel = new JSONModel("model/item.json");
-			that.getView().setModel(this.oModel, "oModel");
-			that.openLoadingFragment();   
-			  var sServerName = localStorage.getItem("ServerID");
-			  var sUrl = sServerName + "/b1s/v1/BusinessPartners?$select=CardCode,CardName&$filter=CardType eq 'cSupplier'";
-			  $.ajax({
-				url: sUrl,
-				type: "GET",
-				dataType: 'json',
-				crossDomain: true,
-				xhrFields: {
-				  withCredentials: true},
-				success: function(response){
-				  that.oModel.getData().VendorList = response.value;
-				  that.oModel.refresh();
-				  that.closeLoadingFragment()
-				}, error: function() { 
-				  that.closeLoadingFragment()
-				  console.log("Error Occur");
-				}
-			})
-		  }, 
-		
-	onSaveVendor:function(){
-			var VendName = sap.ui.getCore().byId("VendorIDs").getValue();
-			
-			if(VendName == ""){
-			  sap.m.MessageToast.show("Please select Vendor");
-			  this.closeLoadingFragment();
-			  return;
-			}else{
-			localStorage.setItem("VendorName",sap.ui.getCore().byId("VendorIDs").getValue());
-			localStorage.setItem("VendorCode",sap.ui.getCore().byId("VendorIDs").getSelectedKey());
-			
-			this.onWithoutRef();
-			}
-		
-		  },
+
 
 	onSelectVendorShow: function(){
-			if (!this.Vendorlist) {
-			  this.Vendorlist = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.fragment.vendor", this);
-			  this.getView().addDependent(this.Vendorlist);
-			}
-			sap.ui.getCore().byId("VendorIDs").setValue("");
-			sap.ui.getCore().byId("VendorIDs").setSelectedKey("");
-		   	
-			this.onGetListVendor();
-			this.Vendorlist.open();
-		  },
+			this.openLoadingFragment();
+			  if (!this.PretVendorList) {
+				this.PretVendorList = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.fragment.PurchVendor", this);
+				this.getView().addDependent(this.PretVendorList);
+			  }
+			
+			  sap.ui.getCore().byId("PretVendorIDs").setValue("");
+			  sap.ui.getCore().byId("PretVendorIDs").setSelectedKey("");
+				 
+			  this.onGetListVendor();
+			  this.PretVendorList.open();
+			  this.closeLoadingFragment();
+			  },
 		
-	onCloseVendor: function(){
-		  if(this.Vendorlist){
-		  this.Vendorlist.close();
+	
+	onGetListVendor: function(){
+		this.oModel = new JSONModel("model/item.json");
+		this.oModel.setSizeLimit(1000);
+		this.getView().setModel(this.oModel, "oModel");
+
+		var that = this;  
+		var sServerName = localStorage.getItem("ServerID");
+		var xsjsServer = sServerName.replace("50000", "4300");
+		var sUrl = xsjsServer + "/app_xsjs/VendorList.xsjs";
+		  
+		$.ajax({
+			url: sUrl,
+			type: "GET",
+			dataType: 'json',
+			crossDomain: true,
+			beforeSend: function (xhr) {
+			  xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:"+localStorage.getItem("XSPass")));
+			},
+			xhrFields: {
+			  withCredentials: true},
+			success: function(response){
+			  var OCARD = [];
+			  var OCRD =  response;
+			  var count = Object.keys(OCRD).length;
+			 
+			  for(let o = 0; o < count;o++){
+				OCARD.push({
+				  CardCode: OCRD[o].CardCode,
+				  CardName: OCRD[o].CardName
+				});
+			  }
+			  that.oModel.getData().VendorList = OCARD;
+			  that.oModel.refresh();
+			  console.log(that.oModel.getData().VendorList)
+			  that.oMdlMenu = new JSONModel("model/menus.json");
+			  that.getView().setModel(this.oMdlMenu);
+
+			}, error: function() { 
+			  that.closeLoadingFragment()
+			  console.log("Error Occur");
 			}
+		})
+		}, 
+	
+	onCloseVendor: function(){
+		if(this.PretVendorList){
+		this.PretVendorList.close();}
+		
 		this.oMdlMenu = new JSONModel("model/menus.json");
 		this.getView().setModel(this.oMdlMenu);
+
+		},	  
+		  
+	onSaveVendor:function(){
+		var VendName = sap.ui.getCore().byId("PretVendorIDs").getValue();
+				
+		if(VendName == ""){
+		sap.m.MessageToast.show("Please select Vendor");
+		this.closeLoadingFragment();
+		return;
+		}else{
+		localStorage.setItem("VendorName",sap.ui.getCore().byId("PretVendorIDs").getValue());
+		localStorage.setItem("VendorCode",sap.ui.getCore().byId("PretVendorIDs").getSelectedKey());
+		this.onWithRef();
+			}
+		},
 		
-		  },
 
 	onWithRef: function(){
 			this.router = this.getOwnerComponent().getRouter();

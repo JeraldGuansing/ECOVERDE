@@ -15,7 +15,7 @@
           	  <Label id="docIDs" />
         </InputListItem>
 
-        <InputListItem label="From Warehouse">
+        <InputListItem label="To Warehouse">
           	  <Label id="fWhseID" />
         </InputListItem>        
       

@@ -154,7 +154,7 @@ getContextByIndex: function(evt) {
       
       var i = this.byId("tblID").getSelectedIndices();
       var oList =  this.oModel.getData().goodsRetlist;
-     
+      console.log(oList[i])
       localStorage.setItem("DocNo", oList[i].DocNum);
       localStorage.setItem("DocEntry", oList[i].DocEntry);
       localStorage.setItem("BaseEntry", oList[i].BaseEntry);

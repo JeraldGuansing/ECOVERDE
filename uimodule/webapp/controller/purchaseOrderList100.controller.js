@@ -50,7 +50,8 @@ sap.ui.define([
      
       var sServerName = localStorage.getItem("ServerID");
       var xsjsServer = sServerName.replace("50000", "4300");
-      var sUrl = xsjsServer + "/app_xsjs/PurchaseOrder.xsjs?whse=" + localStorage.getItem("wheseID");
+      var sUrl = xsjsServer + "/app_xsjs/PurchaseOrder.xsjs?whse=" + localStorage.getItem("wheseID") + "&crcode=" + localStorage.getItem("VendorCode");
+    
       $.ajax({
         url: sUrl,
         type: "GET",
@@ -63,8 +64,8 @@ sap.ui.define([
         },
         error: function (xhr, status, error) {
           this.closeLoadingFragment();
-          // console.log("Error Occured:" + error);
-          sap.m.MessageToast.show("Error: " + xhr.responseJSON.error.message.value);
+          console.log("Error Occured:" + error);
+          // sap.m.MessageToast.show("Error: " + xhr.responseJSON.error.message.value);
         },
         success: function (response) {
        
@@ -145,7 +146,7 @@ sap.ui.define([
 			if (iIndex < 0) {
 				MessageToast.show("Please Select Item first");
 			} else {
-          this.onReceivedItem();
+          this.OnMiltipleSelect();
          }
 		},
 
@@ -172,13 +173,38 @@ sap.ui.define([
         this.onGotoReceived();
       },
 
+  OnMiltipleSelect: function(){
+    var docE = [];
+    sessionStorage.clear();
+    var i = this.byId("tblID").getSelectedIndices();
+    var oList =  this.oModel.getData().value;
+   
+    for(let x=0;x < i.length;x++){
+      var a = i[x];
+      var str = oList[a].CardName;
+      var res = str.substring(0, 18);
+      docE.push({
+        "DocEntry": oList[a].DocEntry,
+        "DocNo": oList[a].DocNum,
+        "VendorCode": oList[a].CardCode,
+        "NumAtCard": oList[a].NumAtCard,
+        "Comments": oList[a].Comments,
+        "VendorName": res
+      });  
+    }    
+    // console.log(oList);
+    sessionStorage.setItem('GRPO',JSON.stringify(docE));
+    this.clearSelection();
+    this.onGotoReceived();
+  },
+
       clearSelection: function(evt) {
         this.byId("tblID").clearSelection();
       },
   
       onGotoReceived: function(){
         this.router = this.getOwnerComponent().getRouter();
-        this.router.navTo("GRwReference",null, true);
+        this.router.navTo("GRwReference");
         },
       
   });

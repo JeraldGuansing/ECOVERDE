@@ -223,8 +223,8 @@ sap.ui.define([
           var sUrl = sServerName + "/b1s/v1/StockTransfers";
           var oBody = {
             "Reference1": localStorage.getItem("Reference1"),
-            "FromWarehouse":  localStorage.getItem("FromWhseID"),
-            "ToWarehouse":localStorage.getItem("wheseID"), 
+            "FromWarehouse":  localStorage.getItem("wheseID"),
+            "ToWarehouse":localStorage.getItem("FromWhseID"), 
             "DocDate": that.getView().byId("DP8").getValue(),
             "StockTransferLines": []
           }
@@ -237,10 +237,10 @@ sap.ui.define([
             "UoMEntry":posItem[i].UoMEntry,
             "UoMCode": posItem[i].UoMCode,
             "BaseEntry": localStorage.getItem("DocEntry"),
-            "BaseLine": posItem[i].LineNum,
+            "BaseLine": i,
             "BaseType": "InventoryTransferRequest",
-            "WarehouseCode": localStorage.getItem("wheseID"),
-            "FromWarehouseCode": localStorage.getItem("FromWhseID")
+            "WarehouseCode": localStorage.getItem("FromWhseID"),
+            "FromWarehouseCode": localStorage.getItem("wheseID")
             });
           }
           // console.log(oBody);
@@ -266,10 +266,9 @@ sap.ui.define([
                       styleClass:"sapUiSizeCompact"
                     });
                       that.closeLoadingFragment();
-                      this.oModel.setData({InventoryTransfer:[]});
-                      this.oModel.updateBindings(true);
-                     this.onPressNavback();
-                    this.oModel.refresh();
+                      that.oModel.getData().InventoryTransfer = [];
+                    //  this.onPressNavback();
+                    that.oModel.refresh();
                     
                   },context: this
                 });

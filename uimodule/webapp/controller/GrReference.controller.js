@@ -17,6 +17,8 @@ sap.ui.define([
   var listpath;
   var indS;
   var lineNum;
+  var docEntry;
+  var OCARD = [];
   return Controller.extend("com.ecoverde.ECOVERDE.controller.GrReference", {
    
     onInit: function(){
@@ -55,18 +57,21 @@ initialize: function(vFromId){
       this.oModel = new JSONModel("model/item.json");
       this.oModel.setSizeLimit(1500);
       this.getView().setModel(this.oModel, "oModel");
+      var odta = JSON.parse(sessionStorage.getItem("GRPO"));
       
-      oView.byId("docID").setText(localStorage.getItem("DocNo"));
-      oView.byId("venID").setText(localStorage.getItem("VendorCode"));
-      oView.byId("venName").setText(localStorage.getItem("VendorName"));
-      oView.byId("cardnum").setValue(localStorage.getItem("NumAtCard"));
-      oView.byId("comments").setValue(localStorage.getItem("Comments"));
+      oView.byId("venID").setText(odta[0].VendorCode);
+      oView.byId("venName").setText(odta[0].VendorName);
+      oView.byId("cardnum").setValue("");
+      oView.byId("comments").setValue("");
+      this.oModel.getData().DocumentLines = []; 
+      OCARD = [];
 
-      oView.byId("inptID").setVisible(false);
-        // this.oModel.setData({receiving:[]});
-        // this.oModel.updateBindings(true);
-      this.onGRList();
-      // console.log(this.oModel.getData())
+      for(let p = 0;p < odta.length;p++){
+        docEntry = odta[p].DocEntry;
+        this.onGRList();
+      }
+      
+     
       var today = new Date();
       var dd = String(today.getDate()).padStart(2, '0');
       var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
@@ -74,11 +79,58 @@ initialize: function(vFromId){
       
       today =  yyyy+ mm + dd;
       this.byId("DP8").setValue(today);
-
-      this.onGetTransactionType();
-      this.onGetListProject();
       this.onOriginator();
+
+      console.log(this.oModel.getData())
     },
+
+    onGRList: function(){
+      var that = this;  
+      var sServerName = localStorage.getItem("ServerID");
+      var xsjsServer = sServerName.replace("50000", "4300");
+      var sUrl = xsjsServer + "/app_xsjs/PurchaseItem.xsjs?doc=" + docEntry;
+      $.ajax({
+        url: sUrl,
+        type: "GET",
+        dataType: 'json',
+        async: false,
+        crossDomain: true,
+        beforeSend: function (xhr) {
+          xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:"+localStorage.getItem("XSPass")));
+        },
+        xhrFields: {
+          withCredentials: true},
+        success: function(response){
+          var OCRD =  response;
+          var count = Object.keys(OCRD).length;
+        
+          for(let o = 0; o < count;o++){
+          OCARD.push({
+            "DocNum": OCRD[o].DocNum, 
+            "DocEntry": OCRD[o].DocEntry,
+            "UomEntry": OCRD[o].UomEntry,
+            "DocNum": OCRD[o].DocNum,
+            "LineNum": OCRD[o].LineNum,
+            "ItemCode": OCRD[o].ItemCode,
+            "ItemDescription": OCRD[o].Dscription,
+            "Quantity": OCRD[o].Quantity,
+            "openQuant": OCRD[o].OpenQty,
+            "TaxCode": OCRD[o].TaxCode,
+            "UoMCode": OCRD[o].UomCode,
+            "BarCode": OCRD[o].CodeBars,
+            "Currency": OCRD[o].Currency,
+            "receivedQty": 0
+          });
+          }
+          that.oModel.getData().DocumentLines = OCARD;
+          that.oModel.refresh();
+       }, error: function() { 
+          that.closeLoadingFragment()
+          console.log("Error Occur");
+      }
+    })
+},
+
 
 
 onOriginator: function(){
@@ -259,7 +311,7 @@ onPostingGR: function(){
       that.openLoadingFragment();
       var sServerName = localStorage.getItem("ServerID");
       var sUrl = sServerName + "/b1s/v1/PurchaseDeliveryNotes";
-      var StoredItem = this.oModel.getData().forPosting;
+      var StoredItem = that.oModel.getData().forPosting;
     // if "Quantity": StoredItem[i].Quantity,
 
     const oGRPO = StoredItem.filter(function(GRP){
@@ -269,7 +321,7 @@ onPostingGR: function(){
   
       var oBody = {
         "CardCode": localStorage.getItem("VendorCode"),
-        "U_App_GRTransType": that.getView().byId('TransactionID').getValue(),
+        // "U_App_GRTransType": that.getView().byId('TransactionID').getValue(),
         // "DocType": "dDocument_Items",
         "Comments": that.getView().byId('comments').getValue(),
         "NumAtCard": that.getView().byId('cardnum').getValue(),
@@ -282,12 +334,9 @@ onPostingGR: function(){
           oBody.DocumentLines.push({
             "ItemCode": oGRPO[i].ItemCode,
             "Quantity": oGRPO[i].Quantity,
-            // "TaxCode": oGRPO[i].TaxCode,
-            // "UnitPrice": oGRPO[i].UnitPrice,  
             "BaseEntry" : localStorage.getItem("DocEntry"),
             "BaseType": "22",
             "BaseLine": i,
-            "ProjectCode": that.getView().byId('proj').getSelectedKey(),
             "WarehouseCode": localStorage.getItem("wheseID")
           });
         }
@@ -319,7 +368,7 @@ onPostingGR: function(){
             
               var oBody2 = {
                 "CardCode": localStorage.getItem("VendorCode"),
-                "U_App_GRTransType": that.getView().byId('TransactionID').getValue(),
+                // "U_App_GRTransType": that.getView().byId('TransactionID').getValue(),
                 "DocType": "dDocument_Items",
                 "Comments": that.getView().byId('comments').getValue(),
                 "NumAtCard": that.getView().byId('cardnum').getValue(),
@@ -341,7 +390,7 @@ onPostingGR: function(){
                     "TaxCode": GRPO[i].TaxCode,
                     "UnitPrice": GRPO[i].UnitPrice,  
                     "BaseEntry" : localStorage.getItem("DocEntry"),
-                    "ProjectCode": that.getView().byId('proj').getSelectedKey(),
+                    "ProjectCode": GRPO[i].ProjectCode,
                     "BaseType": "22",
                     "BaseLine": GRPO[i].BaseLine,
                     "WarehouseCode": localStorage.getItem("wheseID")
@@ -401,7 +450,7 @@ onPostingGR1: function(){
       var oBody = {
         "CardCode": localStorage.getItem("VendorCode"),
         "DocType": "dDocument_Items",
-        "U_App_GRTransType": that.getView().byId('TransactionID').getValue(),
+        // "U_App_GRTransType": that.getView().byId('TransactionID').getValue(),
         "Comments": that.getView().byId('comments').getValue(),
         "NumAtCard": that.getView().byId('cardnum').getValue(),
         "DocDate": oView.byId("DP8").getValue(),
@@ -411,7 +460,7 @@ onPostingGR1: function(){
         if(StoredItem[i].Quantity !=0){      
           oBody.DocumentLines.push({
             "ItemCode": StoredItem[i].ItemCode,
-            "ProjectCode": this.getView().byId('proj').getSelectedKey(),
+            "ProjectCode": GRPO[i].ProjectCode,
             "Quantity": StoredItem[i].Quantity,
             "TaxCode": StoredItem[i].TaxCode,
             "UnitPrice": StoredItem[i].UnitPrice,  
@@ -493,13 +542,9 @@ onPressItem: function(oEvent){
                
                   sap.ui.getCore().byId("codeIDref").setValue(boundData.ItemCode);
                   sap.ui.getCore().byId("nameIDref").setValue(boundData.ItemDescription);
-                  //sap.ui.getCore().byId("rQtyref").setValue(boundData.Quantity);
                   sap.ui.getCore().byId("qtyIDref").setValue(boundData.receivedQty);
-
                   sap.ui.getCore().byId('codeIDref').setEnabled(false);
                   sap.ui.getCore().byId('nameIDref').setEnabled(false);
-                  // sap.ui.getCore().byId("rQtyref").setEnabled(false);
-                  // that.onShowEdit();
                 }
                 }
               });
@@ -625,61 +670,6 @@ onGetAddItem: function(){
             this.onCloseAdd();    
       }
   },
-
-onGRList: function(){
-      var that = this;
-      that.openLoadingFragment();
-      var docID = localStorage.getItem("DocNo");
-      var sServerName = localStorage.getItem("ServerID");
-      var sUrl = sServerName + "/b1s/v1/PurchaseOrders?$select=DocNum,DocumentLines&$filter=DocNum eq " + docID;
-    
-      $.ajax({
-        url: sUrl,
-        type: "GET",
-        dataType: 'json',
-        crossDomain: true,
-        xhrFields: {
-          withCredentials: true},
-        success: function(response){
-          // console.log(response)
-          //that.oModel.getData().DocumentLines  = response.value[0];
-         var rResult = [];
-         rResult = response.value[0].DocumentLines;
-         try {
-          for(var i = 0;i < rResult.length;i++){
-          if(rResult[i].RemainingOpenQuantity != 0){
-          that.oModel.getData().DocumentLines.push({
-            "DocNum": docID,
-            "ItemCode":rResult[i].ItemCode,
-            "ItemDescription": rResult[i].ItemDescription,
-            "BarCode":  rResult[i].BarCode,
-            "CostingCode": rResult[i].CostingCode,
-            "UnitPrice": rResult[i].UnitPrice,
-            "TaxCode": rResult[i].TaxCode,
-            "Quantity":  rResult[i].Quantity,
-            "openQuant": rResult[i].RemainingOpenQuantity,
-            "RemainingOpenQuantity": rResult[i].RemainingOpenQuantity,
-            "receivedQty": "0",
-            "GrossTotal": rResult[i].GrossTotal,
-            "Currency": rResult[i].Currency,
-            "UoMCode": rResult[i].UoMCode,
-            "LineNum": rResult[i].LineNum
-            
-          });
-        }}
-      }
-        catch(err) {
-          that.initialize();
-            // that.router = that.getOwnerComponent().getRouter();
-            // that.router.navTo("homeScreen")
-        }
-         that.oModel.refresh();
-         that.closeLoadingFragment();
-        }, error: function(response) { 
-          that.closeLoadingFragment();
-        }
-    })
-    },
 
 openLoadingFragment: function(){
       if (! this.oDialog) {

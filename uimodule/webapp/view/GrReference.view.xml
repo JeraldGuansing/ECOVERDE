@@ -20,29 +20,18 @@
               </headerToolbar>
             <content>
                 <List>
-                   <InputListItem label="Type:">
-                      <ComboBox id="TransactionID" selectionChange=""  placeholder="Select Transaction Type" items="{oModel>/GRType}">
-                          <core:Item key="{oModel>FldValue}" text="{oModel>Descr}" />
-                      </ComboBox>
-                    </InputListItem>
 
-                      <InputListItem label="Project:">
-                    <ComboBox id="proj" selectionChange=""  placeholder="Select Project" items="{oModel>/projectList}">
-                        <core:Item key="{oModel>Code}" text="{oModel>Name}" />
-                    </ComboBox>
-                   </InputListItem>
-
-                     <InputListItem label="Request No">
+                   <InputListItem label="Request No">
                             <Input id="cardnum" />
                     </InputListItem>
                     
                    <InputListItem label="Remarks">
                             <Input id="comments" />
-                    </InputListItem>
+                    </InputListItem>            
 
-                    <InputListItem label="Doc No">
+                    <!-- <InputListItem label="Doc No">
                             <Label id="docID" />
-                    </InputListItem>
+                    </InputListItem> -->
 
                     <InputListItem label="Vendor Code">
                           <Label id="venID" />
@@ -64,15 +53,9 @@
               </content>
        </Panel>
       <html:br></html:br>
-                <List>
-                  <InputListItem id="inptID" label="Receiving Option:">
-                    <Switch id="swID" state="false" customTextOn="Scan" customTextOff="Manual"/>
-                  </InputListItem>
-                </List>
                 <List id="projectlistid" items="{oModel>/DocumentLines}">
                     <ObjectListItem title="{oModel>ItemCode}"
                             number="{oModel>receivedQty}/{oModel>openQuant}"
-                            numberUnit="{oModel>GrossTotal} {oModel>Currency} {oModel>TaxCode}"
                             type="Active"
                             press = "onPressItem"
                             icon="sap-icon://add-product"
@@ -81,7 +64,9 @@
 				                      <ObjectStatus text=" {oModel>UoMCode}"/>
                             </firstStatus>
                               <attributes>
+                                  <ObjectAttribute title="{oModel>DocNum}"/>
                                   <ObjectAttribute title="{oModel>BarCode}"/>
+                                  <ObjectAttribute title="{oModel>ProjectCode}"/>
                                   <ObjectAttribute title="{oModel>CostingCode}"/>
                                 </attributes>
                     </ObjectListItem>
@@ -89,9 +74,9 @@
         </content>
         <footer>
             <Bar>
-             <contentLeft>
+             <!-- <contentLeft>
 				      	<Button text="Add" press="onAddItemThree" icon="sap-icon://add"/>
-			      	</contentLeft>
+			      	</contentLeft> -->
               <contentMiddle>
 				      	<Button text="Scan" press="onScan" icon="sap-icon://camera"/>
 			      	</contentMiddle>

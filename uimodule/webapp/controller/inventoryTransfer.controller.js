@@ -53,7 +53,7 @@ sap.ui.define([
      
       var sServerName = localStorage.getItem("ServerID");
  //     var sUrl = sServerName + "/b1s/v1/InventoryTransferRequests?$select=DocNum,DocEntry,FromWarehouse,DocDate&$filter=DocumentStatus eq 'bost_Open' and ToWarehouse eq '" +  localStorage.getItem("wheseID") +"'";
-      var sUrl = sServerName + "/b1s/v1/$crossjoin(InventoryTransferRequests,Warehouses)?$expand=InventoryTransferRequests($select=DocNum,DocEntry,FromWarehouse,DocDate,Reference1),Warehouses($select=WarehouseName)&$filter=InventoryTransferRequests/ToWarehouse eq Warehouses/WarehouseCode and InventoryTransferRequests/DocumentStatus eq 'bost_Open' and InventoryTransferRequests/FromWarehouse eq '" +  localStorage.getItem("wheseID") +"'";
+      var sUrl = sServerName + "/b1s/v1/$crossjoin(InventoryTransferRequests,Warehouses)?$expand=InventoryTransferRequests($select=DocNum,DocEntry,ToWarehouse,DocDate,Reference1),Warehouses($select=WarehouseName)&$filter=InventoryTransferRequests/ToWarehouse eq Warehouses/WarehouseCode and InventoryTransferRequests/DocumentStatus eq 'bost_Open' and InventoryTransferRequests/FromWarehouse eq '" +  localStorage.getItem("wheseID") +"'";
   
       $.ajax({
         url: sUrl,
@@ -67,6 +67,7 @@ sap.ui.define([
           console.log(xhr.responseJSON.error.message.value);
         },
         success: function (json) {
+        console.log(json)
         this.oModel.getData().InventoryTransfer = json.value;
         this.oModel.refresh();
         this.closeLoadingFragment();
@@ -103,10 +104,10 @@ onCopyReq: function(evt) {
       localStorage.setItem("DocNo", "");
       var i = this.byId("tblID").getSelectedIndices();
       var oList =  this.oModel.getData().InventoryTransfer;
-     
+    //  console.log(oList)
       localStorage.setItem("DocNo", oList[i].InventoryTransferRequests.DocNum);
       localStorage.setItem("DocEntry", oList[i].InventoryTransferRequests.DocEntry);
-      localStorage.setItem("FromWhseID", oList[i].InventoryTransferRequests.FromWarehouse);
+      localStorage.setItem("FromWhseID", oList[i].InventoryTransferRequests.ToWarehouse);
       localStorage.setItem("Reference1", oList[i].InventoryTransferRequests.Reference1);
       localStorage.setItem("FromWhseNM", oList[i].Warehouses.WarehouseName);
       this.onCopyRequest();

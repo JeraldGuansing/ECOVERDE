@@ -74,5 +74,6 @@
     "ApprovalTempTR": [],
     "ApprovalTempGI": [],
     "PurchaseOrder": [],
-    "DimentionType": []
+    "DimentionType": [],
+    "MulPODetails": []
 }

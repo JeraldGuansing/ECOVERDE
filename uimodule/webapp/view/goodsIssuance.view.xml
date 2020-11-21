@@ -45,6 +45,7 @@
                                   <attributes>
                                     <ObjectAttribute title="{oModel>Barcode}"/>
                                     <ObjectAttribute title="{oModel>CostingCode}"/>
+                                    <ObjectAttribute title="{oModel>ProjectCode}"/>
                                   </attributes>
                           </ObjectListItem>
                       </List>

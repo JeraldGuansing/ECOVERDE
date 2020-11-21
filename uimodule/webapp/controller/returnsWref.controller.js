@@ -202,7 +202,7 @@ onPressNavBack: function(){
           });
         }
       }
-      // console.log(oBody);
+      console.log(oBody);
       oBody = JSON.stringify(oBody);
       $.ajax({
         url: sUrl,

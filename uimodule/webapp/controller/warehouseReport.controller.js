@@ -266,7 +266,6 @@ sap.ui.define([
     for(let x = 0;x < i.length;x++){
       var a = i[x];
       if(oList[a].InStock != 0){
-        
           this.oModel.getData().TransferRequest.push({
           "ItemCode": oList[a].ItemCode,
           "ItemName":oList[a].ItemName,
@@ -276,8 +275,6 @@ sap.ui.define([
           "AbsEntry":  oList[a].UoMCode,
           "WarehouseCode": oList[a].WarehouseCode
           });
-
-          
         }
       }
     

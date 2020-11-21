@@ -10,7 +10,7 @@
 			<ToolbarSpacer/>
 				<!-- <Title text="Title" level="H2"/> -->
 				<ToolbarSpacer/>
-				<Button icon="sap-icon://decline" type="Reject" press="onCloseApproval" ariaLabelledBy="editButtonLabel"/>
+				<Button icon="sap-icon://decline" type="Reject" press="onCloseVendor" ariaLabelledBy="editButtonLabel"/>
 			</Toolbar>
             </customHeader>
         <content>
@@ -36,11 +36,10 @@
                         <f:formContainers>
                             <f:FormContainer>
                                 <f:formElements>
-                                    <f:FormElement label="Remarks">
-                                            <Input id="TRremarksID"/>
-                                    </f:FormElement>
-                                    <f:FormElement label="Comment">
-                                            <Input id="TRCommentID"/>
+                                    <f:FormElement label="Vendor">
+                                        <ComboBox id="PretVendorIDs" showSecondaryValues= "true" filterSecondaryValues= "true" showButton="true" placeholder="Select Item Vendor" selectionChange="onSelectUoM" items="{oModel>/VendorList}">
+                                            <core:ListItem key="{oModel>CardCode}" text="{oModel>CardName}" additionalText ="{oModel>CardCode}"/>
+                                        </ComboBox>
                                     </f:FormElement>                                    
                                 </f:formElements>
                             </f:FormContainer>
@@ -50,11 +49,11 @@
             </l:Grid>
         </content>
         <beginButton>
-            <Button text="Cancel" icon="sap-icon://inspect-down" press="onCloseApproval" type="Reject"/>
+            <Button text="Cancel" icon="sap-icon://inspect-down" press="onCloseVendor" type="Reject"/>
         </beginButton>
     
         <endButton>
-            <Button text="Post" icon="sap-icon://manager-insight" press="onConfirmPosting" type="Accept" />
+            <Button text="Next" icon="sap-icon://open-command-field" press="onSaveVendor" type="Accept" />
         </endButton>
     </Dialog>
 </core:FragmentDefinition>
