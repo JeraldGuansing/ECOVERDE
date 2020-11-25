@@ -21,7 +21,7 @@
             <content>
                 <List>
 
-                   <InputListItem label="Request No">
+                   <InputListItem label="Delivery No">
                             <Input id="cardnum" />
                     </InputListItem>
                     
@@ -55,7 +55,7 @@
       <html:br></html:br>
                 <List id="projectlistid" items="{oModel>/DocumentLines}">
                     <ObjectListItem title="{oModel>ItemCode}"
-                            number="{oModel>receivedQty}/{oModel>openQuant}"
+                            number="{oModel>receivedQty}/{oModel>openQuant1}"
                             type="Active"
                             press = "onPressItem"
                             icon="sap-icon://add-product"
@@ -65,9 +65,9 @@
                             </firstStatus>
                               <attributes>
                                   <ObjectAttribute title="{oModel>DocNum}"/>
-                                  <ObjectAttribute title="{oModel>BarCode}"/>
-                                  <ObjectAttribute title="{oModel>ProjectCode}"/>
-                                  <ObjectAttribute title="{oModel>CostingCode}"/>
+                                  <ObjectAttribute title="{oModel>NumAtCard} / {oModel>Comments}"/>
+                                  <!-- <ObjectAttribute title="{oModel>BarCode}"/> -->
+                                  <ObjectAttribute title="{oModel>CostingCode} / {oModel>ProjectCode}"/>
                                 </attributes>
                     </ObjectListItem>
                 </List>
@@ -77,9 +77,9 @@
              <!-- <contentLeft>
 				      	<Button text="Add" press="onAddItemThree" icon="sap-icon://add"/>
 			      	</contentLeft> -->
-              <contentMiddle>
+              <contentLeft>
 				      	<Button text="Scan" press="onScan" icon="sap-icon://camera"/>
-			      	</contentMiddle>
+			      	</contentLeft>
               <contentRight>
 				      	<Button text="Post" press="onCheckPost" icon="sap-icon://manager-insight"/>
 			      	</contentRight>

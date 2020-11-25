@@ -46,7 +46,7 @@ sap.ui.define([
         this.getView().byId("toWID").setEnabled(false);
         this.getView().byId('toWID').setValue(localStorage.getItem("wheseNm"));
         // this.getView().byId("ProjID").setEnabled(false);
-        
+         this.getView().byId("fromWID").setEnabled(false);
         var today = new Date();
         var dd = String(today.getDate()).padStart(2, '0');
         var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
@@ -55,7 +55,7 @@ sap.ui.define([
         today =  yyyy+ mm + dd;
         this.byId("DP8").setValue(today);
         // this.ongetFromWhse()
-        this.ongetWHSEList();
+        // this.ongetWHSEList();
     },
 
     openLoadingFragment: function(){
@@ -81,7 +81,7 @@ sap.ui.define([
         var that = this;
         this.openLoadingFragment();   
           var sServerName = localStorage.getItem("ServerID");
-          var sUrl = sServerName + "/b1s/v1/Drafts?$select=DocumentLines&$filter=DocEntry eq " + localStorage.getItem("DocEntry");
+          var sUrl = sServerName + "/b1s/v1/Drafts?$select=Comments,U_App_WhseFrom,DocumentLines&$filter=DocEntry eq " + localStorage.getItem("DocEntry");
           $.ajax({
             url: sUrl,
             type: "GET",
@@ -90,11 +90,12 @@ sap.ui.define([
             xhrFields: {
               withCredentials: true},
             success: function(response){
-        
+              localStorage.setItem("Comments",response.value[0].Comments);
+              localStorage.setItem("FromWhseID",response.value[0].U_App_WhseFrom);
               that.oModel.getData().GRDraftsB = response.value[0].DocumentLines;
               that.oModel.refresh();
-              that.closeLoadingFragment()
-
+              that.closeLoadingFragment();
+              that.ongetFromWhse();
             }, error: function(xhr, status, error) { 
               that.closeLoadingFragment()
               sap.m.MessageToast.show(xhr.responseJSON.error.message.value);
@@ -161,9 +162,10 @@ sap.ui.define([
       var sServerName = localStorage.getItem("ServerID");
       var sUrl = sServerName + "/b1s/v1/InventoryTransferRequests";
       var oBody = {
-        "FromWarehouse": that.getView().byId("fromWID").getSelectedKey(),
+        "FromWarehouse":localStorage.getItem("FromWhseID"),
         "ToWarehouse": localStorage.getItem("wheseID"),  
         "DocDate": that.getView().byId("DP8").getValue(),
+        "Comments": localStorage.getItem("Comments"),
         "StockTransferLines": []
       };          
       
@@ -176,7 +178,7 @@ sap.ui.define([
           "UoMEntry": StoredItem[i].AbsEntry,
           "UoMCode": StoredItem[i].UoMCode,
           "WarehouseCode": localStorage.getItem("wheseID"),
-          "FromWarehouseCode": that.getView().byId("fromWID").getSelectedKey()
+          "FromWarehouseCode": localStorage.getItem("FromWhseID")
           });
         }
       // console.log(oBody);
@@ -274,17 +276,14 @@ sap.ui.define([
 
 
     ongetFromWhse: function(){
-      var that = this;
+      this.openLoadingFragment();
+      this.oModel.getData().displayWHItem = [];
       var sServerName = localStorage.getItem("ServerID");
-      var xsjsServer = sServerName.replace("50000", "4300");
-      var sUrl = xsjsServer + "app_xsjs/TransferWhse.xsjs?idw=" + localStorage.getItem("DocEntry");
-    
+      var sUrl = sServerName + "/b1s/v1/Warehouses?$select=WarehouseName,WarehouseCode&$filter=WarehouseCode eq '" + localStorage.getItem("FromWhseID") + "'";
+
       $.ajax({
         url: sUrl,
             type: "GET",
-            beforeSend: function (xhr) {
-              xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:"+localStorage.getItem("XSPass")));
-            },
             crossDomain: true,
             xhrFields: {
             withCredentials: true
@@ -293,23 +292,14 @@ sap.ui.define([
               this.closeLoadingFragment();
               console.log("Error Occured");
             },
-            success: function (response) {
-              var OTR = [];
-              var ITR =  response;
-              var count = Object.keys(ITR).length;
-              for(let o = 0; o < count;o++){
-                this.getView().byId("fromWID").setValue(ITR[0].FromWhsCod); 
-              }
-                that.oModel.getData().DimentionType = OOCR;
-                that.oModel.refresh();
-                // that.closeLoadingFragment();
+            success: function (json) {
+               this.getView().byId("fromWID").setValue(json.value[0].WarehouseName); 
+              this.oModel.refresh();
+              this.closeLoadingFragment();
             },
             context: this
           })
     },
-
-
-
 
   });
 });

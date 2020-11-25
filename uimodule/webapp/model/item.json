@@ -75,5 +75,7 @@
     "ApprovalTempGI": [],
     "PurchaseOrder": [],
     "DimentionType": [],
-    "MulPODetails": []
+    "MulPODetails": [],
+    "exrateSelection": [],
+    "CloseItem": []
 }

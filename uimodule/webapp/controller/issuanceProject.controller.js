@@ -87,28 +87,48 @@ sap.ui.define([
 
   onShowListProd: function(){
     // this.openLoadingFragment();
-      var sServerName = localStorage.getItem("ServerID");
-      var sUrl = sServerName + "/b1s/v1/ProductionOrders?$select=DocumentNumber,CustomerCode&$filter=ProductionOrderStatus eq 'boposReleased' and Warehouse eq '" + localStorage.getItem("wheseID") + "'";
-     
-      $.ajax({
+    var that = this;  
+    var sServerName = localStorage.getItem("ServerID");
+    var xsjsServer = sServerName.replace("50000", "4300");
+    var sUrl = xsjsServer + "/app_xsjs/ProductionOrderHeader.xsjs?WHID=" + localStorage.getItem("wheseID");
+      
+    $.ajax({
         url: sUrl,
-            type: "GET",
-            crossDomain: true,
-            xhrFields: {
-            withCredentials: true
-            },
-            error: function (xhr, status, error) {
-              this.closeLoadingFragment();
-              console.log("Error Occured");
-            },
-            success: function (json) {
-              
-              this.oModel.getData().ProductionList  = json.value;
-              this.oModel.refresh();
+        type: "GET",
+        dataType: 'json',
+        crossDomain: true,
+        beforeSend: function (xhr) {
+          xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:"+localStorage.getItem("XSPass")));
+        },
+        xhrFields: {
+          withCredentials: true},
+        success: function(response){
+
+          var OWOR = [];
+          var WOR =  response;
+          var count = Object.keys(WOR).length;
          
-            },
-            context: this
-          })
+          for(let o = 0; o < count;o++){
+            var strdate = WOR[o].PostDate;
+            var res = strdate.substring(0, 10);
+            OWOR.push({
+              "DocNum": WOR[o].DocNum,
+              "ItemCode": WOR[o].ItemCode,
+              "PostDate": WOR[o].PostDate,
+              "Project": WOR[o].Project,
+              "OcrCode": WOR[o].OcrCode,
+              "Concatination": WOR[o].ItemCode + "\n" + res + "\n" + WOR[o].Project + "\n" + WOR[o].OcrCode
+            });
+          }
+          that.oModel.getData().ProductionList = OWOR;
+        
+          that.oModel.refresh();
+        
+        }, error: function() { 
+          that.closeLoadingFragment()
+          console.log("Error Occur");
+        }
+    })
   },
 
 // handleSearch: function (oEvent) {

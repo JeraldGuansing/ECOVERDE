@@ -36,7 +36,7 @@
           </Toolbar>
             <t:Table id="tblID" rows="{oModel>/value}" cellClick="" enableSelectAll="false" selectionMode="MultiToggle" ariaLabelledBy="title">
                 <t:columns>
-                    <t:Column width="5em">
+                    <t:Column width="9em">
                       <Label text="Doc Num" />
                       <t:template>
                         <Text text="{oModel>DocNum}" wrapping="false" />

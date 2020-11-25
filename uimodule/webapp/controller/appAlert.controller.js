@@ -202,8 +202,7 @@ sap.ui.define([
       url: sUrl,
           type: "POST",
           beforeSend: function (xhr) {
-          xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:P@ssw0rd810~"));
-          // xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:P@ssw0rd123"));
+            xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:" + localStorage.getItem("XSPass")));    
           },
           crossDomain: true,
           xhrFields: {

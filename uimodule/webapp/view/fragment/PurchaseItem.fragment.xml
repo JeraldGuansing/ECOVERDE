@@ -1,0 +1,16 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<SelectDialog
+        multiSelect="true"
+		title="Items List"
+		items="{oModel>/exrateSelection}"
+		confirm=".onValueHelpConfirm"
+        cancel=".onWithRef">
+		<StandardListItem
+            count="{oModel>id}"
+			iconDensityAware="false"
+			iconInset="false"
+            type="Active"
+			title="{oModel>DocNum}"
+			description="{oModel>ItemCode} - {oModel>ItemDescription} {oModel>openQuant}/{oModel>openQuant1}"/>
+	</SelectDialog>
+</core:FragmentDefinition>

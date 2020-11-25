@@ -273,7 +273,7 @@ sap.ui.define([
 			  }
 			  that.oModel.getData().VendorList = OCARD;
 			  that.oModel.refresh();
-			  console.log(that.oModel.getData().VendorList)
+			
 			  that.oMdlMenu = new JSONModel("model/menus.json");
 			  that.getView().setModel(this.oMdlMenu);
 

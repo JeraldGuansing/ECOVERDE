@@ -15,9 +15,7 @@
             </InputListItem>
             
             <InputListItem label="From Whse">
-              <ComboBox id="fromWID" items="{oModel>/warehouses}" placeholder="Select Warehouse">
-                  <core:Item key="{oModel>WarehouseCode}" text="{oModel>WarehouseName}" />
-              </ComboBox>
+                  <Input id="fromWID"/>
             </InputListItem>
     
             <InputListItem label="Posting Date">

@@ -13,6 +13,7 @@ sap.ui.define([
   var fitemUOMcode;
   var listpath;
   var indS;
+  var WddCode;
   return Controller.extend("com.ecoverde.ECOVERDE.controller.transferRequest", {
     onInit: function(){
       var that = this;
@@ -193,11 +194,13 @@ sap.ui.define([
               var count = Object.keys(ITM).length;
             
               for(let o = 0; o < count;o++){
-                OITM.push({
-                  "ItemCode": ITM[o].ItemCode,
-                  "ItemName": ITM[o].ItemName,
-                  "WhseInv": "(" + ITM[o].FROMWHSE + ") / (" + ITM[o].TOWHSE + ")"
-                });
+                if(ITM[o].FROMWHSE != 0 && ITM[o].TOWHSE){
+                  OITM.push({
+                    "ItemCode": ITM[o].ItemCode,
+                    "ItemName": ITM[o].ItemName,
+                    "WhseInv": "(" + ITM[o].FROMWHSE + ") / (" + ITM[o].TOWHSE + ")"
+                  });
+                }
               }
                 that.oModel.getData().itemMaster = OITM;
                 that.oModel.refresh();
@@ -469,8 +472,10 @@ onPostingGR: function(){
           var sUrl = sServerName + "/b1s/v1/InventoryTransferRequests";
           var oBody = {
             "FromWarehouse": that.getView().byId("fromWID").getSelectedKey(),
-            "ToWarehouse": localStorage.getItem("wheseID"),  
+            "ToWarehouse": localStorage.getItem("wheseID"),
+            "Comments": sap.ui.getCore().byId("TRCommentID").getValue(),   
             "DocDate": that.getView().byId("DP8").getValue(),
+            "U_App_WhseFrom": that.getView().byId("fromWID").getSelectedKey(),
             "StockTransfer_ApprovalRequests": [
               {
                   "ApprovalTemplatesID": localStorage.getItem("Appv_TR"),
@@ -512,15 +517,16 @@ onPostingGR: function(){
                   });
                   that.oModel.getData().TransferRequest = [];
                   that.oModel.refresh();
-                  this.getView().byId("fromWID").setEnabled(true);
+                  that.getView().byId("fromWID").setEnabled(true);
+                  that.OnSelectWddCode()
                   that.onCloseApproval();  
                   },
                 success: function (json) {
                         that.closeLoadingFragment();
                         that.onCloseApproval();
                       },context: this
-                    });
-                  
+                  });
+                 
          },
 
 onConfirmPosting1: function(){
@@ -554,6 +560,7 @@ onPostingGR1: function(){
             "FromWarehouse": that.getView().byId("fromWID").getSelectedKey(),
             "ToWarehouse": localStorage.getItem("wheseID"),  
             "DocDate": that.getView().byId("DP8").getValue(),
+            "U_App_WhseFrom": that.getView().byId("fromWID").getSelectedKey(),
             "StockTransferLines": []
           };          
           
@@ -659,8 +666,70 @@ onCheckPost: function(){
                 that.onConfirmPosting1();
               }
             }
-        },       
+        },
 
+OnSelectWddCode: function(){
+  var that = this;
+    var sServerName = localStorage.getItem("ServerID");
+    var xsjsServer = sServerName.replace("50000", "4300");
+    var sUrl = xsjsServer + "/app_xsjs/SelectTR.xsjs?uid="+ localStorage.getItem("UserKeyID") + "&tmplc=" + localStorage.getItem("Appv_TR");
+    
+    $.ajax({
+      url: sUrl,
+      type: "GET",
+      dataType: 'json',
+      crossDomain: true,
+      beforeSend: function (xhr) {
+        xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:"+localStorage.getItem("XSPass")));
+      },
+      xhrFields: {
+        withCredentials: true},
+      success: function(response){
+        var OTRN = [];
+        var ITR =  response;
+        var count = Object.keys(ITR).length;
+       
+        for(let o = 0; o < count;o++){
+          OTRN.push({
+            "WddCode": ITR[o].WddCode
+          });
+        }
+          WddCode = OTRN[0].WddCode;
+          console.log(WddCode)
+          that.onUpdateRemarks();
+      }, error: function() { 
+        that.closeLoadingFragment()
+        console.log("Error Occur");
+      }
+  })
+},
+
+onUpdateRemarks: function(){
+  var sServerName = localStorage.getItem("ServerID");
+  var xsjsServer = sServerName.replace("50000", "4300");
+  var sUrl = xsjsServer + "/app_xsjs/UpdateTR.xsjs?rmks=" + sap.ui.getCore().byId("TRremarksID").getValue() +"&intCode=" + WddCode;
+  
+  $.ajax({
+    url: sUrl,
+        type: "POST",
+        beforeSend: function (xhr) {
+          xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:" + localStorage.getItem("XSPass")));    
+        },
+        crossDomain: true,
+        xhrFields: {
+        withCredentials: true
+        },
+        error: function (xhr, status, error) {
+          this.closeLoadingFragment();
+          console.log("Error Occured");
+        },
+        success: function (response) {
+          // console.log(response)
+          this.closeLoadingFragment();
+        },
+        context: this
+      })
+},
   
   onShowEdit: function(oEvent){
           var that = this;

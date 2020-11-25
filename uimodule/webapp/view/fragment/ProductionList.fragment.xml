@@ -12,7 +12,8 @@
          id="tblList">
     <ColumnListItem>
 			<cells>
-            	<ObjectIdentifier title="Document Number: {oModel>DocumentNumber}" text="Customer Code: {oModel>CustomerCode}" />
+            	<ObjectIdentifier title="Document Number: {oModel>DocNum}" 
+				text="Item Code: {oModel>Concatination}" />
 			</cells>
 	</ColumnListItem>
 		<columns>
