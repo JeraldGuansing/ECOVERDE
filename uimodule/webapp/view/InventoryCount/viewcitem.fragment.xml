@@ -43,8 +43,24 @@
                                             <Input id="acName"/>
                                     </f:FormElement>
 
-                                       <f:FormElement label="UoM Code">
+                                    <f:FormElement label="UoM Code">
                                         <Input id="acUoM"/>
+                                    </f:FormElement>
+
+                                     <f:FormElement label="Counted">
+                                     	<Switch id="swcount" change="onSWCount" state="false" customTextOn="Yes" customTextOff="No">
+                                            <layoutData>
+                                                <FlexItemData growFactor="1" />
+                                            </layoutData>
+                                        </Switch>
+                                    </f:FormElement>
+
+                                     <f:FormElement label="Freeze">
+                                         <Switch id="swfrezee" change="onSWFreeze" state="false" customTextOn="Yes" customTextOff="No">
+                                            <layoutData>
+                                                <FlexItemData growFactor="1" />
+                                            </layoutData>
+                                        </Switch>
                                     </f:FormElement>
 
                                     <f:FormElement label="InStock">

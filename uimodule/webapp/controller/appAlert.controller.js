@@ -94,8 +94,22 @@ sap.ui.define([
             var count = Object.keys(sms).length;
             
             for(let x = 0; x < parseInt(count);x++){
+              // var tim = sms[x].RecTime;
+              // var date = new Date(tim);
+
+              // var hours = date.getHours();
+              // console.log(hours)
+              // var minutes = date.getMinutes();
+              // var ampm = hours >= 12 ? 'am' : 'pm';
+              // hours = hours % 12;
+              // hours = hours ? hours : 12; // the hour '0' should be '12'
+              // minutes = minutes < 10 ? '0'+minutes : minutes;
+              // var strTime = hours + ':' + minutes + ' ' + ampm;
+             
               that.oModel.getData().AlertSMS.push({
                 "Subject": sms[x].Subject,
+                // "RecTime": sms[x].RecTime,
+                "UserText": sms[x].UserText,
                 "KeyStr": sms[x].KeyStr,
                 "AlertCode": sms[x].AlertCode,
                 "DateCreated": "",

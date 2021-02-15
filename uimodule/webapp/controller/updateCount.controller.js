@@ -122,12 +122,12 @@ sap.ui.define([
     onSaveEdit: function(){
       var updateQty = this.oModel.getData().CountItem;
 
-      if(sap.ui.getCore().byId("CntqtyID").getValue() == 0 || sap.ui.getCore().byId("CntqtyID").getValue() == 0){
-        sap.m.MessageToast.show("Please Enter Quantity");
-      }else{
+      // if(sap.ui.getCore().byId("CntqtyID").getValue() == 0 || sap.ui.getCore().byId("CntqtyID").getValue() == 0){
+      //   sap.m.MessageToast.show("Please Enter Quantity");
+      // }else{
         updateQty[indS].CountedQuantity = sap.ui.getCore().byId("CntqtyID").getValue();
         this.onCloseEdit();
-      }
+      // }
     },
 
     onConfirmUpdate: function(){
@@ -157,11 +157,19 @@ onUpdateCount: function(){
         var posItem = this.oModel.getData().CountItem;
 
         var x = posItem.length;
+        var cted = "tNo";
         for(var i = 0; i < x; i++){
+       
+          if(posItem[i].CountedQuantity > 0){
+            cted ="Y";
+          }else{
+            cted ="N";
+          }
+        
         oBody.InventoryCountingLines.push({
           "LineNumber": posItem[i].LineNumber,
            "CountedQuantity": posItem[i].CountedQuantity,
-           "Counted": "tYES"
+           "Counted": cted
           });
         }
         // console.log(oBody);

@@ -17,6 +17,7 @@
                             intro="{oModel>DateCreated}">
                             <attributes>
                               <ObjectAttribute title="{oModel>Subject} - {oModel>KeyStr}"/>
+                              <ObjectAttribute title="Remarks: {oModel>UserText}"/>
                             </attributes>
                     </ObjectListItem>
         </List>

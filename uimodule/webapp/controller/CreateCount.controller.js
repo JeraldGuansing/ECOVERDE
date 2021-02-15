@@ -43,6 +43,7 @@ sap.ui.define([
 
   initialize: function(){
       this.oModel = new JSONModel("model/item.json");
+      this.oModel.setSizeLimit(1500);
       this.getView().setModel(this.oModel, "oModel");
 
 
@@ -208,30 +209,51 @@ sap.ui.define([
           },
   
   onGetItem: function(){
-      this.openLoadingFragment();
-      var sServerName = localStorage.getItem("ServerID");
-      var xsjsServer = sServerName.replace("50000", "4300");
-      var sUrl = xsjsServer + "/app_xsjs/ExecQuery.xsjs?procName=spAppGetItems&dbName=" + localStorage.getItem("dbName");  
-   
-        $.ajax({
+    this.openLoadingFragment();
+    var that = this;
+    var sServerName = localStorage.getItem("ServerID");
+    var xsjsServer = sServerName.replace("50000", "4300");
+    var sUrl = xsjsServer + "/app_xsjs/InventoryItem.xsjs?whse=" + localStorage.getItem("wheseID");
+    $.ajax({
           url: sUrl,
-          type: "GET",
-          crossDomain: true,
-          xhrFields: {
-          withCredentials: true
-                  },
-          error: function (xhr, status, error) {
-            this.closeLoadingFragment();
-            sap.m.MessageToast(xhr.responseJSON.error.message.value);
-          },beforeSend: function (xhr) {
-            xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:P@ssw0rd810~"));
-          },success: function (json) {
-              this.oModel.getData().itemMaster  = json;
-                    this.oModel.refresh();
-                    this.closeLoadingFragment();
-                  },
-                  context: this
-                })
+              type: "GET",
+              beforeSend: function (xhr) {
+                xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:"+localStorage.getItem("XSPass")));
+                },
+              crossDomain: true,
+              xhrFields: {
+              withCredentials: true
+              },
+              error: function (xhr, status, error) {
+                this.closeLoadingFragment();
+                console.log("Error Occured");
+              },
+              success: function (response) {
+                var OITM = [];
+                var ITM =  response;
+                var count = Object.keys(ITM).length;
+              
+                for(let o = 0; o < count;o++){
+                  if(ITM[o].OnHand !=0){
+                    OITM.push({
+                      ItemCode: ITM[o].ItemCode,
+                      ItemName: ITM[o].ItemName,
+                      BarCode: ITM[o].BarCode,
+                      Series: ITM[o].Series,
+                      WhsCode: ITM[o].WhsCode,
+                      WhsName: ITM[o].WhsName,
+                      OnHand: ITM[o].OnHand,
+                      IsCommited: ITM[o].OnHand,
+                      OnOrder: ITM[o].OnOrder
+                    });
+                  }
+                }
+                  that.oModel.getData().itemMaster = OITM;
+                  that.oModel.refresh();
+                  that.closeLoadingFragment();
+              },
+              context: this
+            })
           },
 
   handleSearch: function (oEvent) {
@@ -259,12 +281,35 @@ sap.ui.define([
                  "InStock": "",
                  "UoMName": "",
                  "InventoryUoMEntry": "",
-                 "Freeze": "No"
+                 "Freeze": "tNO",
+                 "Counted": "tNO"
               });
             }
              
             }
       this.onDisplayItem();
+          },
+  
+onSWCount: function(){
+            var oITM =  this.oModel.getData().SelectedItemCount;
+            var oState = sap.ui.getCore().byId("swcount").getState();
+            if(oState == "false"){
+              oITM[indS].Counted = "N";
+            }else{
+              oITM[indS].Counted = "Y";
+            }
+           
+          },
+
+onSWFreeze: function(){
+            var oITM =  this.oModel.getData().SelectedItemCount;
+            var oState = sap.ui.getCore().byId("swfrezee").getState();
+            if(!oState){
+              oITM[indS].Freeze = "N"
+            }else{
+              oITM[indS].Freeze = "Y"
+            }
+           
           },
 
   onDisplayItem: function(){
@@ -315,7 +360,7 @@ sap.ui.define([
     this.oModel.refresh();
   },
 
-  onPressItem:function(){
+onPressItem:function(){
     if (!this.caItem) {
       this.caItem = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.InventoryCount.viewcitem", this);
       this.getView().addDependent(this.caItem);
@@ -345,6 +390,18 @@ onViewItem: function(oEvent){
       sap.ui.getCore().byId('acName').setEnabled(false);
       sap.ui.getCore().byId("acUoM").setEnabled(false);
       sap.ui.getCore().byId("acQty").setEnabled(false);
+
+      if(boundData.Counted == "Y"){
+      sap.ui.getCore().byId("swcount").setState(true);
+      }else{
+        sap.ui.getCore().byId("swcount").setState(false);
+      }
+
+      if(boundData.Freeze == "Y"){
+        sap.ui.getCore().byId("swfrezee").setState(true);
+        }else{
+          sap.ui.getCore().byId("swfrezee").setState(false);
+        }
           
     that.closeLoadingFragment();
           
@@ -435,6 +492,8 @@ onSaveSingle: function(){
           CountingItem.InventoryCountingLines.push(
             {
               "ItemCode": selectedItem[i].ItemCode,
+              "Freeze": selectedItem[i].Freeze,
+              // "Counted": selectedItem[i].Counted,
               "WarehouseCode": localStorage.getItem("wheseID")
             });
           }
@@ -603,7 +662,6 @@ onShowMultipleE: function(){
     this.multiE.open();
     },
 
-
 onShowTeamU: function(){
       if(!this.multiU) {
         this.multiU = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.InventoryCount.individualUser", this);
@@ -625,13 +683,13 @@ onShowTeamE: function(){
         this.multiE.open();
         },
 
-  onCloseMultipleE: function(){
+onCloseMultipleE: function(){
       if(this.multiE){
           this.multiE.close();
       }
     },
 
-  onCloseMultipleU: function(){
+onCloseMultipleU: function(){
     if(this.multiU){
         this.multiU.close();
     }
@@ -724,12 +782,13 @@ onGetEmp: function (oEvent) {
           }
           },
 
-ontest:function(){
-    console.log(MultipleUserC);
-    console.log(MultipleEmpC);
-    console.log(teamUserC);
-    console.log(teamEmpC);
-    
-},
+checkedtest: function (oEvent){
+  var selectedItem = this.oModel.getData().SelectedItemCount;
+      for(var i=0;i < selectedItem.length; i++){ 
+        console.log(oEvent.getParameters().selectedItem);
+      } 
+  },
+
+
   });
 });

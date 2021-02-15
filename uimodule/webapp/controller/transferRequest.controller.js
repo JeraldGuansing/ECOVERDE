@@ -473,7 +473,7 @@ onPostingGR: function(){
           var oBody = {
             "FromWarehouse": that.getView().byId("fromWID").getSelectedKey(),
             "ToWarehouse": localStorage.getItem("wheseID"),
-            "Comments": sap.ui.getCore().byId("TRCommentID").getValue(),   
+            "JournalMemo": that.getView().byId("remarksTR").getValue(),  
             "DocDate": that.getView().byId("DP8").getValue(),
             "U_App_WhseFrom": that.getView().byId("fromWID").getSelectedKey(),
             "StockTransfer_ApprovalRequests": [
@@ -558,7 +558,8 @@ onPostingGR1: function(){
           var sUrl = sServerName + "/b1s/v1/InventoryTransferRequests";
           var oBody = {
             "FromWarehouse": that.getView().byId("fromWID").getSelectedKey(),
-            "ToWarehouse": localStorage.getItem("wheseID"),  
+            "ToWarehouse": localStorage.getItem("wheseID"),
+            "JournalMemo": that.getView().byId("remarksTR").getValue(),    
             "DocDate": that.getView().byId("DP8").getValue(),
             "U_App_WhseFrom": that.getView().byId("fromWID").getSelectedKey(),
             "StockTransferLines": []
@@ -731,7 +732,7 @@ onUpdateRemarks: function(){
       })
 },
   
-  onShowEdit: function(oEvent){
+onShowEdit: function(oEvent){
           var that = this;
           that.openLoadingFragment();
         

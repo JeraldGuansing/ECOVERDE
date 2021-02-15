@@ -33,7 +33,7 @@
                                         	path: 'oModel>/DimentionType',sorter: {
                                             path: 'DimDesc',
                                             descending: false,
-                                            group: true}}" showSecondaryValues= "true" placeholder="Select Item Code">
+                                            group: true}}" showSecondaryValues= "true" placeholder="Dist Rule">
                                             <core:ListItem key="{oModel>OcrCode}" text="{oModel>OcrCode}" additionalText ="{oModel>OcrName}"/>
                                         </ComboBox>
                                     </f:FormElement>

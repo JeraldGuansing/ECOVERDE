@@ -28,6 +28,10 @@
               change=""
               class="sapUiSmallMarginBottom"/>
         </InputListItem>
+
+         <InputListItem label="Remarks">
+              <Input id="remarksTR"/>
+          </InputListItem>
       
      </List>
       <html:br></html:br>
@@ -51,6 +55,7 @@
                   </items>
                 </List>
             </content>
+          
     <footer>
 			<Bar>
 				<contentLeft>

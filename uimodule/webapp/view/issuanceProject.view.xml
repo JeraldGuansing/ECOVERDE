@@ -14,9 +14,14 @@
           	<Button icon="sap-icon://drop-down-list" />
           </InputListItem>
       </List>     -->
-       <html:br></html:br>
+    
         <content>
-            <List>        
+            <List>
+              <!-- <InputListItem label="Type:">
+                  <ComboBox id="TransactionID" selectionChange=""  placeholder="Select Transaction Type" items="{oModel>/GIType}">
+                      <core:Item key="{oModel>FldValue}" text="{oModel>Descr}" />
+                  </ComboBox>
+              </InputListItem>         -->
               <InputListItem label="Posting Date">
                     <DatePicker
                     id="DP8"
@@ -25,18 +30,20 @@
                     class="sapUiSmallMarginBottom"/>
               </InputListItem>
                </List> 
-                <List id="projectlistid" items="{oModel>/SelectedItemProd}">
+                  <html:br></html:br>
+                <List id="projectlistid" mode="MultiSelect" includeItemInSelection="true" items="{oModel>/SelectedItemProd}">
                     <ObjectListItem title="{oModel>ItemCode}"
                             number="{oModel>Quantity}"
-                            numberUnit="{oModel>UoMCode}"
+                            numberUnit="{oModel>UomCode}"
                             type="Active"
                             press = "onPressOpenEdit"
                             icon="sap-icon://database"
                             intro="{oModel>ItemName}">
                           
                             <attributes>
-                              <ObjectAttribute title="Order No.: {oModel>DocumentNumber}"/>
-                              <ObjectAttribute title="Project: {oModel>ProjectName}"/>
+                              <ObjectAttribute title="Order No.: {oModel>DocNum}"/>
+                              <ObjectAttribute title="Project: {oModel>Project}"/>
+                              <ObjectAttribute title="Dist. Rule: {oModel>OcrCode}"/>
                             </attributes>
                     </ObjectListItem>
                 </List>

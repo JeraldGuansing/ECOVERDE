@@ -5,6 +5,21 @@
     xmlns:f="sap.ui.layout.form">
     <Dialog>
         <content>
+        	<!-- <Toolbar>
+                <ToolbarSpacer/>
+			        <Label text="Freeze"/>
+                    <Switch state="true" customTextOn="Yes" customTextOff="No">
+                        <layoutData>
+                            <FlexItemData growFactor="1" />
+                        </layoutData>
+                    </Switch>
+                    <Label text="Counted"/>
+                        <Switch state="true" customTextOn="Yes" customTextOff="No">
+                            <layoutData>
+                                <FlexItemData growFactor="1" />
+                            </layoutData>
+                        </Switch>
+			    </Toolbar> -->
             <l:Grid defaultSpan = "L12 M12 S12" width = "auto">
                 <l:content>
                     <f:Form editable="true">

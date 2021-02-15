@@ -38,10 +38,7 @@
                                 <f:formElements>
                                     <f:FormElement label="Remarks">
                                             <Input id="TRremarksID"/>
-                                    </f:FormElement>
-                                    <f:FormElement label="Comment">
-                                            <Input id="TRCommentID"/>
-                                    </f:FormElement>                                    
+                                    </f:FormElement>                              
                                 </f:formElements>
                             </f:FormContainer>
                         </f:formContainers>

@@ -9,7 +9,7 @@
 	xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:tnt="sap.tnt">
   <App id="GoodsIssueDraft" >
-    <Page title="Goods Issuance" showNavButton="true" navButtonPress="onPressNavBack">
+    <Page title="Goods Issuance" showNavButton="true" navButtonPress="onAlert">
         <List>        
               <InputListItem label="Type:">
                   <ComboBox id="TransactionID" selectionChange=""  placeholder="Select Transaction Type" items="{oModel>/GIType}">

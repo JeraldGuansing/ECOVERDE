@@ -9,30 +9,22 @@
 		title="Select Production Item"
         confirm="onSelectProdItem"
 		items="{oModel>/ProductionItem}"
-         id="tblList2">
+        id="tblList2">
     <ColumnListItem>
 			<cells>
-            	<ObjectIdentifier title="{oModel>ItemNo}"/>
-				  <Text text="{oModel>ItemName}"/>
-                 <Text text="{oModel>BaseQuantity}"/>
-                <Text text="{oModel>UoMName}"/>
-			</cells>
-          
+            	<ObjectIdentifier title="{oModel>ItemCode}" text="{oModel>ItemName}"/>
+                 <Text text="{oModel>Quantity}"/>
+                <Text text="{oModel>UomCode}"/>
+			</cells>     
 	</ColumnListItem>
 		<columns>
-			<Column width="7em">
+			<Column width="10em">
 			    <Text text="Items Code"/>
 			</Column>
 		</columns>
         
-		<columns>
-			<Column width="10em">
-			    <Text text="Item Name"/>
-			</Column>
-		</columns>
-
     	<columns>
-			<Column width="7em">
+			<Column width="5em">
 			    <Text text="Quantity"/>
 			</Column>
 		</columns>
@@ -42,7 +34,5 @@
 			    <Text text="UOM"/>
 			</Column>
 		</columns>
-
-
 	</TableSelectDialog>    
 </core:FragmentDefinition>

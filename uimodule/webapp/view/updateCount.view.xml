@@ -3,7 +3,7 @@
   xmlns="sap.m"
   xmlns:mvc="sap.ui.core.mvc">
   <App id="updateCount" >
-      <Page showHeader="true" title="Invenotry Count" showNavButton="true" navButtonPress="onPressNavBack">
+      <Page showHeader="true" title="Inventory Count" showNavButton="true" navButtonPress="onPressNavBack">
           <List id="InvITM" items="{oModel>/CountItem}">
                     <ObjectListItem title="{oModel>ItemCode}"
                             number="{oModel>CountedQuantity}"

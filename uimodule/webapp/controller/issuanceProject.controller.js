@@ -16,6 +16,8 @@ sap.ui.define([
     var itmUoM;
     var ITMDEL;
     var arrrITM;
+    var docNUM;
+    var indx;
     var indS;
   return Controller.extend("com.ecoverde.ECOVERDE.controller.issuanceProject", {
     onInit: function(){
@@ -46,6 +48,9 @@ sap.ui.define([
       this.getView().setModel(this.oModel, "oModel");
       // this.onGetCountSheet();
 
+      this.oModel.getData().SelectedItemProd = [];
+
+
       var today = new Date();
       var dd = String(today.getDate()).padStart(2, '0');
       var mm = String(today.getMonth() + 1).padStart(2, '0');
@@ -53,7 +58,7 @@ sap.ui.define([
       
       today =  yyyy+ mm + dd;
       this.byId("DP8").setValue(today);
-
+      this.onGetTransactionType();
     },
 
     onPressIssuance: function (){
@@ -75,6 +80,7 @@ sap.ui.define([
     },
   
   onShowListItem: function(){
+    
     this.openLoadingFragment();
     if (!this.ProdList) {
       this.ProdList = sap.ui.xmlfragment("com.ecoverde.ECOVERDE.view.fragment.ProductionList", this);
@@ -83,10 +89,11 @@ sap.ui.define([
     this.onShowListProd();
     this.ProdList.open();
     this.closeLoadingFragment();
+    
   },
 
   onShowListProd: function(){
-    // this.openLoadingFragment();
+    this.openLoadingFragment();
     var that = this;  
     var sServerName = localStorage.getItem("ServerID");
     var xsjsServer = sServerName.replace("50000", "4300");
@@ -112,6 +119,7 @@ sap.ui.define([
             var strdate = WOR[o].PostDate;
             var res = strdate.substring(0, 10);
             OWOR.push({
+              "DocEntry": WOR[o].DocEntry,
               "DocNum": WOR[o].DocNum,
               "ItemCode": WOR[o].ItemCode,
               "PostDate": WOR[o].PostDate,
@@ -121,9 +129,8 @@ sap.ui.define([
             });
           }
           that.oModel.getData().ProductionList = OWOR;
-        
           that.oModel.refresh();
-        
+          that.closeLoadingFragment()
         }, error: function() { 
           that.closeLoadingFragment()
           console.log("Error Occur");
@@ -146,21 +153,21 @@ handleClose: function (oEvent) {
     oBinding.filter([]);
     this.oModel.getData().SelectedProd = [];
     var aContexts = oEvent.getParameter("selectedContexts");
-    if (aContexts && aContexts.length) {
-     
-      var getJSONITEM = aContexts.map(function (oContext) { 
-      return oContext.getObject().DocumentNumber; }).join(",");
-      var splitITEM = getJSONITEM.split(",");
     
-      for(var i = 0;i < splitITEM.length; i++){
-      this.oModel.getData().SelectedProd.push({
-        "DocumentNumber": splitITEM[i]
-      });
-    }
-      // console.log(this.oModel.getData().SelectedProd)
-      this.oModel.refresh();
+    if (aContexts && aContexts.length) {
+      var spat = aContexts[0].sPath;
+      var splitITEM = spat.split("/");
+      indx = splitITEM[2];
+    
+      var podlist = this.oModel.getData().ProductionList;
+      docNUM = podlist[indx].DocEntry;
+
+      // console.log(docNUM)
+      // this.oModel.refresh();
+
       this.onShowItemProd();
     }
+    
   },
 
   onShowItemProd: function(){
@@ -177,103 +184,59 @@ handleClose: function (oEvent) {
 
   onGetProdItem: function(){
     this.openLoadingFragment();
-      var selectedProd =  this.oModel.getData().SelectedProd;
-      ITMDEL = {};
-      arrrITM = [];
-      const UOMName ={};
-      var sServerName = localStorage.getItem("ServerID");
-      var sUrl = sServerName + "/b1s/v1/ProductionOrders?$select=AbsoluteEntry,ProductionOrderLines&$filter=DocumentNumber eq "+ selectedProd[0].DocumentNumber +" and Warehouse eq '" + localStorage.getItem("wheseID") + "'";
+    var that = this;  
+    var sServerName = localStorage.getItem("ServerID");
+    var xsjsServer = sServerName.replace("50000", "4300");
+    var sUrl = xsjsServer + "/app_xsjs/ProductionOrderItem.xsjs?doc=" + docNUM;
       
-      $.ajax({
+    $.ajax({
         url: sUrl,
-            type: "GET",
-            dataType: 'json',
-            async: false,
-            crossDomain: true,
-            xhrFields: {
-            withCredentials: true
-            },
-            error: function (xhr, status, error) {
-              this.closeLoadingFragment();
-              console.log("Error Occured");
-            },
-            success: function (json) {
-              localStorage.setItem("DocEntry",json.value[0].AbsoluteEntry);
-              var res = json.value[0].ProductionOrderLines;
-              var BaseQuantity;
-              var Warehouse;
-              var UoMEntry;
-              var UoMCode;
-              var projName;
-              var LineNumber;
-              
-              for(var i = 0;i < res.length;i++){
-                fitemUOMcode = res[i].ItemNo;
-                itmUoM = res[i].UoMEntry;
-                BaseQuantity = res[i].BaseQuantity;
-                LineNumber = res[i].LineNumber;
-                Warehouse = res[i].Warehouse;
-                UoMEntry = res[i].UoMEntry;
-                UoMCode = res[i].UoMCode;
-                projName = res[i].Project;
-                var sUrlI = sServerName + "/b1s/v1/Items?$select=ItemCode,ItemName&$filter=ItemCode eq '" + fitemUOMcode + "'";
-      
-                $.ajax({
-                  url: sUrlI,
-                      type: "GET",
-                      dataType: 'json',
-                      crossDomain: true,
-                      async: false,
-                      xhrFields: {
-                      withCredentials: true},
-                      error: function (xhr, status, error) {
-                        this.closeLoadingFragment();
-                        console.log("Error Occured");},
-                      success: function (json) {
-                      ITMDEL.ItemCode = json.value[0].ItemCode;
-                      ITMDEL.ItemName = json.value[0].ItemName;
-                      }})
-
-                      var sUrlU = sServerName + "/b1s/v1/UnitOfMeasurements?$select=Code,AbsEntry&$filter=AbsEntry eq " + itmUoM;
-                      $.ajax({
-                        url: sUrlU,
-                        type: "GET",
-                        dataType: 'json',
-                        async: false,
-                        crossDomain: true,
-                        xhrFields: {
-                          withCredentials: true},
-                        success: function(response){
-                          var getresult = response.value;
-                          UOMName.UoM = getresult[0].Code;
-                          
-                          arrrITM.push({
-                            "DocumentNumber": selectedProd[0].DocumentNumber,
-                            "ItemNo": ITMDEL.ItemCode,
-                            "ItemName": ITMDEL.ItemName,
-                            "UoMName": UOMName.UoM,
-                            "BaseQuantity": BaseQuantity,
-                            "Warehouse": Warehouse,
-                            "UoMEntry" : UoMEntry,
-                            "UoMCode": UoMCode,
-                            "LineNumber": LineNumber,
-                            "ProjectName": projName,
-                          });
-                        }
-
-                      })
-                      this.closeLoadingFragment();
-                }
-              this.oModel.getData().ProductionItem = arrrITM;
-              // console.log(this.oModel.getData().ProductionItem)
-              this.oModel.refresh();
-              
-            },
-            context: this
-          })         
+        type: "GET",
+        dataType: 'json',
+        crossDomain: true,
+        beforeSend: function (xhr) {
+          xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:"+localStorage.getItem("XSPass")));
+        },
+        xhrFields: {
+          withCredentials: true},
+        success: function(response){
+       
+          var WOR1 = [];
+          var WOR =  response;
+          var count = Object.keys(WOR).length;
+          if(count != 0){
+          for(let o = 0; o < count;o++){
+           
+            var resQuant = parseInt(WOR[o].BaseQty) - parseInt(WOR[o].IssuedQty);
+              WOR1.push({
+                "DocEntry": WOR[o].DocEntry,
+                "DocNum": WOR[o].DocNum,
+                "LineNum": WOR[o].LineNum,
+                "ItemCode": WOR[o].ItemCode,
+                "ItemName": WOR[o].ItemName,
+                "Quantity": resQuant,
+                "OcrCode": WOR[o].OcrCode,
+                "Project": WOR[o].Project,
+                "UomEntry": WOR[o].UomEntry,
+                "UomCode": WOR[o].UomCode
+              });
+          }
+          that.oModel.getData().ProductionItem = WOR1;
+          that.oModel.refresh();
+          that.closeLoadingFragment();
+          
+        }else{
+          sap.m.MessageToast.show("No Item Found");
+          that.closeLoadingFragment();
+        }
+        }, error: function() { 
+          that.closeLoadingFragment()
+          console.log("Error Occur");
+        }
+    })     
   },
 
-  onSelectProdItem: function (oEvent) {
+onSelectProdItem: function (oEvent) {
     var arr = [];
      var aItems = sap.ui.getCore().byId('tblList2').getItems();
       var aSelectedItems = [];
@@ -292,15 +255,16 @@ handleClose: function (oEvent) {
       for(let x = 0;x < arr.length;x++){
         this.oModel.getData().SelectedItemProd.push(
           {
-            "ItemCode": ol[x].ItemNo,
-            "Quantity":ol[x].BaseQuantity,
-            "UoMCode":ol[x].UoMName,
-            "ItemName":ol[x].ItemName,
-            "UoMC":ol[x].UoMCode,
-            "UoMEntry": ol[x].UoMEntry,
-            "DocumentNumber": ol[x].DocumentNumber,
-            "ProjectName": ol[x].ProjectName,
-            "LineNumber": ol[x].LineNumber
+            "DocEntry":  ol[x].DocEntry,
+            "DocNum": ol[x].DocNum,
+            "LineNum":  ol[x].LineNum,
+            "ItemCode":  ol[x].ItemCode,
+            "ItemName":  ol[x].ItemName,
+            "Quantity":  ol[x].Quantity,
+            "OcrCode":  ol[x].OcrCode,
+            "Project":  ol[x].Project,
+            "UomEntry":  ol[x].UomEntry,
+            "UomCode":  ol[x].UomCode
           }
         )
       }
@@ -329,10 +293,10 @@ onPressOpenEdit:function(oEvent){
   var indexItem = listpath.split("/");
   indS =indexItem[2];
    
-    sap.ui.getCore().byId("isProdID").setValue(boundData.DocumentNumber);
+    sap.ui.getCore().byId("isProdID").setValue(boundData.DocNum);
     sap.ui.getCore().byId("isPEItemC").setValue(boundData.ItemCode);
     sap.ui.getCore().byId("isPEItemN").setValue(boundData.ItemName);
-    sap.ui.getCore().byId("isPEItemU").setValue(boundData.UoMCode);
+    sap.ui.getCore().byId("isPEItemU").setValue(boundData.UomCode);
     sap.ui.getCore().byId("isPEItemQ").setValue(boundData.Quantity);
 
     sap.ui.getCore().byId('isProdID').setEnabled(false);
@@ -353,7 +317,7 @@ onSaveEditItem: function(){
   StoredItem[indS].Quantity = QtyE;
 
   this.onPressCloseEdit();
-  that.oModel.refresh();
+  this.oModel.refresh();
 }
 
 },
@@ -418,11 +382,15 @@ onDeleteItem(oEvent){
     var StoredItem = this.oModel.getData().SelectedItemProd;
     for(var i = 0;i < StoredItem.length;i++){
       oBody.DocumentLines.push({
-        "BaseLine": StoredItem[i].LineNumber,
+        "LineNum": i,
+        "WarehouseCode":localStorage.getItem("wheseID"),
+        "BaseLine": StoredItem[i].LineNum,
+        "AccountCode": "11324002",
         "Quantity": StoredItem[i].Quantity,
-        "UoMEntry": StoredItem[i].UoMEntry,
-        "BaseEntry": localStorage.getItem("DocEntry"),
-        "Project":  StoredItem[i].ProjectName
+        "UomEntry": StoredItem[i].UomEntry,
+        "BaseEntry": StoredItem[i].DocEntry,
+        "CostingCode":  StoredItem[i].OcrCode,
+        "Project": StoredItem[i].Project
         });
       }
       console.log(oBody)
@@ -444,16 +412,50 @@ onDeleteItem(oEvent){
                     actions: [MessageBox.Action.OK],
                     title: "Issuance to Project",
                     icon: MessageBox.Icon.INFORMATION,
-                    styleClass:"sapUiSizeCompact"
+                    styleClass:"sapUiSizeCompact",
+                    onClose: function () {
+                      this.onPressIssuance();
+                      this.oModel.refresh();
+                      
+                    }
+
                   });
                    
-                    
-                  this.onPressIssuance();
-                  this.oModel.refresh();
-                  
                   that.closeLoadingFragment();
                 },context: this
               });
    },
+
+  onGetTransactionType: function(){
+    // this.openLoadingFragment();
+    var sServerName = localStorage.getItem("ServerID");
+    // var sUrl = sServerName + "/b1s/v1/Items?$select=ItemCode,ItemName&$filter=BarCode ne 'null'";
+    var xsjsServer = sServerName.replace("50000", "4300");
+    var sUrl = xsjsServer + "/app_xsjs/ExecQuery.xsjs?procName=spAppGetGIType&dbName=" + localStorage.getItem("dbName");
+    
+    $.ajax({
+      url: sUrl,
+          type: "GET",
+          crossDomain: true,
+          xhrFields: {
+          withCredentials: true
+          },
+          error: function (xhr, status, error) {
+            this.closeLoadingFragment();
+            console.log("Error Occured");
+          },
+          beforeSend: function (xhr) {
+            xhr.setRequestHeader ("Authorization", "Basic " + btoa("SYSTEM:"+localStorage.getItem("XSPass")));
+
+          },
+          success: function (response) {
+            this.oModel.getData().GIType  = response;
+            this.oModel.refresh();
+            this.closeLoadingFragment();
+          },
+          context: this
+        })
+  },
+
   });
 });

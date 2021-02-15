@@ -61,7 +61,7 @@
     
       <html:br></html:br>
         <content>
-                <List id="projectlistid" items="{oModel>/SelectedItemCount}">
+                <List id="projectlistid" mode="MultiSelect" items="{oModel>/SelectedItemCount}">
                     <ObjectListItem title="{oModel>ItemCode}"
                             number="{oModel>InStock}"
                             numberUnit="{oModel>UoMName}"
